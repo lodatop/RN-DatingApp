@@ -56,7 +56,7 @@ const MealsNavigator = createStackNavigator(
     initialRouteName: 'Login',
     defaultNavigationOptions: {
       headerStyle: {
-        backgroundColor: Colors.primaryColor
+        backgroundColor: '#ffadce'
       },
       headerTintColor: 'white',
       headerTitle: 'Custom title'
