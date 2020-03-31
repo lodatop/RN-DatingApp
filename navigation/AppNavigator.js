@@ -26,6 +26,17 @@ const MenuTabNavigator = createBottomTabNavigator(
           }
         }
       },
+      Inbox: {
+        screen: InboxScreen,
+        navigationOptions: {
+          tabBarLabel: 'Inbox',
+          tabBarIcon: tabInfo => {
+            return (
+              <Ionicons name="ios-chatbubbles" size={25} color={tabInfo.tintColor} />
+            );
+          }
+        }
+      },
       Profile: {
         screen: ProfileScreen,
         navigationOptions: {
