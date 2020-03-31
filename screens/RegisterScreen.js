@@ -6,6 +6,7 @@ import { KoroInput } from 'rn-koro-lib'
 const RegisterScreen = props => {
     return (
         <View style={{...styles.container}}>
+            <Text>This is the register screen</Text>
             <KoroInput 
                 label='Name'
                 onChange={()=>{}}/>
@@ -21,7 +22,6 @@ const RegisterScreen = props => {
             <KoroInput 
                 label='Password'
                 onChange={()=>{}}/>
-            <Text>This is the register screen</Text>
             <Button 
                 title='Go to Login'
                 onPress={()=>{props.navigation.replace({routeName: 'Login'})}}
