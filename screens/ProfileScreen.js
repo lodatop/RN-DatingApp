@@ -1,9 +1,10 @@
 import React from 'react';
-import {View, Text, StyleSheet, Image, TouchableOpacity, Dimensions} from 'react-native';
+import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
 
 import { MaterialIcons, AntDesign } from '@expo/vector-icons'
 
 import UserData from '../components/profile/UserData'
+import UserImages from '../components/profile/UserImages'
 
 const ProfileScreen = props => {
     return (
@@ -12,22 +13,31 @@ const ProfileScreen = props => {
                 <UserData />
             </View>
             <View style={styles.biography}>
-                <Text>Aqui va la biografia</Text>
+                <Text>About me:</Text>
+                <Text numberOfLines={2}>i like animals</Text>
+                <Text>Im looking to: Chat</Text>
+                <Text>Profession:</Text>
+                <Text>Student</Text>
+                {/* <View style={{ backgroundColor: 'green', alignItems: 'center'}}>
+                    <ScrollView horizontal={true}>
+                        <UserImages />
+                    </ScrollView>
+                </View> */}
             </View>
             <View style={styles.userOptionsContainer}>
             <View style={styles.userOptions}>
                     <TouchableOpacity 
-                        style={{...styles.iconContainer, ...{width: 65, height: 65, backgroundColor: '#ff96c0'}}} 
+                        style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: '#ff96c0'}}} 
                         activeOpacity={0.7}>
-                            <MaterialIcons name="edit" size={40} />
+                            <MaterialIcons name="edit" size={40} color='#ff96c0'/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Edit your profile</Text>
                 </View>
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
-                        style={{...styles.iconContainer, backgroundColor: '#ff66a3'}} 
+                        style={{...styles.iconContainer, borderColor: '#ff66a3'}} 
                         activeOpacity={0.7}>
-                            <MaterialIcons name="add-a-photo" size={40} />
+                            <MaterialIcons name="add-a-photo" size={40} color='#ff66a3'/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Add a photo</Text>
                 </View>
@@ -40,18 +50,6 @@ const ProfileScreen = props => {
                     <Text style={styles.userOptionText}>Logout</Text>
                 </View>
             </View>
-            {/* <TouchableOpacity style={styles.userOptions} activeOpacity={0.7}>
-                <MaterialIcons name="settings" size={40} />
-                <Text style={styles.userOptionText}>Settings</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.userOptions} activeOpacity={0.7}>
-                <MaterialIcons name="add-a-photo" size={40} />
-                <Text style={styles.userOptionText}>Add photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.userOptions} activeOpacity={0.7}>
-                <MaterialIcons name="edit" size={40} />
-                <Text style={styles.userOptionText}>Edit your profile</Text>
-            </TouchableOpacity> */}
         </View>
     )
 }
@@ -79,7 +77,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-evenly'
     },
     biography: {
-        height: '40%'
+        flex: 1,
+        maxHeight: '40%',
+        width: '100%',
+        marginBottom: 15
     },
     iconContainer: {
         width: 80,
@@ -87,7 +88,9 @@ const styles = StyleSheet.create({
         elevation: 10,
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 50
+        borderRadius: 50,
+        backgroundColor: '#ffedf4',
+        borderWidth: 2
     }
 })
 export default ProfileScreen;

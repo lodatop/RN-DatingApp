@@ -1,17 +1,22 @@
 import React from 'react';
-import {View, Text, ScrollView, StyleSheet, Dimensions, Image} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 
 import { Ionicons } from '@expo/vector-icons'
 
 const UserData = props => {
     return (
             <View style={styles.infoContainer}>
-                <View style={styles.profileImg}>
-                    <Image
-                        style={styles.image}
-                        resizeMode='contain'
-                        source={require('../../assets/default-user.png')}
-                    />              
+                <View style={styles.imageContainer}>
+                    <TouchableOpacity style={styles.changePhoto}>
+                        <Ionicons name='ios-add' size={30}/>
+                    </TouchableOpacity>
+                    <View style={styles.profileImg}>
+                        <Image
+                            style={styles.image}
+                            resizeMode='contain'
+                            source={require('../../assets/default-user.png')}
+                        />              
+                    </View>
                 </View>
                 <View style={styles.userData}>
                     <Text style={styles.text} numberOfLines={1}>Name, age</Text>
@@ -32,16 +37,20 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     profileImg: {
+        width: '100%',
+        height: '100%',
+        overflow: 'hidden',
+        borderRadius: 100
+    },
+    imageContainer: {
+        zIndex: 100,
         width: '85%',
         height: '85%',
-        overflow: 'hidden',
-        borderRadius: 100,
         alignItems: 'center',
         justifyContent: 'center'
     },
     userData:{
-        width: '100%',
-        height: '10%'
+        width: '100%'
     },
     infoContainer:{
         width: Dimensions.get('window').width * 0.6,
@@ -50,7 +59,20 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignSelf:'center',
         padding: 10,
-        marginBottom: 15
+    },
+    changePhoto: {
+        position: 'absolute',
+        zIndex: 150,
+        width: 30,
+        height: 30,
+        borderRadius: 15,
+        bottom: 15,
+        right: 15,
+        borderWidth: 1,
+        borderColor: '#96878d',
+        backgroundColor: '#ded3d7',
+        alignItems: 'center',
+        justifyContent: 'center'
     }
 })
 export default UserData;
