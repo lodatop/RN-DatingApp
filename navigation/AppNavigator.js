@@ -70,7 +70,8 @@ const MealsNavigator = createStackNavigator(
         backgroundColor: '#ffadce'
       },
       headerTintColor: 'white',
-      headerTitle: 'Custom title'
+      headerTitle: 'Custom title',
+      headerTitleAlign: 'center'
     }
   }
 );

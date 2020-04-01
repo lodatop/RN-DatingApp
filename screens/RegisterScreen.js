@@ -1,24 +1,28 @@
 import React, { useState, useContext } from 'react';
-import {View, Text, ScrollView, StyleSheet, Button} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 import  { FirebaseContext } from '../components/Firebase';
 
-import { KoroInput } from 'rn-koro-lib'
+import { KoroProgress } from 'rn-koro-lib'
 
 const RegisterScreen = props => {
 
-    const [email, setEmail] = useState()
-    const [password, setPassword] = useState()
+    const [email, setEmail] = useState('')
+    const [password, setPassword] = useState('')
+    const [loading, setLoading] = useState(false);
     
     const firebase = useContext(FirebaseContext);
 
     const register = (e) => {
         e.preventDefault();
+        setLoading(true);
         firebase.auth.createUserWithEmailAndPassword(email, password)
         .then(result => {
+            setLoading(false);
             var user = result.user;
             props.navigation.replace({routeName: 'Main'})
         })
         .catch(function(error) {
+            setLoading(false);
             var errorMessage = error.message;
             alert(errorMessage)
         });
@@ -26,27 +30,90 @@ const RegisterScreen = props => {
 
     return (
         <View style={{...styles.container}}>
-            <Text>This is the register screen</Text>
-            <KoroInput 
-                label='Email'
-                onChange={(text)=>{setEmail(text)}}/>
-            <KoroInput 
-                label='Password'
-                onChange={(text)=>{setPassword(text)}}/>
-            <Button 
-                title='Register'
-                onPress={register}
+            <Text style={styles.title}>Sign up to continue!</Text>
+            <Text>Email:</Text>
+            <TextInput
+                keyboardType='email-address'
+                onChangeText={(text)=>{setEmail(text.trim())}}
+                style={{...styles.textInput, borderColor: email !== '' ? 'green': 'red'}}
+                value={email}
             />
+            <Text>Password:</Text>
+            <TextInput
+                keyboardType='default'
+                onChangeText={(text)=>{setPassword(text.trim())}}
+                style={{...styles.textInput, borderColor: password !== '' ? 'green': 'red'}}
+                value={password}
+            />
+            <TouchableOpacity 
+                style={styles.loginButton} 
+                onPress={register}>
+                <Text style={styles.loginText}>Register</Text>
+            </TouchableOpacity>
+            <Text style={{fontWeight: 'bold', fontSize: 15, color: 'black', textAlign: 'center'}}>OR</Text>
+            <TouchableOpacity 
+                style={styles.registerButton} 
+                onPress={()=>{props.navigation.replace({routeName: 'Login'})}}>
+                <Text style={styles.registerText}>Go back to login</Text>
+            </TouchableOpacity>
+            <KoroProgress visible={loading}/>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
+    loginButton: {
+        marginVertical: 10,
+        backgroundColor: '#ff3888', 
+        paddingVertical: 10
+    },
+    loginText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
+    registerButton: {
+        marginVertical: 10,
+        backgroundColor: '#f569a1', 
+        paddingVertical: 10,
+        width: '70%',
+        alignSelf: 'center'
+    },
+    registerText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
+    textInput:{
+        height: 40,
+        borderBottomWidth: 3,
+        borderColor: 'red',
+        margin: 5,
+        paddingLeft: 10
+    },
     container: {
         flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
+        padding: 15
+    }, 
+    title:{
+        fontSize: 20,
+        textAlign: 'center',
+        borderColor: 'grey',
+        borderBottomWidth: 1,
+        paddingBottom: 15,
+        marginBottom: 15
     }
 })
+
+RegisterScreen.navigationOptions = {
+    headerTitle: 'REGISTER'
+}
+
 
 export default RegisterScreen;
