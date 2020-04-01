@@ -19,7 +19,7 @@ const RegisterScreen = props => {
         .then(result => {
             setLoading(false);
             var user = result.user;
-            props.navigation.replace({routeName: 'createProfile'})
+            props.navigation.replace({routeName: 'CreateProfile'})
         })
         .catch(function(error) {
             setLoading(false);
