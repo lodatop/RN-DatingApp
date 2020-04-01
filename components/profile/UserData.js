@@ -4,6 +4,9 @@ import {View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react
 import { Ionicons } from '@expo/vector-icons'
 
 const UserData = props => {
+
+    const { name, age, photo } = props;
+
     return (
             <View style={styles.infoContainer}>
                 <View style={styles.imageContainer}>
@@ -11,15 +14,21 @@ const UserData = props => {
                         <Ionicons name='ios-add' size={30}/>
                     </TouchableOpacity>
                     <View style={styles.profileImg}>
-                        <Image
-                            style={styles.image}
-                            resizeMode='contain'
-                            source={require('../../assets/default-user.png')}
-                        />              
+                        {
+                            (photo)? 
+                                <Image
+                                    style={styles.image}
+                                    resizeMode='contain'
+                                    source={photo}/>
+                                :<Image
+                                    style={styles.image}
+                                    resizeMode='contain'
+                                    source={require('../../assets/default-user.png')}/>      
+                        }         
                     </View>
                 </View>
                 <View style={styles.userData}>
-                    <Text style={styles.text} numberOfLines={1}>Name, age</Text>
+                    <Text style={styles.text} numberOfLines={1}>{name}, {age}.</Text>
                 </View>
             </View>
     )

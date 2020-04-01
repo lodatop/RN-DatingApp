@@ -1,23 +1,64 @@
-import React from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
+import  { FirebaseContext } from '../components/Firebase';
 
 import { MaterialIcons, AntDesign } from '@expo/vector-icons'
 
 import UserData from '../components/profile/UserData'
 import UserImages from '../components/profile/UserImages'
 
+import { KoroProgress } from 'rn-koro-lib'
+
 const ProfileScreen = props => {
+
+    const [profile, setProfile] = useState()
+    const [loading, setLoading] = useState(false);
+    
+    const firebase = useContext(FirebaseContext);
+
+    useEffect(() => {
+        getProfileData();
+      }, []);
+
+    const getProfileData = async () => {
+
+        setLoading(true);
+
+        let uid = await firebase.auth.currentUser.uid;
+
+        var db = firebase.firestore;
+
+        db.collection("profile").where("uid", "==", uid)
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                setProfile(doc.data())
+                setLoading(false);
+            });
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+        });
+
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.userDataContainer}>
-                <UserData />
+                {(profile)?
+                    (profile.photo)?<UserData name={profile.name} age={profile.age} photo={profile.photo[0]}/>
+                    : <UserData name={profile.name} age={profile.age}/>
+                    :<UserData />}
             </View>
             <View style={styles.biography}>
-                <Text>About me:</Text>
-                <Text numberOfLines={2}>i like animals</Text>
-                <Text>Im looking to: Chat</Text>
-                <Text>Profession:</Text>
-                <Text>Student</Text>
+                {(profile)? 
+                (
+                    <View>
+                        <Text>About me:</Text>
+                        <Text numberOfLines={2}>{profile.aboutMe}</Text>
+                        <Text>Profession: {profile.profession}</Text>
+                    </View>
+                ) : <Text> </Text>}
                 {/* <View style={{ backgroundColor: 'green', alignItems: 'center'}}>
                     <ScrollView horizontal={true}>
                         <UserImages />
@@ -50,6 +91,7 @@ const ProfileScreen = props => {
                     <Text style={styles.userOptionText}>Logout</Text>
                 </View>
             </View>
+            <KoroProgress visible={loading}/>
         </View>
     )
 }
