@@ -6,6 +6,7 @@ import { MaterialIcons, AntDesign } from '@expo/vector-icons'
 
 import UserData from '../components/profile/UserData'
 import UserImages from '../components/profile/UserImages'
+import ProfileData from '../components/profile/ProfileData'
 
 import { KoroProgress } from 'rn-koro-lib'
 
@@ -13,6 +14,7 @@ const ProfileScreen = props => {
 
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(false);
+    const [biographyData, setBiographyData] = useState(null)
     
     const firebase = useContext(FirebaseContext);
 
@@ -33,11 +35,12 @@ const ProfileScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 setProfile(doc.data())
-                setLoading(false);
             });
+            setLoading(false);
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
+            setLoading(false);
         });
 
     }
@@ -51,14 +54,7 @@ const ProfileScreen = props => {
                     :<UserData />}
             </View>
             <View style={styles.biography}>
-                {(profile)? 
-                (
-                    <View>
-                        <Text>About me:</Text>
-                        <Text numberOfLines={2}>{profile.aboutMe}</Text>
-                        <Text>Profession: {profile.profession}</Text>
-                    </View>
-                ) : <Text> </Text>}
+                { profile? <ProfileData profile={profile}/> : <Text style={styles.biography}>No info available</Text>}
                 {/* <View style={{ backgroundColor: 'green', alignItems: 'center'}}>
                     <ScrollView horizontal={true}>
                         <UserImages />
@@ -66,7 +62,7 @@ const ProfileScreen = props => {
                 </View> */}
             </View>
             <View style={styles.userOptionsContainer}>
-            <View style={styles.userOptions}>
+                <View style={styles.userOptions}>
                     <TouchableOpacity 
                         style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: '#ff96c0'}}} 
                         activeOpacity={0.7}>
@@ -135,4 +131,9 @@ const styles = StyleSheet.create({
         borderWidth: 2
     }
 })
+
+ProfileScreen.navigationOptions = {
+    headerTitle: 'PROFILE'
+}
+
 export default ProfileScreen;
