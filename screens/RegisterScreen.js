@@ -16,7 +16,7 @@ const RegisterScreen = props => {
         firebase.auth.createUserWithEmailAndPassword(email, password)
         .then(result => {
             var user = result.user;
-            props.navigation.replace({routeName: 'Main'})
+            props.navigation.replace({routeName: 'createProfile'})
         })
         .catch(function(error) {
             var errorMessage = error.message;

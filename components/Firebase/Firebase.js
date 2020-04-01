@@ -1,5 +1,7 @@
 import app from 'firebase/app';
 import 'firebase/auth';
+import 'firebase/firestore';
+import 'firebase/storage';
 const config = {
     apiKey: "AIzaSyD1YyQxum0b4bRZ3ZULLcepRv1MBKQte8o",
     authDomain: "allaboutthatace-bh.firebaseapp.com",
@@ -10,7 +12,12 @@ const config = {
 };
 class Firebase {
   constructor() {
+
     app.initializeApp(config);
+
+    this.firestore = app.firestore();
+
+    this.storage = app.storage();
     
     this.auth = app.auth();
   }

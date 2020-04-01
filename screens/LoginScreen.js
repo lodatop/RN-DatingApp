@@ -13,6 +13,7 @@ const LoginScreen = props => {
 
     const login = (e) => {
         e.preventDefault();
+        //marico en esta mierda y en el register y basicamente en todo lo q se meta con firebase hay q poner un spinner pq es muy lenta la conexion por el wifi de vzla
         firebase.auth.signInWithEmailAndPassword(email, password)
         .then(result => {
             var user = result.user;
