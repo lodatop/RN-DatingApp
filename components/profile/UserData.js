@@ -28,7 +28,9 @@ const UserData = props => {
                     </View>
                 </View>
                 <View style={styles.userData}>
-                    <Text style={styles.text} numberOfLines={1}>{name}, {age}.</Text>
+                    {(name && age) ? 
+                        <Text style={styles.text} numberOfLines={1}>{name.split(' ')[0]}, {age}.</Text> 
+                        : <Text style={styles.text}>No info</Text>}
                 </View>
             </View>
     )
