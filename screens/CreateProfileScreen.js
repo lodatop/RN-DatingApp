@@ -1,12 +1,17 @@
 import React, { useState, useContext } from 'react';
-import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image} from 'react-native';
-import  { FirebaseContext } from '../components/Firebase';
+import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, Picker, TouchableOpacity} from 'react-native';
+
 import ImagePicker from 'react-native-image-picker'
 
-const createProfileScreen = props => {
+import { KoroProgress } from 'rn-koro-lib'
+
+import { FirebaseContext } from '../components/Firebase';
+
+const CreateProfileScreen = props => {
 
     const [profile, setProfile] = useState({})
     const [photo, setPhoto] = useState(null)
+    const [loading, setLoading] = useState(false);
     
     const firebase = useContext(FirebaseContext);
 
@@ -31,7 +36,7 @@ const createProfileScreen = props => {
         let uid = await firebase.auth.currentUser.uid;
 
         var db = firebase.firestore;
-
+        setLoading(true);
         if(photo){
             var storageRef = firebase.storage().ref()
             var ref = storageRef.child(photo)
@@ -51,8 +56,10 @@ const createProfileScreen = props => {
                         photos: [url]
                     }
                     db.collection('profile').add(postProfile).then(ref => {
+                        setLoading(false);
                         props.navigation.replace({routeName: 'Main'})
                     }).catch(function(error) {
+                        setLoading(false);
                         var errorMessage = error.message;
                         alert(errorMessage);
                     })
@@ -70,10 +77,11 @@ const createProfileScreen = props => {
                 profession: profile.profession,
                 height: profile.height,
             }
-
             db.collection('profile').add(postProfile).then(ref => {
+                setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
             }).catch(function(error) {
+                setLoading(false);
                 var errorMessage = error.message;
                 alert(errorMessage);
             })
@@ -82,47 +90,131 @@ const createProfileScreen = props => {
     }
 
     return (
-        <View>
-            <Text> Tell us about Yourself. Wisam haz esto un titulo grandecito y lindo o algo asi. </Text>
-            <Text> Name: </Text>
-            <TextInput onChangeText={(txt) => handleChange("name", txt)} value={profile.name}></TextInput>
-            <Text> Age: </Text>
-            <TextInput onChangeText={(txt) => handleChange("age", txt)} value={profile.age} keyboardType="number-pad"></TextInput>
-            <Text> Gender: </Text>
-            {//esto tiene q ser un select, acomodalo vos
+        <View style={styles.container}>
+            <Text style={styles.title}>Tell us about yourself!</Text>
+            <Text>Name:</Text>
+            <TextInput
+                keyboardType='email-address'
+                onChangeText={(txt) => handleChange("name", txt)}
+                style={{...styles.textInput, borderColor: profile.name ? 'green': 'red'}}
+                value={profile.name}
+            />
+            <Text>Age:</Text>
+            <TextInput
+                keyboardType='number-pad'
+                onChangeText={(txt) => 
+                    {
+                        (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
+                    }
                 }
-            <TextInput onChangeText={(txt) => handleChange("gender", txt)} value={profile.gender}></TextInput>
-            <Text> About You: </Text>
-            <TextInput onChangeText={(txt) => handleChange("aboutMe", txt)} value={profile.aboutMe}></TextInput>
-            <Text> Profession: </Text>
-            <TextInput onChangeText={(txt) => handleChange("profession", txt)} value={profile.profession}></TextInput>
-            <Text> Height: </Text>
-            <TextInput onChangeText={(txt) => handleChange("height", txt)} value={profile.height}></TextInput>
-           
-            <View>
-                {photo && (
+                style={{...styles.textInput, borderColor: profile.age ? 'green': 'red'}}
+                value={profile.age}
+            />
+            
+            <Text> Gender: </Text>
+            <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? 'green': 'red' }}>
+                <Picker
+                    mode='dialog'
+                    selectedValue={profile.gender || 'Select...'}
+                    style={{ width: '100%', marginBottom: 10}}
+                    onValueChange={(itemValue, itemIndex) => handleChange("gender", itemValue)}
+                >
+                    <Picker.Item label="Select..." value="" />
+                    <Picker.Item label="Male" value="male" />
+                    <Picker.Item label="Female" value="female" />
+                </Picker>
+            </View>
+
+            <Text>About You:</Text>
+            <TextInput
+                onChangeText={(txt) => handleChange("aboutMe", txt)}
+                style={{...styles.textInput, borderColor: profile.aboutMe ? 'green': 'red'}}
+                value={profile.aboutMe}
+            />
+            <Text>Profession:</Text>
+            <TextInput
+                onChangeText={(txt) => handleChange("profession", txt)}
+                style={{...styles.textInput, borderColor: profile.profession ? 'green': 'red'}}
+                value={profile.profession}
+            />
+            <Text>Height:</Text>
+            <TextInput
+                keyboardType='number-pad'
+                onChangeText={(txt) => handleChange("height", txt)}
+                style={{...styles.textInput, borderColor: profile.height ? 'green': 'red'}}
+                value={profile.height}
+            />
+            {photo && (
                 <Image
                     source={{ uri: photo.uri }}
                     style={{ width: 300, height: 300 }}
                 />
-                )}
-                <Button title="Choose Photo" onPress={this.handleChoosePhoto} />
-            </View>
-
-            <View style={styles.button}>
-                <Button
-                    title='Continue'
-                    onPress={createProfile}
-                />
-            </View>
+            )}
+           <TouchableOpacity 
+                style={styles.choosePhotoButton} 
+                onPress={this.handleChoosePhoto}>
+                <Text style={styles.choosePhotoText}>Choose Photo</Text>
+            </TouchableOpacity>
+            <TouchableOpacity 
+                style={styles.continueButton} 
+                onPress={createProfile}>
+                <Text style={styles.continueText}>Continue</Text>
+            </TouchableOpacity>
+            <KoroProgress visible={loading}/>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    button: {
-        marginVertical: 10
+    choosePhotoButton: {
+        marginVertical: 10,
+        backgroundColor: '#ff3888', 
+        paddingVertical: 10
+    },
+    choosePhotoText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
+    continueButton: {
+        marginVertical: 10,
+        backgroundColor: '#f569a1', 
+        paddingVertical: 10
+    },
+    continueText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
+    textInput:{
+        height: 40,
+        borderBottomWidth: 3,
+        borderColor: 'red',
+        margin: 5,
+        paddingLeft: 10
+    },
+    container: {
+        flex: 1,
+        padding: 15
+    }, 
+    title:{
+        fontSize: 20,
+        textAlign: 'center',
+        borderColor: 'grey',
+        borderBottomWidth: 1,
+        paddingBottom: 15,
+        marginBottom: 15
     }
 })
 
-export default createProfileScreen;
+CreateProfileScreen.navigationOptions = {
+    headerTitle: 'YOUR PROFILE'
+}
+
+export default CreateProfileScreen;

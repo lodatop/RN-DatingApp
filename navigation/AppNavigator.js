@@ -10,7 +10,7 @@ import LoginScreen from '../screens/LoginScreen';
 import MatchingScreen from '../screens/MatchingScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import RegisterScreen from '../screens/RegisterScreen';
-import createProfileScreen from '../screens/CreateProfileScreen';
+import CreateProfileScreen from '../screens/CreateProfileScreen';
 import Colors from '../constants/Colors';
 
 const MenuTabNavigator = createBottomTabNavigator(
@@ -62,7 +62,7 @@ const MealsNavigator = createStackNavigator(
   {
     Login: LoginScreen,
     Register: RegisterScreen,
-    createProfile: createProfileScreen,
+    CreateProfile: CreateProfileScreen,
     Main: MenuTabNavigator
   },
   {
