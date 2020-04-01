@@ -1,8 +1,17 @@
 import React  from 'react';
 import Firebase, { FirebaseContext } from './components/Firebase';
-import { Text, View } from 'react-native';
+import { Text, View, YellowBox } from 'react-native';
 // import { AppLoading } from 'expo';
 import { enableScreens } from 'react-native-screens';
+import _ from 'lodash';
+
+YellowBox.ignoreWarnings(['Setting a timer']);
+const _console = _.clone(console);
+console.warn = message => {
+  if (message.indexOf('Setting a timer') <= -1) {
+    _console.warn(message);
+  }
+};
 
 import AppNavigator from './navigation/AppNavigator';
 import { decode, encode } from 'base-64'
