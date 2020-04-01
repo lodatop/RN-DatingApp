@@ -14,7 +14,6 @@ const ProfileScreen = props => {
 
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(false);
-    const [biographyData, setBiographyData] = useState(null)
     
     const firebase = useContext(FirebaseContext);
 
@@ -43,6 +42,10 @@ const ProfileScreen = props => {
             setLoading(false);
         });
 
+    }
+
+    const logout = () => {
+        console.log("hay que ponerle logout")
     }
 
     return (
@@ -79,7 +82,8 @@ const ProfileScreen = props => {
                     <Text style={styles.userOptionText}>Add a photo</Text>
                 </View>
                 <View style={styles.userOptions}>
-                    <TouchableOpacity 
+                    <TouchableOpacity
+                        onPress={logout}
                         style={{...styles.iconContainer, ...{width: 65, height: 65, backgroundColor: 'red'}}} 
                         activeOpacity={0.7}>
                             <AntDesign name="logout" size={40} color='white' />
