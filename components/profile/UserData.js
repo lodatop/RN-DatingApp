@@ -21,7 +21,7 @@ const UserData = props => {
                                 <Image
                                     style={styles.image}
                                     resizeMode='contain'
-                                    source={photo}/>
+                                    source={{uri: photo}}/>
                                 :<Image
                                     style={styles.image}
                                     resizeMode='contain'
