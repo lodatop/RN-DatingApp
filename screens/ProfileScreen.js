@@ -14,9 +14,8 @@ const ProfileScreen = props => {
 
     const [profile, setProfile] = useState()
     const [loading, setLoading] = useState(false);
+    const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     
-    const firebase = useContext(FirebaseContext);
-
     useEffect(() => {
         getProfileData();
       }, []);
@@ -34,7 +33,6 @@ const ProfileScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 setProfile(doc.data())
-                console.log(doc.data())
             });
             setLoading(false);
         })
@@ -78,7 +76,9 @@ const ProfileScreen = props => {
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
                         style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: '#ff96c0'}}} 
-                        activeOpacity={0.7}>
+                        activeOpacity={0.7}
+                        onPress={() => props.navigation.navigate({routeName: 'EditProfile'})}
+                        >
                             <MaterialIcons name="edit" size={40} color='#ff96c0'/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Edit your profile</Text>

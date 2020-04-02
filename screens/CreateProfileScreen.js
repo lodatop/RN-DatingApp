@@ -241,7 +241,7 @@ const styles = StyleSheet.create({
 })
 
 CreateProfileScreen.navigationOptions = {
-    headerTitle: 'PROFILE INFORMATION'
+    headerTitle: 'Edit Profile'
 }
 
 export default CreateProfileScreen;
