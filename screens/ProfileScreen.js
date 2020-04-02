@@ -8,17 +8,69 @@ import UserData from '../components/profile/UserData'
 import UserImages from '../components/profile/UserImages'
 import ProfileData from '../components/profile/ProfileData'
 
-import { KoroProgress } from 'rn-koro-lib'
+import * as ImagePicker from 'expo-image-picker';
+
+import { KoroProgress, KoroModal } from 'rn-koro-lib'
 
 const ProfileScreen = props => {
 
     const [profile, setProfile] = useState()
-    const [loading, setLoading] = useState(false);
+    const [modalOpen, setModalOpen] = useState(false)
+    const [loading, setLoading] = useState(false)
+    const [photo, setPhoto] = useState(null)
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     
     useEffect(() => {
         getProfileData();
       }, []);
+
+    const handleChoosePhoto = async () => {
+    
+        let response = await ImagePicker.launchImageLibraryAsync();
+        
+        if(response.uri){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
+    const uploadPhoto = async () => {
+
+        let uid = await firebase.auth.currentUser.uid;
+
+        var db = firebase.firestore;
+
+        setLoading(true);
+
+        var storageRef = firebase.storage.ref()
+        var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
+        const response = await fetch(photo.uri);
+        const blob = await response.blob();
+        ref.put(blob).then(snapshot => {
+            snapshot.ref.getDownloadURL().then(downloadURL => {
+                let url = downloadURL
+                const photos = (profile.photos)? profile.photos : [];
+                photos.push(url)
+                const toUpdate = {
+                    photos: photos
+                }
+                db.collection("profile").where("uid", "==", uid)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach(function(document) {
+                    document.ref.update(toUpdate); 
+                    setLoading(false);
+                    setModalOpen(false)
+                    });
+                }).catch(function(error) {
+                    alert("Error getting documents: ", error);
+                    setLoading(false);
+                });  
+            })
+        
+        })
+
+    }
 
     const getProfileData = async () => {
 
@@ -86,7 +138,8 @@ const ProfileScreen = props => {
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
                         style={{...styles.iconContainer, borderColor: '#ff66a3'}} 
-                        activeOpacity={0.7}>
+                        activeOpacity={0.7}
+                        onPress={handleChoosePhoto}>
                             <MaterialIcons name="add-a-photo" size={40} color='#ff66a3'/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Add a photo</Text>
@@ -101,6 +154,27 @@ const ProfileScreen = props => {
                     <Text style={styles.userOptionText}>Logout</Text>
                 </View>
             </View>
+            <KoroModal visible={modalOpen} borderStyle={{padding: 20}} onRequestClose={()=> setModalOpen(false)}>
+                <Text> Preview Image. </Text>
+                {photo && (
+                    <Image
+                        source={{ uri: photo.uri }}
+                        style={{ width: 300, height: 300, alignSelf: 'center' }}
+                    />
+                )}
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.loginButton} 
+                    onPress={uploadPhoto}>
+                    <Text style={styles.loginText}>Upload</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    style={styles.loginButton} 
+                    onPress={()=> setModalOpen(false)}>
+                    <Text style={styles.loginText}>Close</Text>
+                </TouchableOpacity>
+            </KoroModal>
             <KoroProgress visible={loading}/>
         </View>
     )
