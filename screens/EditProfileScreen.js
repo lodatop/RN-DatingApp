@@ -51,6 +51,40 @@ const EditProfileScreen = props => {
             alert("Error getting documents: ", error);
             setLoading(false);
         });
+    }
+
+    const updateProfile = async () => {
+
+        let uid = await firebase.auth.currentUser.uid;
+
+        var db = firebase.firestore;
+        setLoading(true);
+
+        const toUpdate = {};
+
+        if(profile.aboutMe != '' && profile.aboutMe)
+            toUpdate.aboutMe = profile.aboutMe;
+        if(profile.profession != '' && profile.profession)
+            toUpdate.profession = profile.profession;
+
+        if(toUpdate.length !== 0){
+            db.collection("profile").where("uid", "==", uid)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach(function(document) {
+                document.ref.update(toUpdate); 
+                setLoading(false);
+                props.navigation.replace({routeName: 'Main'})
+                });
+            }).catch(function(error) {
+                alert("Error getting documents: ", error);
+                setLoading(false);
+            });  
+        } else {
+            setLoading(false);
+            alert('Nothing to update.')
+            props.navigation.replace({routeName: 'Main'})
+        }
 
     }
 
@@ -106,7 +140,7 @@ const EditProfileScreen = props => {
                     <TouchableOpacity
                         activeOpacity={0.7}
                         style={styles.applyButton} 
-                        onPress={()=>{}}>
+                        onPress={updateProfile}>
                         <Text style={styles.buttonText}>Apply Changes</Text>
                     </TouchableOpacity>
                     <TouchableOpacity 
