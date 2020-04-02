@@ -15,7 +15,7 @@ const CreateProfileScreen = props => {
         gender: '',
         aboutMe: '',
         profession: '',
-        height: '',
+        height: ''
     })
     const [photo, setPhoto] = useState(null)
     const [loading, setLoading] = useState(false);
@@ -24,7 +24,7 @@ const CreateProfileScreen = props => {
     const firebase = useContext(FirebaseContext);
 
     useEffect(() => {
-        (profile.name === '' || profile.age === '' || profile.gender === '' || profile.aboutMe === '' || profile.profession === '' || profile.height === '') ?
+        (profile.name === '' || profile.age === '' || profile.gender === '') ?
         setContinueDisabled(true) : setContinueDisabled(false)
     }, [profile])
 
@@ -63,11 +63,14 @@ const CreateProfileScreen = props => {
                         name: profile.name,
                         age: profile.age,
                         gender: profile.gender,
-                        aboutMe: profile.aboutMe,
-                        profession: profile.profession,
-                        height: profile.height,
                         photos: [url]
                     }
+                    if(profile.aboutMe != '')
+                        postProfile.aboutMe = profile.aboutMe;
+                    if(profile.height != '')
+                    postProfile.height = profile.height;
+                    if(profile.profession != '')
+                        postProfile.aboutMe = profile.profession;
                     db.collection('profile').add(postProfile).then(ref => {
                         setLoading(false);
                         props.navigation.replace({routeName: 'Main'})
@@ -85,11 +88,14 @@ const CreateProfileScreen = props => {
                 uid,
                 name: profile.name,
                 age: profile.age,
-                gender: profile.gender,
-                aboutMe: profile.aboutMe,
-                profession: profile.profession,
-                height: profile.height,
+                gender: profile.gender
             }
+            if(profile.aboutMe != '')
+                postProfile.aboutMe = profile.aboutMe;
+            if(profile.height != '')
+            postProfile.height = profile.height;
+            if(profile.profession != '')
+                postProfile.aboutMe = profile.profession;
             db.collection('profile').add(postProfile).then(ref => {
                 setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
@@ -135,6 +141,9 @@ const CreateProfileScreen = props => {
                     <Picker.Item label="Select..." value="" />
                     <Picker.Item label="Male" value="male" />
                     <Picker.Item label="Female" value="female" />
+                    <Picker.Item label="Non Binary" value="non_binary" />
+                    <Picker.Item label="Trans Male" value="trans_male" />
+                    <Picker.Item label="Trans Female" value="trans_female" />
                 </Picker>
             </View>
 
