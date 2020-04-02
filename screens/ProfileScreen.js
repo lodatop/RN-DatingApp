@@ -167,15 +167,15 @@ const ProfileScreen = props => {
                 )}
                 <TouchableOpacity
                     activeOpacity={0.7}
-                    style={styles.loginButton} 
+                    style={styles.modalButton} 
                     onPress={uploadPhoto}>
-                    <Text style={styles.loginText}>Upload</Text>
+                    <Text style={styles.modalText}>Upload</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.7}
-                    style={styles.loginButton} 
+                    style={styles.modalButton} 
                     onPress={()=> setModalOpen(false)}>
-                    <Text style={styles.loginText}>Close</Text>
+                    <Text style={styles.modalText}>Close</Text>
                 </TouchableOpacity>
             </KoroModal>
             <KoroProgress visible={loading}/>
@@ -185,6 +185,19 @@ const ProfileScreen = props => {
 
 
 const styles = StyleSheet.create({
+    modalButton: {
+        marginVertical: 10,
+        backgroundColor: '#ff3888', 
+        paddingVertical: 10
+    },
+    modalText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
     container: {
         flex: 1,
         paddingHorizontal: 20,
