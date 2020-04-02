@@ -45,7 +45,9 @@ const ProfileScreen = props => {
     }
 
     const logout = () => {
-        console.log("hay que ponerle logout")
+        firebase.auth.signOut().then(() => {
+            props.navigation.replace({routeName: 'Login'})
+        })
     }
 
     return (
