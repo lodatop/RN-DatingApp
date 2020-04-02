@@ -10,9 +10,9 @@ const UserData = props => {
     return (
             <View style={styles.infoContainer}>
                 <View style={styles.imageContainer}>
-                    <TouchableOpacity style={styles.changePhoto}>
+                    {/* <TouchableOpacity style={styles.changePhoto}>
                         <Ionicons name='ios-add' size={30}/>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                     <View style={styles.profileImg}>
                         {
                             (photo)? 

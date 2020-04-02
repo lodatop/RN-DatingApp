@@ -58,7 +58,7 @@ const RegisterScreen = props => {
                 onPress={()=>{props.navigation.replace({routeName: 'Login'})}}>
                 <Text style={styles.registerText}>Go back to login</Text>
             </TouchableOpacity>
-            <KoroProgress visible={loading}/>
+            <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
     )
 }

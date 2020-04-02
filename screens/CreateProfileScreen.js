@@ -187,7 +187,7 @@ const CreateProfileScreen = props => {
                     <Text style={{...styles.continueText, opacity: continueDisabled ? 0.7 : null}}>Continue</Text>
                 </TouchableOpacity>
             </ScrollView>
-            <KoroProgress visible={loading}/>
+            <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
     )
 }

@@ -11,7 +11,7 @@ const ProfileData = props => {
             <View style={styles.bioContainer}>
                 {profile.aboutMe ? (
                     <View>
-                        <Text style={styles.label}>About me: 
+                        <Text style={styles.label} numberOfLines={2} >About me: 
                             <Text style={styles.text}> {profile.aboutMe}</Text>
                         </Text>
                     </View>

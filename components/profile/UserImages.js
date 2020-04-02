@@ -9,7 +9,7 @@ const UserImages = props => {
     return (
             <View style={styles.container}>
                 {images ? 
-                    images.map((image, index) => {
+                    images.reverse().map((image, index) => {
                         return (
                             <View key={index} style={styles.image}>
                                 <Image
@@ -28,7 +28,7 @@ const UserImages = props => {
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
+        minWidth: '100%',
         height: '100%',
         flexDirection: 'row',
         alignItems: 'center'
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     image: {
         width: 150,
         height:150,
-        backgroundColor: 'blue',
+        backgroundColor: 'lightgrey',
         borderRadius: 10,
         marginRight: 10
     }

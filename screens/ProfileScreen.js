@@ -24,6 +24,10 @@ const ProfileScreen = props => {
         getProfileData();
       }, []);
 
+    const updateProfile = () => {
+        getProfileData();
+    }
+
     const handleChoosePhoto = async () => {
     
         let response = await ImagePicker.launchImageLibraryAsync();
@@ -49,7 +53,7 @@ const ProfileScreen = props => {
         ref.put(blob).then(snapshot => {
             snapshot.ref.getDownloadURL().then(downloadURL => {
                 let url = downloadURL
-                const photos = (profile.photos)? profile.photos : [];
+                const photos = (profile.photos) ? profile.photos : [];
                 photos.push(url)
                 const toUpdate = {
                     photos: photos
@@ -58,7 +62,8 @@ const ProfileScreen = props => {
                 .get()
                 .then((querySnapshot) => {
                     querySnapshot.forEach(function(document) {
-                    document.ref.update(toUpdate); 
+                    document.ref.update(toUpdate);
+                    updateProfile();
                     setLoading(false);
                     setModalOpen(false)
                     });
@@ -121,9 +126,11 @@ const ProfileScreen = props => {
             </View>
             <View style={{...styles.images}}>
                 { profile ?
-                        <ScrollView horizontal={true}>
-                            <UserImages images={profile.photos}/>
+                    profile.photos ? 
+                        <ScrollView horizontal={true} style={{flex: 1}}>
+                            <UserImages images={[...profile.photos]}/>
                         </ScrollView>
+                        :null
                     : null
                 }
             </View>
@@ -157,28 +164,44 @@ const ProfileScreen = props => {
                     <Text style={styles.userOptionText}>Logout</Text>
                 </View>
             </View>
-            <KoroModal visible={modalOpen} borderStyle={{padding: 20}} onRequestClose={()=> setModalOpen(false)}>
-                <Text> Preview Image. </Text>
+            <KoroModal 
+                visible={modalOpen} 
+                borderStyle={{padding: 20}} 
+                contentStyle={{borderRadius: 15, elevation: 15, backgroundColor: 'rgba(255, 227, 236, 1)'}}
+                onRequestClose={()=> setModalOpen(false)}>
+                <Text style={styles.modalTitle}>Image Preview</Text>
                 {photo && (
-                    <Image
-                        source={{ uri: photo.uri }}
-                        style={{ width: 300, height: 300, alignSelf: 'center' }}
-                    />
+                    <View
+                        style={{ 
+                            overflow: 'hidden',
+                            marginVertical: 15,
+                            width: 300, 
+                            height: 300, 
+                            alignSelf: 'center', 
+                            borderRadius: 10 }}>
+                        <Image
+                            resizeMode='cover'
+                            source={{ uri: photo.uri }}
+                            style={{
+                                width: '100%', 
+                                height: '100%'}}
+                        />
+                    </View>
                 )}
                 <TouchableOpacity
                     activeOpacity={0.7}
                     style={styles.modalButton} 
                     onPress={uploadPhoto}>
-                    <Text style={styles.modalText}>Upload</Text>
+                    <Text style={styles.modalText}>Add image</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.7}
-                    style={styles.modalButton} 
+                    style={{...styles.modalButton, backgroundColor: '#ff1c67'}} 
                     onPress={()=> setModalOpen(false)}>
-                    <Text style={styles.modalText}>Close</Text>
+                    <Text style={{...styles.modalText}}>Cancel</Text>
                 </TouchableOpacity>
             </KoroModal>
-            <KoroProgress visible={loading}/>
+            <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
     )
 }
@@ -186,9 +209,16 @@ const ProfileScreen = props => {
 
 const styles = StyleSheet.create({
     modalButton: {
+        width: '80%',
         marginVertical: 10,
-        backgroundColor: '#ff3888', 
+        backgroundColor: '#f569a1', 
         paddingVertical: 10
+    },
+    modalTitle:{
+        marginVertical: 15,
+        fontSize: 25,
+        textTransform: 'uppercase',
+        fontWeight: 'bold'
     },
     modalText: {
         textAlign: 'center',
