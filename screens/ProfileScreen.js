@@ -46,9 +46,13 @@ const ProfileScreen = props => {
 
     const logout = () => {
         setLoading(true);
-        firebase.auth.signOut().then(() => {
+        firebase.auth.signOut()
+        .then(() => {
             setLoading(false);
             props.navigation.replace({routeName: 'Login'})
+        }).catch(err=> {
+            setLoading(false);
+            alert("Couldn't logout, try again");
         })
     }
 
@@ -140,7 +144,7 @@ const styles = StyleSheet.create({
     }
 })
 
-ProfileScreen.navigationOptions = {
+ProfileScreen.tabBarOptions = {
     headerTitle: 'PROFILE'
 }
 

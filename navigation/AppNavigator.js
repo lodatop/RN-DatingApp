@@ -58,7 +58,7 @@ const MenuTabNavigator = createBottomTabNavigator(
     }
   );
 
-const MealsNavigator = createStackNavigator(
+const StackNavigator = createStackNavigator(
   {
     Login: LoginScreen,
     Register: RegisterScreen,
@@ -72,10 +72,10 @@ const MealsNavigator = createStackNavigator(
         backgroundColor: '#ffadce'
       },
       headerTintColor: 'white',
-      headerTitle: 'Custom title',
+      headerTitle: 'Ace Mate',
       headerTitleAlign: 'center'
     }
   }
 );
 
-export default createAppContainer(MealsNavigator);
+export default createAppContainer(StackNavigator);

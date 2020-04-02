@@ -27,7 +27,7 @@ const CreateProfileScreen = props => {
     const firebase = useContext(FirebaseContext);
 
     useEffect(() => {
-        (profile.name === '' || profile.age === '' || profile.gender === '') ?
+        (profile.name === '' || profile.age < 18 || profile.gender === '') ?
         setContinueDisabled(true) : setContinueDisabled(false)
     }, [profile])
 
@@ -113,14 +113,14 @@ const CreateProfileScreen = props => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Tell us about yourself!</Text>
-            <Text>Name:</Text>
+            <Text>Name*:</Text>
             <TextInput
                 keyboardType='email-address'
                 onChangeText={(txt) => handleChange("name", txt)}
                 style={{...styles.textInput, borderColor: profile.name ? 'green': 'red'}}
                 value={profile.name}
             />
-            <Text>Age:</Text>
+            <Text>Age*:</Text>
             <TextInput
                 keyboardType='number-pad'
                 onChangeText={(txt) => 
@@ -128,11 +128,11 @@ const CreateProfileScreen = props => {
                         (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
                     }
                 }
-                style={{...styles.textInput, borderColor: profile.age ? 'green': 'red'}}
+                style={{...styles.textInput, borderColor: profile.age > 17 ? 'green': 'red'}}
                 value={profile.age}
             />
             
-            <Text> Gender: </Text>
+            <Text> Gender*: </Text>
             <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? 'green': 'red' }}>
                 <Picker
                     mode='dialog'
@@ -149,19 +149,19 @@ const CreateProfileScreen = props => {
                 </Picker>
             </View>
 
-            <Text>About You:</Text>
+            <Text>About You (Optional):</Text>
             <TextInput
                 onChangeText={(txt) => handleChange("aboutMe", txt)}
                 style={{...styles.textInput, borderColor: profile.aboutMe ? 'green': 'red'}}
                 value={profile.aboutMe}
             />
-            <Text>Profession:</Text>
+            <Text>Profession (Optional):</Text>
             <TextInput
                 onChangeText={(txt) => handleChange("profession", txt)}
                 style={{...styles.textInput, borderColor: profile.profession ? 'green': 'red'}}
                 value={profile.profession}
             />
-            <Text>Height:</Text>
+            <Text>Height (Optional):</Text>
             <TextInput
                 keyboardType='number-pad'
                 onChangeText={(txt) => handleChange("height", txt)}
