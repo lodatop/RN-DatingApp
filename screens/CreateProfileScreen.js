@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, Picker, TouchableOpacity} from 'react-native';
 
 import ImagePicker from 'react-native-image-picker'
@@ -9,13 +9,26 @@ import { FirebaseContext } from '../components/Firebase';
 
 const CreateProfileScreen = props => {
 
-    const [profile, setProfile] = useState({})
+    const [profile, setProfile] = useState({
+        name: '',
+        age: '',
+        gender: '',
+        aboutMe: '',
+        profession: '',
+        height: '',
+    })
     const [photo, setPhoto] = useState(null)
     const [loading, setLoading] = useState(false);
+    const [continueDisabled, setContinueDisabled] = useState(true);
     
     const firebase = useContext(FirebaseContext);
 
-    handleChoosePhoto = () => {
+    useEffect(() => {
+        (profile.name === '' || profile.age === '' || profile.gender === '' || profile.aboutMe === '' || profile.profession === '' || profile.height === '') ?
+        setContinueDisabled(true) : setContinueDisabled(false)
+    }, [profile])
+
+    const handleChoosePhoto = () => {
         const options = {
           noData: true,
         }
@@ -68,7 +81,7 @@ const CreateProfileScreen = props => {
             })
 
         } else {
-            postProfile = {
+            const postProfile = {
                 uid,
                 name: profile.name,
                 age: profile.age,
@@ -151,14 +164,16 @@ const CreateProfileScreen = props => {
                 />
             )}
            <TouchableOpacity 
+                disabled={true}
                 style={styles.choosePhotoButton} 
-                onPress={this.handleChoosePhoto}>
+                onPress={handleChoosePhoto}>
                 <Text style={styles.choosePhotoText}>Choose Photo</Text>
             </TouchableOpacity>
-            <TouchableOpacity 
+            <TouchableOpacity
+                disabled={continueDisabled}
                 style={styles.continueButton} 
                 onPress={createProfile}>
-                <Text style={styles.continueText}>Continue</Text>
+                <Text style={{...styles.continueText, opacity: continueDisabled ? 0.7 : null}}>Continue</Text>
             </TouchableOpacity>
             <KoroProgress visible={loading}/>
         </View>

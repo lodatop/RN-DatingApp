@@ -42,16 +42,18 @@ const RegisterScreen = props => {
             <TextInput
                 keyboardType='default'
                 onChangeText={(text)=>{setPassword(text.trim())}}
-                style={{...styles.textInput, borderColor: password !== '' ? 'green': 'red'}}
+                style={{...styles.textInput, borderColor: password.length > 5 ? 'green': 'red'}}
                 value={password}
             />
-            <TouchableOpacity 
+            <TouchableOpacity
+                activeOpacity={0.7}
                 style={styles.loginButton} 
                 onPress={register}>
                 <Text style={styles.loginText}>Register</Text>
             </TouchableOpacity>
             <Text style={{fontWeight: 'bold', fontSize: 15, color: 'black', textAlign: 'center'}}>OR</Text>
-            <TouchableOpacity 
+            <TouchableOpacity
+                activeOpacity={0.7}
                 style={styles.registerButton} 
                 onPress={()=>{props.navigation.replace({routeName: 'Login'})}}>
                 <Text style={styles.registerText}>Go back to login</Text>
