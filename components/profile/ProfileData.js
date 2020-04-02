@@ -47,7 +47,7 @@ const styles = StyleSheet.create({
         width: '100%',
         justifyContent: 'space-between',
         alignSelf:'center',
-        padding: 10,
+        paddingHorizontal: 10
     },
     label: {
         fontWeight: 'bold',

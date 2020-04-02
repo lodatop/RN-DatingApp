@@ -118,11 +118,14 @@ const ProfileScreen = props => {
             </View>
             <View style={styles.biography}>
                 { profile? <ProfileData profile={profile}/> : <Text style={styles.biography}>No info available</Text>}
-                {/* <View style={{ backgroundColor: 'green', alignItems: 'center'}}>
-                    <ScrollView horizontal={true}>
-                        <UserImages />
-                    </ScrollView>
-                </View> */}
+            </View>
+            <View style={{...styles.images}}>
+                { profile ?
+                        <ScrollView horizontal={true}>
+                            <UserImages images={profile.photos}/>
+                        </ScrollView>
+                    : null
+                }
             </View>
             <View style={styles.userOptionsContainer}>
                 <View style={styles.userOptions}>
@@ -133,7 +136,7 @@ const ProfileScreen = props => {
                         >
                             <MaterialIcons name="edit" size={40} color='#ff96c0'/>
                     </TouchableOpacity>
-                    <Text style={styles.userOptionText}>Edit your profile</Text>
+                    <Text style={styles.userOptionText} numberOfLines={2}>Edit your profile</Text>
                 </View>
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
@@ -184,29 +187,47 @@ const ProfileScreen = props => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        padding: 30
+        paddingHorizontal: 20,
+        paddingBottom: 30,
+        overflow: 'visible'
     },
     userDataContainer:{
-        
+        height: '37%',
+        backgroundColor: 'transparent'
+    },
+    images: {
+        backgroundColor: 'transparent',
+        width: '100%',
+        height: '28%',
+        marginBottom: 15,
+        padding: 5,
+        paddingHorizontal: 10,
+        borderTopWidth: 1,
+        borderBottomWidth: 1,
+        borderColor: 'lightgrey'
     },
     userOptions: {
         alignItems: 'center',
         backgroundColor: 'transparent',
-        width: '50%'
+        width: '40%',
+        overflow: 'visible'
     },
     userOptionText: {
         fontSize: 15,
-        textAlign: 'center'
+        textAlign: 'center',
+        overflow: 'visible'
     },
     userOptionsContainer:{
+        height: '15%',
         flexDirection: 'row',
-        justifyContent: 'space-evenly'
+        justifyContent: 'space-evenly',
+        overflow: 'visible',
+        alignItems: 'center'
     },
     biography: {
-        flex: 1,
-        maxHeight: '40%',
+        height: '18%',
         width: '100%',
-        marginBottom: 15
+        backgroundColor: 'transparent'
     },
     iconContainer: {
         width: 80,
