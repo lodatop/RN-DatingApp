@@ -27,7 +27,7 @@ const CreateProfileScreen = props => {
     const firebase = useContext(FirebaseContext);
 
     useEffect(() => {
-        (profile.name === '' || profile.age < 18 || profile.gender === '') ?
+        (profile.name === '' || eval(profile.age) < 18 || profile.gender === '') ?
         setContinueDisabled(true) : setContinueDisabled(false)
     }, [profile])
 
