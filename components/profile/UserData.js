@@ -7,6 +7,8 @@ const UserData = props => {
 
     const { name, age, photo } = props;
 
+    console.log(photo)
+
     return (
             <View style={styles.infoContainer}>
                 <View style={styles.imageContainer}>

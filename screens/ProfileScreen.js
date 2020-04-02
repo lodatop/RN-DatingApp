@@ -56,7 +56,7 @@ const ProfileScreen = props => {
         <View style={styles.container}>
             <View style={styles.userDataContainer}>
                 {(profile)?
-                    (profile.photo)?<UserData name={profile.name} age={profile.age} photo={profile.photo[0]}/>
+                    (profile.photos)?<UserData name={profile.name} age={profile.age} photo={profile.photos[0]}/>
                     : <UserData name={profile.name} age={profile.age}/>
                     :<UserData />}
             </View>

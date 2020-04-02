@@ -1,9 +1,12 @@
 import React, { useState, useContext, useEffect } from 'react';
 import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, Picker, TouchableOpacity} from 'react-native';
 
-import ImagePicker from 'react-native-image-picker'
+//import ImagePicker from 'react-native-image-picker';
 
-import { KoroProgress } from 'rn-koro-lib'
+import * as ImagePicker from 'expo-image-picker';
+
+
+import { KoroProgress } from 'rn-koro-lib';
 
 import { FirebaseContext } from '../components/Firebase';
 
@@ -28,15 +31,22 @@ const CreateProfileScreen = props => {
         setContinueDisabled(true) : setContinueDisabled(false)
     }, [profile])
 
-    const handleChoosePhoto = () => {
-        const options = {
+    const handleChoosePhoto = async () => {
+        
+        let response = await ImagePicker.launchImageLibraryAsync();
+        
+        if(response.uri){
+            setPhoto(response)
+        }
+
+        /*const options = {
           noData: true,
         }
         ImagePicker.launchImageLibrary(options, response => {
-          if (response.uri) {
+            if (response.uri) {
             setPhoto(response)
           }
-        })
+        })*/
       }
 
     const handleChange = (name, value) => {
@@ -51,11 +61,11 @@ const CreateProfileScreen = props => {
         var db = firebase.firestore;
         setLoading(true);
         if(photo){
-            var storageRef = firebase.storage().ref()
-            var ref = storageRef.child(photo)
-
-            ref.put(photo).then(snapshot => {
-                console.log(snapshot)
+            var storageRef = firebase.storage.ref()
+            var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
+            const response = await fetch(photo.uri);
+            const blob = await response.blob();
+            ref.put(blob).then(snapshot => {
                 snapshot.ref.getDownloadURL().then(downloadURL => {
                     let url = downloadURL
                     const postProfile = {
@@ -68,16 +78,12 @@ const CreateProfileScreen = props => {
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
                     if(profile.height != '')
-                    postProfile.height = profile.height;
+                        postProfile.height = profile.height;
                     if(profile.profession != '')
                         postProfile.aboutMe = profile.profession;
                     db.collection('profile').add(postProfile).then(ref => {
                         setLoading(false);
                         props.navigation.replace({routeName: 'Main'})
-                    }).catch(function(error) {
-                        setLoading(false);
-                        var errorMessage = error.message;
-                        alert(errorMessage);
                     })
                 })
             
@@ -93,16 +99,12 @@ const CreateProfileScreen = props => {
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
             if(profile.height != '')
-            postProfile.height = profile.height;
+                postProfile.height = profile.height;
             if(profile.profession != '')
                 postProfile.aboutMe = profile.profession;
             db.collection('profile').add(postProfile).then(ref => {
                 setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
-            }).catch(function(error) {
-                setLoading(false);
-                var errorMessage = error.message;
-                alert(errorMessage);
             })
         }
 
@@ -173,7 +175,6 @@ const CreateProfileScreen = props => {
                 />
             )}
            <TouchableOpacity 
-                disabled={true}
                 style={styles.choosePhotoButton} 
                 onPress={handleChoosePhoto}>
                 <Text style={styles.choosePhotoText}>Choose Photo</Text>
