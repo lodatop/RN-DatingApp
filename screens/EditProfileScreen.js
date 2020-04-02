@@ -102,6 +102,20 @@ const EditProfileScreen = props => {
                 </View>
                 <Text style={styles.label}>Im interested in:</Text>
                 <Text>Helicopteros</Text>
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={styles.applyButton} 
+                        onPress={()=>{}}>
+                        <Text style={styles.buttonText}>Apply Changes</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        activeOpacity={0.7}
+                        style={styles.discardButton} 
+                        onPress={()=>{props.navigation.goBack()}}>
+                        <Text style={styles.buttonText}>Discard Changes</Text>
+                    </TouchableOpacity>
+                </View>
                 <KoroProgress visible={loading}/>
             </View>
     )
@@ -112,6 +126,33 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         padding: 15
+    },
+    buttonContainer:{
+        width: '100%',
+        flexDirection: 'column',
+        justifyContent: 'space-between'
+    },
+    applyButton: {
+        marginVertical: 10,
+        backgroundColor: '#f569a1', 
+        paddingVertical: 10,
+        width: '100%',
+        alignSelf: 'center'
+    },
+    buttonText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
+    discardButton: {
+        marginVertical: 10,
+        backgroundColor: '#ff1c67', 
+        paddingVertical: 10,
+        width: '70%',
+        alignSelf: 'center'
     },
     inputContainer:{
         width: '100%',
