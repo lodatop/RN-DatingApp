@@ -34,6 +34,7 @@ const ProfileScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
                 setProfile(doc.data())
+                console.log(doc.data())
             });
             setLoading(false);
         })
@@ -59,9 +60,10 @@ const ProfileScreen = props => {
     return (
         <View style={styles.container}>
             <View style={styles.userDataContainer}>
-                {(profile)?
-                    (profile.photos)?<UserData name={profile.name} age={profile.age} photo={profile.photos[0]}/>
-                    : <UserData name={profile.name} age={profile.age}/>
+                {(profile) ?
+                    (profile.photos) ? 
+                        <UserData name={profile.name} age={profile.age} photo={profile.photos[0]}/>
+                        : <UserData name={profile.name} age={profile.age}/>
                     :<UserData />}
             </View>
             <View style={styles.biography}>

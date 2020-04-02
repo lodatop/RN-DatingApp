@@ -112,79 +112,81 @@ const CreateProfileScreen = props => {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>Tell us about yourself!</Text>
-            <Text>Name*:</Text>
-            <TextInput
-                keyboardType='email-address'
-                onChangeText={(txt) => handleChange("name", txt)}
-                style={{...styles.textInput, borderColor: profile.name ? 'green': 'red'}}
-                value={profile.name}
-            />
-            <Text>Age*:</Text>
-            <TextInput
-                keyboardType='number-pad'
-                onChangeText={(txt) => 
-                    {
-                        (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
-                    }
-                }
-                style={{...styles.textInput, borderColor: profile.age > 17 ? 'green': 'red'}}
-                value={profile.age}
-            />
-            
-            <Text> Gender*: </Text>
-            <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? 'green': 'red' }}>
-                <Picker
-                    mode='dialog'
-                    selectedValue={profile.gender || 'Select...'}
-                    style={{ width: '100%', marginBottom: 10}}
-                    onValueChange={(itemValue, itemIndex) => handleChange("gender", itemValue)}
-                >
-                    <Picker.Item label="Select..." value="" />
-                    <Picker.Item label="Male" value="male" />
-                    <Picker.Item label="Female" value="female" />
-                    <Picker.Item label="Non Binary" value="non_binary" />
-                    <Picker.Item label="Trans Male" value="trans_male" />
-                    <Picker.Item label="Trans Female" value="trans_female" />
-                </Picker>
-            </View>
-
-            <Text>About You (Optional):</Text>
-            <TextInput
-                onChangeText={(txt) => handleChange("aboutMe", txt)}
-                style={{...styles.textInput, borderColor: profile.aboutMe ? 'green': 'red'}}
-                value={profile.aboutMe}
-            />
-            <Text>Profession (Optional):</Text>
-            <TextInput
-                onChangeText={(txt) => handleChange("profession", txt)}
-                style={{...styles.textInput, borderColor: profile.profession ? 'green': 'red'}}
-                value={profile.profession}
-            />
-            <Text>Height (Optional):</Text>
-            <TextInput
-                keyboardType='number-pad'
-                onChangeText={(txt) => handleChange("height", txt)}
-                style={{...styles.textInput, borderColor: profile.height ? 'green': 'red'}}
-                value={profile.height}
-            />
-            {photo && (
-                <Image
-                    source={{ uri: photo.uri }}
-                    style={{ width: 300, height: 300 }}
+            <ScrollView>
+                <Text style={styles.title}>Tell us about yourself!</Text>
+                <Text>Name*:</Text>
+                <TextInput
+                    keyboardType='email-address'
+                    onChangeText={(txt) => handleChange("name", txt)}
+                    style={{...styles.textInput, borderColor: profile.name ? 'green': 'red'}}
+                    value={profile.name}
                 />
-            )}
-           <TouchableOpacity 
-                style={styles.choosePhotoButton} 
-                onPress={handleChoosePhoto}>
-                <Text style={styles.choosePhotoText}>Choose Photo</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                disabled={continueDisabled}
-                style={styles.continueButton} 
-                onPress={createProfile}>
-                <Text style={{...styles.continueText, opacity: continueDisabled ? 0.7 : null}}>Continue</Text>
-            </TouchableOpacity>
+                <Text>Age*:</Text>
+                <TextInput
+                    keyboardType='number-pad'
+                    onChangeText={(txt) => 
+                        {
+                            (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
+                        }
+                    }
+                    style={{...styles.textInput, borderColor: eval(profile.age) > 17 ? 'green': 'red'}}
+                    value={profile.age}
+                />
+                
+                <Text> Gender*: </Text>
+                <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? 'green': 'red' }}>
+                    <Picker
+                        mode='dialog'
+                        selectedValue={profile.gender || 'Select...'}
+                        style={{ width: '100%', marginBottom: 10}}
+                        onValueChange={(itemValue, itemIndex) => handleChange("gender", itemValue)}
+                    >
+                        <Picker.Item label="Select..." value="" />
+                        <Picker.Item label="Male" value="male" />
+                        <Picker.Item label="Female" value="female" />
+                        <Picker.Item label="Non Binary" value="non_binary" />
+                        <Picker.Item label="Trans Male" value="trans_male" />
+                        <Picker.Item label="Trans Female" value="trans_female" />
+                    </Picker>
+                </View>
+
+                <Text>About You (Optional):</Text>
+                <TextInput
+                    onChangeText={(txt) => handleChange("aboutMe", txt)}
+                    style={{...styles.textInput, borderColor: profile.aboutMe ? 'green': 'red'}}
+                    value={profile.aboutMe}
+                />
+                <Text>Profession (Optional):</Text>
+                <TextInput
+                    onChangeText={(txt) => handleChange("profession", txt)}
+                    style={{...styles.textInput, borderColor: profile.profession ? 'green': 'red'}}
+                    value={profile.profession}
+                />
+                <Text>Height (Optional):</Text>
+                <TextInput
+                    keyboardType='number-pad'
+                    onChangeText={(txt) => handleChange("height", txt)}
+                    style={{...styles.textInput, borderColor: profile.height ? 'green': 'red'}}
+                    value={profile.height}
+                />
+                {photo && (
+                        <Image
+                            source={{ uri: photo.uri }}
+                            style={{ width: 300, height: 300, alignSelf: 'center' }}
+                        />
+                )}
+                <TouchableOpacity 
+                    style={styles.choosePhotoButton} 
+                    onPress={handleChoosePhoto}>
+                    <Text style={styles.choosePhotoText}>Choose Photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                    disabled={continueDisabled}
+                    style={styles.continueButton} 
+                    onPress={createProfile}>
+                    <Text style={{...styles.continueText, opacity: continueDisabled ? 0.7 : null}}>Continue</Text>
+                </TouchableOpacity>
+            </ScrollView>
             <KoroProgress visible={loading}/>
         </View>
     )

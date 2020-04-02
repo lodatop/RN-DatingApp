@@ -20,7 +20,7 @@ const UserData = props => {
                             (photo)? 
                                 <Image
                                     style={styles.image}
-                                    resizeMode='contain'
+                                    resizeMode='cover'
                                     source={{uri: photo}}/>
                                 :<Image
                                     style={styles.image}
@@ -42,7 +42,9 @@ const UserData = props => {
 const styles = StyleSheet.create({
     image:{
         width: '100%',
-        height: '100%'
+        height: '100%',
+        alignSelf: 'center',
+        justifyContent: 'center'
     },
     text: {
         alignSelf: 'center',
