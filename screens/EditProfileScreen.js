@@ -133,7 +133,7 @@ const EditProfileScreen = props => {
                     <TouchableOpacity 
                         activeOpacity={0.7}
                         style={styles.discardButton} 
-                        onPress={()=>{props.navigation.goBack()}}>
+                        onPress={()=>{props.navigation.pop()}}>
                         <Text style={styles.buttonText}>Discard Changes</Text>
                     </TouchableOpacity>
                 </View>

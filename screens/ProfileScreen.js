@@ -130,9 +130,9 @@ const ProfileScreen = props => {
                         : <UserData name={profile.name} age={profile.age}/>
                     :<UserData />}
             </View>
-            <View style={styles.biography}>
+            <ScrollView style={styles.biography}>
                 { profile? <ProfileData profile={profile}/> : <Text style={styles.biography}>No info available</Text>}
-            </View>
+            </ScrollView>
             <View style={{...styles.images}}>
                 { profile ?
                     profile.photos ? 
