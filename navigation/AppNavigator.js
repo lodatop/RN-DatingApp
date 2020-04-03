@@ -54,7 +54,7 @@ const MenuTabNavigator = createBottomTabNavigator(
     {
       // initialRouteName: 'LoginScreen',
       tabBarOptions: {
-        activeTintColor: Colors.accentColor
+        activeTintColor: '#ffadce'
       }
     }
   );

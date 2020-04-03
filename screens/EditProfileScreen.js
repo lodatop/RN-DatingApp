@@ -134,8 +134,6 @@ const EditProfileScreen = props => {
                         <MaterialIcons name='mode-edit' size={35} color='#ff73a1'/>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.label}>Im interested in:</Text>
-                <Text>Helicopteros</Text>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity
                         activeOpacity={0.7}

@@ -101,7 +101,7 @@ const CreateProfileScreen = props => {
             if(profile.height != '')
                 postProfile.height = profile.height;
             if(profile.profession != '')
-                postProfile.aboutMe = profile.profession;
+                postProfile.profession = profile.profession;
             db.collection('profile').add(postProfile).then(ref => {
                 setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
