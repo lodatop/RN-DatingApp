@@ -65,6 +65,7 @@ const LoginScreen = props => {
             />
             <Text>Password:</Text>
             <TextInput
+                secureTextEntry={true}
                 keyboardType='default'
                 onChangeText={(text)=>{setPassword(text.trim())}}
                 style={{...styles.textInput, borderColor: password.length > 5 ? 'green': 'red'}}
