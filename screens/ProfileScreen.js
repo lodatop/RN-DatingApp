@@ -24,7 +24,11 @@ const ProfileScreen = props => {
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
 
     useEffect(()=> {
+        setLoading(true);
         setProfile(profileContext.profile)
+        setTimeout(()=>{
+        setLoading(false)
+        }, 1000)
     }, [profileContext])
 
     const updateProfile = () => {
