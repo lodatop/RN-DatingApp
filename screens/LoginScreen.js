@@ -1,8 +1,9 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, StyleSheet, Button, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { FirebaseContext } from '../components/Firebase';
+import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 
-import { KoroInput, KoroProgress } from 'rn-koro-lib'
+import { KoroProgress } from 'rn-koro-lib'
 
 const LoginScreen = props => {
 
@@ -11,14 +12,16 @@ const LoginScreen = props => {
     const [loading, setLoading] = useState(false);
     
     const firebase = useContext(FirebaseContext);
+    const profileContext = useContext(ProfileContext);
 
     const login = (e) => {
         e.preventDefault();
         setLoading(true);
         firebase.auth.signInWithEmailAndPassword(email, password)
-        .then(result => {
+        .then(async result => {
             setLoading(false);
             var user = result.user;
+            await setProfileContext()
             props.navigation.replace({routeName: 'Main'});
         })
         .catch(function(error) {
@@ -26,6 +29,27 @@ const LoginScreen = props => {
             var errorMessage = error.message;
             alert(errorMessage)
         });
+    }
+
+    const setProfileContext = async () => {
+        setLoading(true);
+
+        let uid = await firebase.auth.currentUser.uid;
+
+        var db = firebase.firestore;
+
+        db.collection("profile").where("uid", "==", uid)
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(async function(doc) {
+                await profileContext.setProfile(doc.data())
+                setLoading(false);
+            });
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+            setLoading(false);
+        });   
     }
 
     return (

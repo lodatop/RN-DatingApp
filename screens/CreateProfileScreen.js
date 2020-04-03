@@ -9,6 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import { KoroProgress } from 'rn-koro-lib';
 
 import { FirebaseContext } from '../components/Firebase';
+import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 
 const CreateProfileScreen = props => {
 
@@ -25,6 +26,7 @@ const CreateProfileScreen = props => {
     const [continueDisabled, setContinueDisabled] = useState(true);
     
     const firebase = useContext(FirebaseContext);
+    const profileContext = useContext(ProfileContext)
 
     useEffect(() => {
         (profile.name === '' || eval(profile.age) < 18 || profile.gender === '') ?
@@ -82,6 +84,7 @@ const CreateProfileScreen = props => {
                     if(profile.profession != '')
                         postProfile.profession = profile.profession;
                     db.collection('profile').add(postProfile).then(ref => {
+                        profileContext.setProfile(postProfile)
                         setLoading(false);
                         props.navigation.replace({routeName: 'Main'})
                     })
@@ -103,6 +106,7 @@ const CreateProfileScreen = props => {
             if(profile.profession != '')
                 postProfile.profession = profile.profession;
             db.collection('profile').add(postProfile).then(ref => {
+                profileContext.setProfile(postProfile)
                 setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
             })

@@ -5,17 +5,13 @@ import { AntDesign, MaterialIcons } from '@expo/vector-icons'
 import { KoroProgress } from 'rn-koro-lib'
 
 import  { FirebaseContext } from '../components/Firebase';
+import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 
 const EditProfileScreen = props => {
 
-    const [profile, setProfile] = useState({
-        name: '',
-        age: '',
-        gender: '',
-        aboutMe: '',
-        profession: '',
-        height: ''
-    })
+    const profileContext = useContext(ProfileContext)
+
+    const [profile, setProfile] = useState(profileContext.profile)
     const [loading, setLoading] = useState(false);
     const [aboutMeDisabled, setAboutMeDisabled] = useState(true);
     const [professionDisabled, setProfessionDisabled] = useState(true);
@@ -26,14 +22,7 @@ const EditProfileScreen = props => {
             [name]: value})
     }
 
-
-    useEffect(() => {
-        getProfileData();
-      }, []);
-
     const getProfileData = async () => {
-
-        setLoading(true);
 
         let uid = await firebase.auth.currentUser.uid;
 
@@ -43,9 +32,8 @@ const EditProfileScreen = props => {
         .get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
-                setProfile(doc.data())
+                profileContext.setProfile(doc.data())
             });
-            setLoading(false);
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
@@ -71,8 +59,9 @@ const EditProfileScreen = props => {
             db.collection("profile").where("uid", "==", uid)
             .get()
             .then((querySnapshot) => {
-                querySnapshot.forEach(function(document) {
+                querySnapshot.forEach(async function(document) {
                 document.ref.update(toUpdate); 
+                await getProfileData()
                 setLoading(false);
                 props.navigation.replace({routeName: 'Main'})
                 });

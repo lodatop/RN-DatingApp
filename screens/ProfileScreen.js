@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
 import  { FirebaseContext } from '../components/Firebase';
+import { ProfileContext } from '../components/ProfileContext/ProfileContext'
 
 import { MaterialIcons, AntDesign } from '@expo/vector-icons'
 
@@ -14,21 +15,24 @@ import { KoroProgress, KoroModal } from 'rn-koro-lib'
 
 const ProfileScreen = props => {
 
-    const [profile, setProfile] = useState()
+    const profileContext = useContext(ProfileContext);
+
+    const [profile, setProfile] = useState(profileContext.profile)
     const [modalOpen, setModalOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [photo, setPhoto] = useState(null)
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
-    
-    useEffect(() => {
-        getProfileData();
-      }, []);
+
+    useEffect(()=> {
+        setProfile(profileContext.profile)
+    }, [profileContext])
 
     const updateProfile = () => {
         getProfileData();
     }
 
     const handleChoosePhoto = async () => {
+        console.log(profile)
     
         let response = await ImagePicker.launchImageLibraryAsync();
         
@@ -89,7 +93,7 @@ const ProfileScreen = props => {
         .get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(function(doc) {
-                setProfile(doc.data())
+                profileContext.setProfile(doc.data())
             });
             setLoading(false);
         })
@@ -104,6 +108,7 @@ const ProfileScreen = props => {
         setLoading(true);
         firebase.auth.signOut()
         .then(() => {
+            profileContext.setProfile({})
             setLoading(false);
             props.navigation.replace({routeName: 'Login'})
         }).catch(err=> {

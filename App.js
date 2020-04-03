@@ -1,5 +1,6 @@
 import React  from 'react';
 import Firebase, { FirebaseContext } from './components/Firebase';
+import { ProfileProvider } from './components/ProfileContext/ProfileContext'
 import { YellowBox } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import _ from 'lodash';
@@ -28,7 +29,9 @@ export default function App() {
   return (
     
     <FirebaseContext.Provider value={new Firebase()}>
-      <AppNavigator />
+      <ProfileProvider>
+        <AppNavigator />
+      </ProfileProvider>
     </FirebaseContext.Provider>
     
   );
