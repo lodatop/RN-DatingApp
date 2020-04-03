@@ -10,6 +10,7 @@ import { KoroProgress } from 'rn-koro-lib';
 
 import { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
+import Colors from '../constants/Colors';
 
 const CreateProfileScreen = props => {
 
@@ -212,7 +213,7 @@ const styles = StyleSheet.create({
     },
     continueButton: {
         marginVertical: 10,
-        backgroundColor: '#f569a1', 
+        backgroundColor: Colors.acceptColor, 
         paddingVertical: 10
     },
     continueText: {

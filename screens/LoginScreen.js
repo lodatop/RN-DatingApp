@@ -4,6 +4,7 @@ import { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 
 import { KoroProgress } from 'rn-koro-lib'
+import Colors from '../constants/Colors';
 
 const LoginScreen = props => {
 
@@ -22,7 +23,7 @@ const LoginScreen = props => {
             setLoading(false);
             var user = result.user;
             await setProfileContext()
-            props.navigation.replace({routeName: 'Main'});
+            props.navigation.navigate('Tabs');
         })
         .catch(function(error) {
             setLoading(false);
@@ -79,7 +80,8 @@ const LoginScreen = props => {
             <TouchableOpacity 
                 activeOpacity={0.7}
                 style={styles.registerButton} 
-                onPress={()=>{props.navigation.replace({routeName: 'Register'})}}>
+                onPress={() => props.navigation.navigate('Register')}
+                >
                 <Text style={styles.registerText}>Sign up</Text>
             </TouchableOpacity>
             <KoroProgress visible={loading} color='#ed1f63'/>
@@ -90,7 +92,7 @@ const LoginScreen = props => {
 const styles = StyleSheet.create({
     loginButton: {
         marginVertical: 10,
-        backgroundColor: '#ff3888', 
+        backgroundColor: Colors.acceptColor, 
         paddingVertical: 10
     },
     loginText: {
@@ -103,7 +105,7 @@ const styles = StyleSheet.create({
     },
     registerButton: {
         marginVertical: 10,
-        backgroundColor: '#f569a1', 
+        backgroundColor: Colors.cancelColor, 
         paddingVertical: 10,
         width: '70%',
         alignSelf: 'center'
@@ -137,7 +139,7 @@ const styles = StyleSheet.create({
     }
 })
 
-LoginScreen.navigationOptions = {
+export const loginConfig = {
     headerTitle: 'LOGIN'
 }
 

@@ -13,7 +13,7 @@ console.warn = message => {
   }
 };
 
-import AppNavigator from './navigation/AppNavigator';
+import AppNavigationContainer from './navigation/AppNavigationContainer';
 import { decode, encode } from 'base-64'
 
 global.crypto = require("@firebase/firestore");
@@ -30,7 +30,7 @@ export default function App() {
     
     <FirebaseContext.Provider value={new Firebase()}>
       <ProfileProvider>
-        <AppNavigator />
+        <AppNavigationContainer />
       </ProfileProvider>
     </FirebaseContext.Provider>
     
