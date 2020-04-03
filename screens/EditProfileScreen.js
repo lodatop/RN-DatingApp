@@ -6,6 +6,7 @@ import { KoroProgress } from 'rn-koro-lib'
 
 import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
+import Colors from '../constants/Colors';
 
 const EditProfileScreen = props => {
 
@@ -63,7 +64,7 @@ const EditProfileScreen = props => {
                 document.ref.update(toUpdate); 
                 await getProfileData()
                 setLoading(false);
-                props.navigation.replace({routeName: 'Main'})
+                props.navigation.navigate('Profile')
                 });
             }).catch(function(error) {
                 alert("Error getting documents: ", error);
@@ -72,7 +73,7 @@ const EditProfileScreen = props => {
         } else {
             setLoading(false);
             alert('Nothing to update.')
-            props.navigation.replace({routeName: 'Main'})
+            props.navigation.navigate('Profile')
         }
 
     }
@@ -133,7 +134,7 @@ const EditProfileScreen = props => {
                     <TouchableOpacity 
                         activeOpacity={0.7}
                         style={styles.discardButton} 
-                        onPress={()=>{props.navigation.pop()}}>
+                        onPress={()=>{props.navigation.navigate('Profile')}}>
                         <Text style={styles.buttonText}>Discard Changes</Text>
                     </TouchableOpacity>
                 </View>
@@ -155,7 +156,7 @@ const styles = StyleSheet.create({
     },
     applyButton: {
         marginVertical: 10,
-        backgroundColor: '#f569a1', 
+        backgroundColor: Colors.acceptColor, 
         paddingVertical: 10,
         width: '100%',
         alignSelf: 'center'
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     },
     discardButton: {
         marginVertical: 10,
-        backgroundColor: '#ff1c67', 
+        backgroundColor: Colors.cancelColor, 
         paddingVertical: 10,
         width: '70%',
         alignSelf: 'center'

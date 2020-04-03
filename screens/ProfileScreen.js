@@ -12,6 +12,7 @@ import ProfileData from '../components/profile/ProfileData'
 import * as ImagePicker from 'expo-image-picker';
 
 import { KoroProgress, KoroModal } from 'rn-koro-lib'
+import Colors from '../constants/Colors';
 
 const ProfileScreen = props => {
 
@@ -114,7 +115,7 @@ const ProfileScreen = props => {
         .then(() => {
             profileContext.setProfile({})
             setLoading(false);
-            props.navigation.replace({routeName: 'Login'})
+            props.navigation.navigate('Login')
         }).catch(err=> {
             setLoading(false);
             alert("Couldn't logout, try again");
@@ -148,7 +149,7 @@ const ProfileScreen = props => {
                     <TouchableOpacity 
                         style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: '#ff96c0'}}} 
                         activeOpacity={0.7}
-                        onPress={() => props.navigation.navigate({routeName: 'EditProfile'})}
+                        onPress={() => props.navigation.navigate('EditProfile')}
                         >
                             <MaterialIcons name="edit" size={40} color='#ff96c0'/>
                     </TouchableOpacity>
@@ -199,13 +200,13 @@ const ProfileScreen = props => {
                 )}
                 <TouchableOpacity
                     activeOpacity={0.7}
-                    style={styles.modalButton} 
+                    style={{...styles.modalButton, backgroundColor: Colors.acceptColor}}
                     onPress={uploadPhoto}>
                     <Text style={styles.modalText}>Add image</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                     activeOpacity={0.7}
-                    style={{...styles.modalButton, backgroundColor: '#ff1c67'}} 
+                    style={{...styles.modalButton, backgroundColor: Colors.cancelColor}} 
                     onPress={()=> setModalOpen(false)}>
                     <Text style={{...styles.modalText}}>Cancel</Text>
                 </TouchableOpacity>
@@ -220,7 +221,6 @@ const styles = StyleSheet.create({
     modalButton: {
         width: '80%',
         marginVertical: 10,
-        backgroundColor: '#f569a1', 
         paddingVertical: 10
     },
     modalTitle:{

@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 import  { FirebaseContext } from '../components/Firebase';
 
+import Colors from '../constants/Colors'
 import { KoroProgress } from 'rn-koro-lib'
 
 const RegisterScreen = props => {
@@ -19,7 +20,7 @@ const RegisterScreen = props => {
         .then(result => {
             setLoading(false);
             var user = result.user;
-            props.navigation.replace({routeName: 'CreateProfile'})
+            props.navigation.navigate('CreateProfile')
         })
         .catch(function(error) {
             setLoading(false);
@@ -55,7 +56,8 @@ const RegisterScreen = props => {
             <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.registerButton} 
-                onPress={()=>{props.navigation.replace({routeName: 'Login'})}}>
+                onPress={() => props.navigation.navigate('Login')}
+                >
                 <Text style={styles.registerText}>Go back to login</Text>
             </TouchableOpacity>
             <KoroProgress visible={loading} color='#ed1f63'/>
@@ -66,7 +68,7 @@ const RegisterScreen = props => {
 const styles = StyleSheet.create({
     loginButton: {
         marginVertical: 10,
-        backgroundColor: '#ff3888', 
+        backgroundColor: Colors.cancelColor, 
         paddingVertical: 10
     },
     loginText: {
@@ -79,7 +81,7 @@ const styles = StyleSheet.create({
     },
     registerButton: {
         marginVertical: 10,
-        backgroundColor: '#f569a1', 
+        backgroundColor: Colors.acceptColor, 
         paddingVertical: 10,
         width: '70%',
         alignSelf: 'center'
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
     }
 })
 
-RegisterScreen.navigationOptions = {
+export const registerConfig = {
     headerTitle: 'REGISTER'
 }
 
