@@ -2,14 +2,16 @@ import React, { useState, useContext } from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
 import  { FirebaseContext } from '../components/Firebase';
 
-import Colors from '../constants/Colors'
-import { KoroProgress } from 'rn-koro-lib'
+import Colors from '../constants/Colors';
+import { KoroProgress } from 'rn-koro-lib';
+import { Ionicons } from '@expo/vector-icons';
 
 const RegisterScreen = props => {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false);
+    const [passwordIsHidden, setPasswordIsHidden] = useState(true);
     
     const firebase = useContext(FirebaseContext);
 
@@ -40,13 +42,24 @@ const RegisterScreen = props => {
                 value={email}
             />
             <Text>Password:</Text>
-            <TextInput
-                secureTextEntry={true}
-                keyboardType='default'
-                onChangeText={(text)=>{setPassword(text.trim())}}
-                style={{...styles.textInput, borderColor: password.length > 5 ? 'green': 'red'}}
-                value={password}
-            />
+            <View>
+                <TextInput
+                    autoCorrect={false}
+                    autoCompleteType='off'
+                    secureTextEntry={passwordIsHidden}
+                    keyboardType='default'
+                    onChangeText={(text)=>{setPassword(text.trim())}}
+                    style={{...styles.textInput, borderColor: password.length > 5 ? 'green': 'red'}}
+                    value={password}
+                />
+                <TouchableOpacity 
+                    style={{...styles.showPassword}}
+                    onPressIn={()=>setPasswordIsHidden(false)}
+                    onPressOut={()=>setPasswordIsHidden(true)}
+                    >
+                    <Ionicons name='md-eye' size={30} color='black'/>
+                </TouchableOpacity>
+            </View>
             <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.loginButton} 
@@ -67,6 +80,14 @@ const RegisterScreen = props => {
 }
 
 const styles = StyleSheet.create({
+    showPassword: {
+        position: 'absolute',
+        top: 0,
+        right: 5,
+        backgroundColor: 'rgba(224, 224, 224, 0.7)',
+        paddingHorizontal: 10,
+        paddingVertical: 5
+    },
     loginButton: {
         marginVertical: 10,
         backgroundColor: Colors.cancelColor, 

@@ -13,7 +13,7 @@ const UserImages = props => {
                         return (
                             <View key={index} style={styles.image}>
                                 <Image
-                                    style={styles.image}
+                                    style={{width: '100%', height: '100%'}}
                                     resizeMode='cover'
                                     source={{uri: image}}/> 
                             </View>

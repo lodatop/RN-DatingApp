@@ -12,15 +12,15 @@ import RegisterScreen, { registerConfig } from '../screens/RegisterScreen';
 import CreateProfileScreen from '../screens/CreateProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import Colors from '../constants/Colors';
+import UserImagesScreen, { userImagesConfig } from '../screens/UserImagesScreen';
 
 const defaultStackConfig = {
   headerTitleAlign: 'center',
     headerStyle: {
         backgroundColor: Colors.headerColor
     },
-    headerTintColor: 'white',
-    headerLeft: null
-}
+    headerTintColor: 'white'
+  }
 
 const MatchingStackNavigator = createStackNavigator();
 export const MatchingNavigator = () => {
@@ -29,7 +29,7 @@ export const MatchingNavigator = () => {
       <MatchingStackNavigator.Screen 
         name='Matching' 
         component={MatchingScreen}
-        options={{title: 'Find an Ace'}}
+        options={{title: 'Find an Ace', headerLeft: null}}
         />
     </MatchingStackNavigator.Navigator>
   )
@@ -42,7 +42,7 @@ export const InboxNavigator = () => {
       <InboxStackNavigator.Screen 
         name='Inbox' 
         component={InboxScreen}
-        options={{title: 'Your Inbox'}}
+        options={{title: 'Your Inbox', headerLeft: null}}
         />
     </InboxStackNavigator.Navigator>
   )
@@ -56,14 +56,22 @@ export const ProfileNavigator = () => {
         name='Profile' 
         component={ProfileScreen}
         options={{
-          title: 'Your Profile'
+          title: 'Your Profile', headerLeft: null
         }}
         />
       <ProfileStackNavigator.Screen 
         name='EditProfile' 
         component={EditProfileScreen}
         options={{
-          title: 'Edit Your Profile'
+          title: 'Edit Your Profile', headerLeft: null
+        }}
+        />
+      <ProfileStackNavigator.Screen 
+        name='UserImages' 
+        component={UserImagesScreen}
+        options={{
+          ...userImagesConfig,
+          title: 'Your Pics'
         }}
         />
     </ProfileStackNavigator.Navigator>
@@ -110,27 +118,6 @@ export const TabNavigator = () => {
   )
 }
 
-// const StackNavigator = createStackNavigator(
-//   {
-//     Login: LoginScreen,
-//     Register: RegisterScreen,
-//     CreateProfile: CreateProfileScreen,
-//     EditProfile: EditProfileScreen,
-//     Main: MenuTabNavigator
-//   },
-//   {
-//     initialRouteName: 'Login',
-//     defaultNavigationOptions: {
-//       headerStyle: {
-//         backgroundColor: '#ffadce'
-//       },
-//       headerTintColor: 'white',
-//       headerTitle: 'Ace Mate',
-//       headerTitleAlign: 'center'
-//     }
-//   }
-// );
-
 const LoginStackNavigator = createStackNavigator();
 export const LoginNavigator = () => {
   return (
@@ -138,16 +125,18 @@ export const LoginNavigator = () => {
       <LoginStackNavigator.Screen 
         name='Login' 
         component={LoginScreen}
-        options={loginConfig}
+        options={{...loginConfig, headerLeft: null}}
         />
       <LoginStackNavigator.Screen 
         name='Register' 
         component={RegisterScreen}
-        options={registerConfig}
+        options={{...registerConfig, headerLeft: null}}
         />
       <LoginStackNavigator.Screen 
         name='CreateProfile' 
-        component={CreateProfileScreen}/>
+        component={CreateProfileScreen}
+        options={{headerLeft: null}}
+        />
       <LoginStackNavigator.Screen 
         name='Tabs' 
         component={TabNavigator}
@@ -159,5 +148,3 @@ export const LoginNavigator = () => {
     </LoginStackNavigator.Navigator>
   )
 }
-
-// export default createAppContainer(StackNavigator);

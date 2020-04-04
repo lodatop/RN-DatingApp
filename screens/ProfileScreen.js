@@ -28,7 +28,7 @@ const ProfileScreen = props => {
         setLoading(true);
         setProfile(profileContext.profile)
         setTimeout(()=>{
-        setLoading(false)
+            setLoading(false)
         }, 1000)
     }, [profileContext])
 
@@ -143,6 +143,12 @@ const ProfileScreen = props => {
                         :null
                     : null
                 }
+                <TouchableOpacity 
+                    style={{...styles.viewPhotos}}
+                    onPress={()=>props.navigation.navigate('UserImages')}
+                    >
+                    <Text>View More</Text>
+                </TouchableOpacity>
             </View>
             <View style={styles.userOptionsContainer}>
                 <View style={styles.userOptions}>
@@ -218,6 +224,14 @@ const ProfileScreen = props => {
 
 
 const styles = StyleSheet.create({
+    viewPhotos: {
+        position: 'absolute',
+        top: 0,
+        right: 5,
+        backgroundColor: 'rgba(224, 224, 224, 0.7)',
+        paddingHorizontal: 10,
+        paddingVertical: 10
+    },
     modalButton: {
         width: '80%',
         marginVertical: 10,
