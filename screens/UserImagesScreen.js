@@ -24,6 +24,7 @@ const UserImagesScreen = props => {
     useEffect(()=> {
         setLoading(true);
         setPhotos(profileContext.profile.photos)
+        setProfile(profileContext.profile)
         setTimeout(()=>{
             setLoading(false)
         }, 1000)
@@ -76,6 +77,64 @@ const UserImagesScreen = props => {
             })
         
         })
+    }
+
+    // const deletePhoto = async (photoId) => {
+
+    //     let uid = await firebase.auth.currentUser.uid;
+
+    //     var db = firebase.firestore;
+    //     setLoading(true);
+
+    //     const toUpdate = {};
+
+    //     toUpdate.photos = profile.photos.filter(photoUri => photoUri != photoId);
+
+    //     if(toUpdate.length !== 0){
+    //         db.collection("profile").where("uid", "==", uid)
+    //         .get()
+    //         .then((querySnapshot) => {
+    //                 querySnapshot.forEach(async function(document) {
+    //                 document.ref.update(toUpdate); 
+    //                 await getProfileData()
+    //                 setLoading(false);
+    //             });
+    //         }).catch(function(error) {
+    //             alert("Error getting documents: ", error);
+    //             setLoading(false);
+    //         });  
+    //     } else {
+    //         setLoading(false);
+    //         alert('Nothing to update.')
+    //         props.navigation.navigate('Profile')
+    //     }
+
+    // }
+
+    const updateProfile = () => {
+        getProfileData();
+    }
+
+    const getProfileData = async () => {
+
+        setLoading(true);
+
+        let uid = await firebase.auth.currentUser.uid;
+
+        var db = firebase.firestore;
+
+        db.collection("profile").where("uid", "==", uid)
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(function(doc) {
+                profileContext.setProfile(doc.data())
+            });
+            setLoading(false);
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+            setLoading(false);
+        });
 
     }
 
@@ -86,12 +145,15 @@ const UserImagesScreen = props => {
                 {photos ? 
                     photos.map((photo, index) => {
                         return (
-                            <View key={index} style={styles.photo}>
+                            <View key={photo} style={styles.photo}>
                                 <Image
-                                    style={{width: '100%', height: '100%', borderRadius: 10}}
+                                    style={{width: width*0.44, height: width*0.44, borderRadius: 10}}
                                     resizeMode='cover'
                                     source={{uri: photo}}/>
-                                <TouchableOpacity style={styles.deletePhoto}>
+                                <TouchableOpacity 
+                                    style={styles.deletePhoto}
+                                    // onPress={()=>deletePhoto(photo)}
+                                    >
                                     <MaterialIcons name='delete' size={30} color='white'/>
                                 </TouchableOpacity>
                             </View>
