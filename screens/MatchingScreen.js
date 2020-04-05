@@ -30,7 +30,9 @@ const Users = [
   ]
 
 const MatchingScreen = props => {
+
     const profileContext = useContext(ProfileContext);
+
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
     const [datingProfiles, setDatingProfiles] = useState([])
@@ -38,20 +40,26 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
 
     useEffect(()=> {
-        getProfiles()
+        if(profile.uid) getProfiles()
         console.log(datingProfiles)
     }, [])
     useEffect(()=> {
         setProfile(profileContext.profile)
+        setTimeout(()=>{
+            if(profile.uid) getProfiles()
+        }, 500)
+        console.log(datingProfiles)
     }, [profileContext])    
 
     const getProfiles = () => {
         let uid = profile.uid;
         const db = firebase.firestore;
-        const query
+        console.log(profileContext)
+        console.log(profile)
+        const query =
         (profile.lookingFor)?
-            query = db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor).where('lookingFor', 'array-contains', profile.gender)
-            : query = db.collection('profile').where('lookingFor', 'array-contains', profile.gender) ;
+            db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor).where('lookingFor', 'array-contains', profile.gender)
+            : db.collection('profile').where('lookingFor', 'array-contains', profile.gender) ;
         
         query.get()
         .then(function(querySnapshot) {
