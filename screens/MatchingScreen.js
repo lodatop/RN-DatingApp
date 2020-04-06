@@ -1,8 +1,10 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Dimensions, Animated, PanResponder, PushNotificationIOS } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Image, Dimensions, Animated, PanResponder, PushNotificationIOS, TouchableNativeFeedbackComponent, TouchableOpacity } from 'react-native';
 
 import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext'
+import { Ionicons } from '@expo/vector-icons';
+import { ProfileModal } from '../components/ProfileModal';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -38,24 +40,25 @@ const MatchingScreen = props => {
     const [datingProfiles, setDatingProfiles] = useState([])
     const [currentIndex, setCurrentIndex] = useState(0);
     const position = new Animated.ValueXY();
+    const [modalVisible, setModalVisible] = useState(false)
 
     useEffect(()=> {
         if(profile.uid) getProfiles()
-        console.log(datingProfiles)
+        // console.log(datingProfiles)
     }, [])
     useEffect(()=> {
         setProfile(profileContext.profile)
         setTimeout(()=>{
             if(profile.uid) getProfiles()
         }, 500)
-        console.log(datingProfiles)
+        // console.log(datingProfiles)
     }, [profileContext])    
 
     const getProfiles = () => {
         let uid = profile.uid;
         const db = firebase.firestore;
-        console.log(profileContext)
-        console.log(profile)
+        // console.log(profileContext)
+        // console.log(profile)
         const query =
         (profile.lookingFor)?
             db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor).where('lookingFor', 'array-contains', profile.gender)
@@ -145,6 +148,7 @@ const MatchingScreen = props => {
         },
         onPanResponderRelease: (e, gestureState) => {
             if(gestureState.dx > 120){
+                console.log(gestureState.dy)
                 Animated.spring(position, {
                     toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy}
                 }).start(()=>{
@@ -154,6 +158,7 @@ const MatchingScreen = props => {
                     }
                 })
             } else if(gestureState.dx < -120){
+                console.log(gestureState.dy)
                 Animated.spring(position, {
                     toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy}
                 }).start(()=>{
@@ -195,6 +200,28 @@ const MatchingScreen = props => {
         extrapolate: 'clamp'
     })
 
+    const swipeRigth = () => {
+        Animated.spring(position, {
+            toValue: { x: SCREEN_WIDTH+100, y: 8}
+        }).start(()=>{
+            console.log('like')
+            setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
+                position.setValue({x: 0, y: 0})
+            }
+        })
+    }
+
+    const swipeLeft = () => {
+        Animated.spring(position, {
+            toValue: { x: -SCREEN_WIDTH-100, y: -8}
+        }).start(()=>{
+            console.log('dislike')
+            setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
+                position.setValue({x: 0, y: 0})
+            }
+        })
+    }
+
 
     const renderUsers = () => {
         return Users.map((item, i) => {
@@ -204,78 +231,79 @@ const MatchingScreen = props => {
             else if (i == currentIndex) {
                 return (
                     <Animated.View
-                    key={item.id}
-                    {...panResponder.panHandlers}
-                    style={{
-                        ...rotateAndTranslate,
-                        width: SCREEN_WIDTH*0.9,
-                        height: SCREEN_HEIGHT*0.7,
-                        borderRadius: 15,
-                        overflow: 'hidden',
-                        position: 'absolute'
-                    }}>
-                    <Animated.View 
-                        style={{ opacity: likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-                        <Text 
-                            style={{ 
-                                borderWidth: 1, 
-                                borderColor: 'green', 
-                                color: 'green', 
-                                fontSize: 32, 
-                                fontWeight: '800', 
-                                padding: 10 
-                                }}>
-                            LIKE
-                        </Text>
-                    </Animated.View>
-                    <Animated.View 
-                        style={{ opacity: dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-                        <Text 
-                            style={{ 
-                                borderWidth: 1, 
-                                borderColor: 'red', 
-                                color: 'red', 
-                                fontSize: 32, 
-                                fontWeight: '800', 
-                                padding: 10 
-                            }}>
-                            NOPE
-                        </Text>
-                    </Animated.View>
+                        key={item.id}
+                        {...panResponder.panHandlers}
+                        style={{
+                            ...rotateAndTranslate,
+                            ...styles.cardStyle
+                        }}>
+                        <Animated.View 
+                            style={{ opacity: likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
+                            <Text style={{ ...styles.label, borderColor: 'green', color: 'green' }}>
+                                LIKE
+                            </Text>
+                        </Animated.View>
+                        <Animated.View 
+                            style={{ opacity: dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
+                            <Text style={{ ...styles.label, borderColor: 'red', color: 'red' }}>
+                                NOPE
+                            </Text>
+                        </Animated.View>
 
-                    <Image 
-                    style={{
-                        flex: 1,
-                        width: null,
-                        height: null
-                    }}
-                    resizeMode='cover'
-                    source={item.uri}/>
-                </Animated.View>
+                        <Image 
+                            style={{
+                                flex: 1,
+                                width: null,
+                                height: null
+                            }}
+                            resizeMode='cover'
+                            source={item.uri}/>
+
+                        <View style={styles.profileInfoContainer}>
+                            <Text style={styles.profileInfo}>{item.id}</Text>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={()=>setModalVisible(true)}
+                            style={styles.showMoreContainer}>
+                            <View style={styles.showMoreButton}>
+                                <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                            </View>
+                        </TouchableOpacity>
+                    </Animated.View>
                 )
             }
             else {
                 return (
                     <Animated.View 
+                        {...panResponder.panHandlers}
                         key={item.id}
                         style={{
                             opacity: nexCardOpacity,
                             transform: [{scale: nexCardScale}],
-                            width: SCREEN_WIDTH*0.9,
-                            height: SCREEN_HEIGHT*0.7,
-                            borderRadius: 15,
-                            overflow: 'hidden',
-                            position: 'absolute'
+                            ...styles.cardStyle
                         }}>
 
                         <Image 
-                        style={{
-                            flex: 1,
-                            width: null,
-                            height: null
-                        }}
-                        resizeMode='cover'
-                        source={item.uri}/>
+                            style={{
+                                flex: 1,
+                                width: null,
+                                height: null
+                            }}
+                            resizeMode='cover'
+                            source={item.uri}/>
+
+                        <View style={styles.profileInfoContainer}>
+                            <Text style={styles.profileInfo}>{item.id}</Text>
+                        </View>
+
+                        <TouchableOpacity
+                            onPress={()=>setModalVisible(true)}
+                            style={styles.showMoreContainer}>
+                            <View style={styles.showMoreButton}>
+                                <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                            </View>
+                        </TouchableOpacity>
                     </Animated.View>
                 )
             }
@@ -285,6 +313,27 @@ const MatchingScreen = props => {
     return (
             <View style={styles.container}>
                 {renderUsers()}
+                <View style={styles.swipeButtonsContainer}>
+                    <TouchableOpacity 
+                        onPress={swipeLeft}
+                        style={{
+                            ...styles.swipeButton, 
+                            backgroundColor: 'red'
+                        }}
+                    >
+                        <Ionicons name='md-close' size={50} color='white'/>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                        onPress={swipeRigth}
+                        style={{
+                            ...styles.swipeButton, 
+                            backgroundColor: 'green'
+                        }}>
+
+                        <Ionicons name='md-checkmark' size={50} color='white'/>
+                    </TouchableOpacity>
+                </View>
+                <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={Users[currentIndex]}/>
             </View>
     )
 }
@@ -293,8 +342,69 @@ const MatchingScreen = props => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: 'center',
+        paddingVertical: 20
+    },
+    swipeButtonsContainer: {
+        position: 'absolute', 
+        bottom: 0, 
+        width: SCREEN_WIDTH*0.9, 
+        flexDirection: 'row',
+        justifyContent: 'space-evenly', 
+        alignItems: 'center', 
+        height: SCREEN_HEIGHT*0.11
+    },
+    swipeButton: {
+        width: 60, 
+        height: 60, 
+        borderRadius: 30,
+        borderColor: 'black',
+        borderWidth: 1,
+        alignItems: 'center',
         justifyContent: 'center',
-        alignItems: 'center'
+        elevation: 10
+    },
+    cardStyle: {
+        width: SCREEN_WIDTH*0.9,
+        height: SCREEN_HEIGHT*0.7,
+        borderRadius: 15,
+        overflow: 'hidden',
+        position: 'absolute',
+        top: 20
+    },
+    showMoreContainer: {
+        width: SCREEN_WIDTH*0.9, 
+        height: 70, 
+        backgroundColor:'rgba(0,0,0,0.5)', 
+        position: 'absolute', 
+        bottom: 0
+    },
+    showMoreButton: {
+        flex:1, 
+        alignItems: 'center', 
+        justifyContent: 'center'
+    },
+    profileInfo: {
+        fontSize: 30,
+        color: 'white',
+        textShadowColor: 'black', 
+        textShadowOffset: { width: 0, height: 0 }, 
+        textShadowRadius: 1,
+    },
+    profileInfoContainer: {
+        position: 'absolute',
+        bottom: 70,
+        height: 60,
+        width: SCREEN_WIDTH*0.9,
+        paddingHorizontal: 20,
+        backgroundColor: 'transparent',
+        justifyContent: 'center'
+    },
+    label: {
+        borderWidth: 1,
+        fontSize: 32, 
+        fontWeight: '800', 
+        padding: 10 
     }
 })
 
