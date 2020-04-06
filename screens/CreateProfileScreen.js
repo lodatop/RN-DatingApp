@@ -109,7 +109,7 @@ const CreateProfileScreen = props => {
             db.collection('profile').add(postProfile).then(ref => {
                 profileContext.setProfile(postProfile)
                 setLoading(false);
-                props.navigation.replace({routeName: 'Main'})
+                props.navigation.navigate('Tabs')
             })
         }
 
