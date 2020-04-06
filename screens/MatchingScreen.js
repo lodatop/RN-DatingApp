@@ -5,6 +5,7 @@ import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext'
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileModal } from '../components/ProfileModal';
+import { Wrapper } from '../hoc/Wrapper';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -313,27 +314,31 @@ const MatchingScreen = props => {
     return (
             <View style={styles.container}>
                 {renderUsers()}
-                <View style={styles.swipeButtonsContainer}>
-                    <TouchableOpacity 
-                        onPress={swipeLeft}
-                        style={{
-                            ...styles.swipeButton, 
-                            backgroundColor: 'red'
-                        }}
-                    >
-                        <Ionicons name='md-close' size={50} color='white'/>
-                    </TouchableOpacity>
-                    <TouchableOpacity 
-                        onPress={swipeRigth}
-                        style={{
-                            ...styles.swipeButton, 
-                            backgroundColor: 'green'
-                        }}>
+                {currentIndex < Users.length ?
+                    <Wrapper>
+                        <View style={styles.swipeButtonsContainer}>
+                            <TouchableOpacity 
+                                onPress={swipeLeft}
+                                style={{
+                                    ...styles.swipeButton, 
+                                    backgroundColor: 'red'
+                                }}>
+                                <Ionicons name='md-close' size={50} color='white'/>
+                            </TouchableOpacity>
+                            <TouchableOpacity 
+                                onPress={swipeRigth}
+                                style={{
+                                    ...styles.swipeButton, 
+                                    backgroundColor: 'green'
+                                }}>
 
-                        <Ionicons name='md-checkmark' size={50} color='white'/>
-                    </TouchableOpacity>
-                </View>
-                <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={Users[currentIndex]}/>
+                                <Ionicons name='md-checkmark' size={50} color='white'/>
+                            </TouchableOpacity>
+                        </View>
+                        <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={Users[currentIndex]}/>
+                    </Wrapper>
+                    : <Text>No more profiles available yet</Text>
+                }
             </View>
     )
 }
