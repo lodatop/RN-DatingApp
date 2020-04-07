@@ -36,7 +36,7 @@ const CreateProfileScreen = props => {
         setContinueDisabled(true) : setContinueDisabled(false)
     }, [profile, lookingFor])
 
-    items = [{
+    const items = [{
         id: '1',
         name: 'male',
       }, {

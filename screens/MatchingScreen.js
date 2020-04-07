@@ -58,24 +58,27 @@ const MatchingScreen = props => {
     const getProfiles = () => {
         let uid = profile.uid;
         const db = firebase.firestore;
-        // console.log(profileContext)
-        // console.log(profile)
+        console.log(profile.lookingFor)
         const query =
         (profile.lookingFor)?
-            db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor)
-            : db.collection('profile').where('lookingFor', 'array-contains', profile.gender) ;
-        
+            db.collection('profile').where('gender', 'in', profile.lookingFor)
+            : db.collection('profile').where('lookingFor', 'array-contains', profile.gender);
+
         query.get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
-                if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
+                if(user.likedBy && user.dislikedBy){
+                    if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
+                        setDatingProfiles([...datingProfiles, user]);
+                } else {
                     setDatingProfiles([...datingProfiles, user]);
+                }
             });
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
-        });   
+        });
     }
 
     const checkMatch = (profileId) => {
