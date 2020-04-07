@@ -49,7 +49,7 @@ const ProfileScreen = props => {
 
     const uploadPhoto = async () => {
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 
@@ -90,7 +90,7 @@ const ProfileScreen = props => {
 
         setLoading(true);
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 

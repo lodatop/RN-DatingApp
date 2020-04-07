@@ -4,6 +4,7 @@ import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, Picker, To
 //import ImagePicker from 'react-native-image-picker';
 
 import * as ImagePicker from 'expo-image-picker';
+import MultiSelect from 'react-native-multiple-select';
 
 
 import { KoroProgress } from 'rn-koro-lib';
@@ -25,17 +26,42 @@ const CreateProfileScreen = props => {
     const [photo, setPhoto] = useState(null)
     const [loading, setLoading] = useState(false);
     const [continueDisabled, setContinueDisabled] = useState(true);
+    const [lookingFor, setLookingFor] = useState([]);
     
     const firebase = useContext(FirebaseContext);
     const profileContext = useContext(ProfileContext)
 
     useEffect(() => {
-        (profile.name === '' || eval(profile.age) < 18 || profile.gender === '') ?
+        (profile.name === '' || eval(profile.age) < 18 || profile.gender === '' || lookingFor.length == 0) ?
         setContinueDisabled(true) : setContinueDisabled(false)
-    }, [profile])
+    }, [profile, lookingFor])
+
+    items = [{
+        id: '1',
+        name: 'male',
+      }, {
+        id: '2',
+        name: 'female',
+      }, {
+        id: '3',
+        name: 'non_binary',
+      }, {
+        id: '4',
+        name: 'trans_male',
+      }, {
+        id: '5',
+        name: 'trans_female'
+      }];
+
+    const onSelectedLookingFor = (selected) => {
+        /*let lookingFor = selected.map(function (obj) {
+            return obj.name;
+        });*/
+        setLookingFor(selected);
+    };
 
     const handleChoosePhoto = async () => {
-        
+
         let response = await ImagePicker.launchImageLibraryAsync();
         
         if(response.uri){
@@ -76,6 +102,7 @@ const CreateProfileScreen = props => {
                         name: profile.name,
                         age: profile.age,
                         gender: profile.gender,
+                        lookingFor: lookingFor,
                         photos: [url]
                     }
                     if(profile.aboutMe != '')
@@ -98,7 +125,8 @@ const CreateProfileScreen = props => {
                 uid,
                 name: profile.name,
                 age: profile.age,
-                gender: profile.gender
+                gender: profile.gender,
+                lookingFor: lookingFor
             }
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
@@ -174,6 +202,29 @@ const CreateProfileScreen = props => {
                     style={{...styles.textInput, borderColor: profile.height ? 'green': 'red'}}
                     value={profile.height}
                 />
+
+                <View style={{ flex: 1, marginVertical: 2}}>
+                    <MultiSelect
+                        hideTags
+                        items={items}
+                        uniqueKey="name"
+                        onSelectedItemsChange={onSelectedLookingFor}
+                        selectedItems={lookingFor}
+                        selectText="Looking for..."
+                        searchInputPlaceholderText="Search..."
+                        tagRemoveIconColor="#CCC"
+                        tagBorderColor="#CCC"
+                        tagTextColor="#CCC"
+                        selectedItemTextColor="#CCC"
+                        selectedItemIconColor="#CCC"
+                        itemTextColor="#000"
+                        displayKey="name"
+                        fixedHeight={true}
+                        hideSubmitButton={true}
+                        searchInputStyle={{ color: '#CCC' }}
+                        />
+                </View>
+
                 {photo && (
                         <Image
                             source={{ uri: photo.uri }}

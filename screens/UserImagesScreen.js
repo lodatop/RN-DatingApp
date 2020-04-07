@@ -79,37 +79,37 @@ const UserImagesScreen = props => {
         })
     }
 
-    // const deletePhoto = async (photoId) => {
+    const deletePhoto = async (photoId) => {
 
-    //     let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
-    //     var db = firebase.firestore;
-    //     setLoading(true);
+        var db = firebase.firestore;
+        setLoading(true);
 
-    //     const toUpdate = {};
+        const toUpdate = {};
 
-    //     toUpdate.photos = profile.photos.filter(photoUri => photoUri != photoId);
+        toUpdate.photos = profile.photos.filter(photoUri => photoUri != photoId);
 
-    //     if(toUpdate.length !== 0){
-    //         db.collection("profile").where("uid", "==", uid)
-    //         .get()
-    //         .then((querySnapshot) => {
-    //                 querySnapshot.forEach(async function(document) {
-    //                 document.ref.update(toUpdate); 
-    //                 await getProfileData()
-    //                 setLoading(false);
-    //             });
-    //         }).catch(function(error) {
-    //             alert("Error getting documents: ", error);
-    //             setLoading(false);
-    //         });  
-    //     } else {
-    //         setLoading(false);
-    //         alert('Nothing to update.')
-    //         props.navigation.navigate('Profile')
-    //     }
+        if(toUpdate.length !== 0){
+            db.collection("profile").where("uid", "==", uid)
+            .get()
+            .then((querySnapshot) => {
+                    querySnapshot.forEach(async function(document) {
+                    document.ref.update(toUpdate); 
+                    await getProfileData()
+                    setLoading(false);
+                });
+            }).catch(function(error) {
+                alert("Error getting documents: ", error);
+                setLoading(false);
+            }); 
+        } else {
+            setLoading(false);
+            alert('Nothing to update.')
+            props.navigation.navigate('Profile')
+        }
 
-    // }
+    }
 
     const updateProfile = () => {
         getProfileData();
@@ -119,7 +119,7 @@ const UserImagesScreen = props => {
 
         setLoading(true);
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 
@@ -152,7 +152,7 @@ const UserImagesScreen = props => {
                                     source={{uri: photo}}/>
                                 <TouchableOpacity 
                                     style={styles.deletePhoto}
-                                    // onPress={()=>deletePhoto(photo)}
+                                    onPress={()=>deletePhoto(photo)}
                                     >
                                     <MaterialIcons name='delete' size={30} color='white'/>
                                 </TouchableOpacity>

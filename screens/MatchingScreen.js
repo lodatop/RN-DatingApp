@@ -45,14 +45,13 @@ const MatchingScreen = props => {
 
     useEffect(()=> {
         if(profile.uid) getProfiles()
-        // console.log(datingProfiles)
     }, [])
     useEffect(()=> {
+        if(profile.uid) getProfiles()
+    }, [profile])  
+    useEffect(()=> {
         setProfile(profileContext.profile)
-        setTimeout(()=>{
-            if(profile.uid) getProfiles()
-        }, 500)
-        // console.log(datingProfiles)
+        console.log(datingProfiles)
     }, [profileContext])    
 
     const getProfiles = () => {
@@ -62,7 +61,7 @@ const MatchingScreen = props => {
         // console.log(profile)
         const query =
         (profile.lookingFor)?
-            db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor).where('lookingFor', 'array-contains', profile.gender)
+            db.collection('profile').where('gender', 'array-contains-any', profile.lookingFor)
             : db.collection('profile').where('lookingFor', 'array-contains', profile.gender) ;
         
         query.get()

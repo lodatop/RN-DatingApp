@@ -25,7 +25,7 @@ const EditProfileScreen = props => {
 
     const getProfileData = async () => {
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 
@@ -44,7 +44,7 @@ const EditProfileScreen = props => {
 
     const updateProfile = async () => {
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
         setLoading(true);
