@@ -42,10 +42,11 @@ const MatchingScreen = props => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
+    // const [isSwipeable, setIsSwipeable] = useState(true)
 
     useEffect(()=> {
         if(profile.uid) getProfiles()
-        // console.log(datingProfiles)
+        console.log('im being rendered')
     }, [])
     useEffect(()=> {
         setProfile(profileContext.profile)
@@ -150,8 +151,9 @@ const MatchingScreen = props => {
         onPanResponderRelease: (e, gestureState) => {
             if(gestureState.dx > 120){
                 console.log(gestureState.dy)
-                Animated.spring(position, {
-                    toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy}
+                Animated.timing(position, {
+                    toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy},
+                    duration: 500
                 }).start(()=>{
                     console.log('like')
                     setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
@@ -160,8 +162,9 @@ const MatchingScreen = props => {
                 })
             } else if(gestureState.dx < -120){
                 console.log(gestureState.dy)
-                Animated.spring(position, {
-                    toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy}
+                Animated.timing(position, {
+                    toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy},
+                    duration: 500
                 }).start(()=>{
                     console.log('dislike')
                     setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
@@ -202,21 +205,29 @@ const MatchingScreen = props => {
     })
 
     const swipeRigth = () => {
-        Animated.spring(position, {
-            toValue: { x: SCREEN_WIDTH+100, y: 8}
+        console.log('called')
+        // setIsSwipeable(false)
+        Animated.timing(position, {
+            toValue: { x: SCREEN_WIDTH+100, y: 8},
+            duration: 500
         }).start(()=>{
             console.log('like')
+            console.log('done')
             setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                 position.setValue({x: 0, y: 0})
+                // setIsSwipeable(true)
             }
         })
     }
 
     const swipeLeft = () => {
-        Animated.spring(position, {
-            toValue: { x: -SCREEN_WIDTH-100, y: -8}
+        // setIsSwipeable(false)
+        Animated.timing(position, {
+            toValue: { x: -SCREEN_WIDTH-100, y: 8},
+            duration: 500
         }).start(()=>{
             console.log('dislike')
+            // setIsSwipeable(true)
             setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                 position.setValue({x: 0, y: 0})
             }
@@ -277,7 +288,7 @@ const MatchingScreen = props => {
             else {
                 return (
                     <Animated.View 
-                        {...panResponder.panHandlers}
+                        // {...panResponder.panHandlers}
                         key={item.id}
                         style={{
                             opacity: nexCardOpacity,
@@ -298,13 +309,14 @@ const MatchingScreen = props => {
                             <Text style={styles.profileInfo}>{item.id}</Text>
                         </View>
 
+                        {/* 
                         <TouchableOpacity
                             onPress={()=>setModalVisible(true)}
                             style={styles.showMoreContainer}>
                             <View style={styles.showMoreButton}>
                                 <Ionicons name='ios-arrow-down' size={50} color='white'/>
                             </View>
-                        </TouchableOpacity>
+                        </TouchableOpacity> */}
                     </Animated.View>
                 )
             }
@@ -319,6 +331,7 @@ const MatchingScreen = props => {
                         <View style={styles.swipeButtonsContainer}>
                             <TouchableOpacity 
                                 onPress={swipeLeft}
+                                // disabled={!isSwipeable}
                                 style={{
                                     ...styles.swipeButton, 
                                     backgroundColor: 'red'
@@ -327,6 +340,7 @@ const MatchingScreen = props => {
                             </TouchableOpacity>
                             <TouchableOpacity 
                                 onPress={swipeRigth}
+                                // disabled={!isSwipeable}
                                 style={{
                                     ...styles.swipeButton, 
                                     backgroundColor: 'green'
