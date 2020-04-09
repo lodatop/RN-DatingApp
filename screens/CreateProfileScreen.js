@@ -151,7 +151,7 @@ const CreateProfileScreen = props => {
                 <TextInput
                     keyboardType='email-address'
                     onChangeText={(txt) => handleChange("name", txt)}
-                    style={{...styles.textInput, borderColor: profile.name ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: profile.name ? Colors.checkColor: Colors.closeColor}}
                     value={profile.name}
                 />
                 <Text>Age*:</Text>
@@ -162,12 +162,12 @@ const CreateProfileScreen = props => {
                             (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
                         }
                     }
-                    style={{...styles.textInput, borderColor: eval(profile.age) > 17 ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: eval(profile.age) > 17 ? Colors.checkColor: Colors.closeColor}}
                     value={profile.age}
                 />
                 
                 <Text> Gender*: </Text>
-                <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? 'green': 'red' }}>
+                <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? Colors.checkColor: Colors.closeColor }}>
                     <Picker
                         mode='dialog'
                         selectedValue={profile.gender || 'Select...'}
@@ -186,20 +186,20 @@ const CreateProfileScreen = props => {
                 <Text>About You (Optional):</Text>
                 <TextInput
                     onChangeText={(txt) => handleChange("aboutMe", txt)}
-                    style={{...styles.textInput, borderColor: profile.aboutMe ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: profile.aboutMe ? Colors.checkColor: Colors.closeColor}}
                     value={profile.aboutMe}
                 />
                 <Text>Profession (Optional):</Text>
                 <TextInput
                     onChangeText={(txt) => handleChange("profession", txt)}
-                    style={{...styles.textInput, borderColor: profile.profession ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: profile.profession ? Colors.checkColor: Colors.closeColor}}
                     value={profile.profession}
                 />
                 <Text>Height (Optional):</Text>
                 <TextInput
                     keyboardType='number-pad'
                     onChangeText={(txt) => handleChange("height", txt)}
-                    style={{...styles.textInput, borderColor: profile.height ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: profile.height ? Colors.checkColor: Colors.closeColor}}
                     value={profile.height}
                 />
 

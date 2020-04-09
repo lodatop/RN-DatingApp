@@ -1,8 +1,8 @@
 export default {
-    primaryColor: '#4a148c',
-    accentColor: '#ff6f00',
-    headerColor: '#ff8cba',
-    acceptColor: '#ff3888',
-    cancelColor: '#f569a1'
+    headerColor: '#ff80d7',
+    acceptColor: '#ff00af',
+    cancelColor: '#ff63ce',
+    checkColor: '#1ac71a',
+    closeColor: '#fc4242'
   };
   

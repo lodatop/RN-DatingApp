@@ -38,7 +38,7 @@ const RegisterScreen = props => {
             <TextInput
                 keyboardType='email-address'
                 onChangeText={(text)=>{setEmail(text.trim())}}
-                style={{...styles.textInput, borderColor: email !== '' ? 'green': 'red'}}
+                style={{...styles.textInput, borderColor: email !== '' ? Colors.checkColor: Colors.closeColor}}
                 value={email}
             />
             <Text>Password:</Text>
@@ -49,7 +49,7 @@ const RegisterScreen = props => {
                     secureTextEntry={passwordIsHidden}
                     keyboardType='default'
                     onChangeText={(text)=>{setPassword(text.trim())}}
-                    style={{...styles.textInput, borderColor: password.length > 5 ? 'green': 'red'}}
+                    style={{...styles.textInput, borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor}}
                     value={password}
                 />
                 <TouchableOpacity 
