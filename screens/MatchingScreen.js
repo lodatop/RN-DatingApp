@@ -46,9 +46,6 @@ const MatchingScreen = props => {
 
     useEffect(()=> {
         if(profile.uid) getProfiles()
-    }, [])
-    useEffect(()=> {
-        if(profile.uid) getProfiles()
     }, [profile])  
     useEffect(()=> {
         setProfile(profileContext.profile)
@@ -56,9 +53,9 @@ const MatchingScreen = props => {
     }, [profileContext])    
 
     const getProfiles = () => {
+        setDatingProfiles([])
         let uid = profile.uid;
         const db = firebase.firestore;
-        console.log(profile.lookingFor)
         const query =
         (profile.lookingFor)?
             db.collection('profile').where('gender', 'in', profile.lookingFor)
@@ -70,9 +67,9 @@ const MatchingScreen = props => {
                 let user = doc.data()
                 if(user.likedBy && user.dislikedBy){
                     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
-                        setDatingProfiles([...datingProfiles, user]);
+                        setDatingProfiles(oldArray => [...oldArray, user]);
                 } else {
-                    setDatingProfiles([...datingProfiles, user]);
+                    setDatingProfiles(oldArray => [...oldArray, user]);
                 }
             });
         })
