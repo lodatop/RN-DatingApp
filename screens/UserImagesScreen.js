@@ -105,7 +105,7 @@ const UserImagesScreen = props => {
             }); 
         } else {
             setLoading(false);
-            alert('Nothing to update.')
+            alert('No photo selected to be deleted.')
             props.navigation.navigate('Profile')
         }
 

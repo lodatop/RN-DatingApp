@@ -6,6 +6,7 @@ import { ProfileContext } from '../components/ProfileContext/ProfileContext'
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileModal } from '../components/ProfileModal';
 import { Wrapper } from '../hoc/Wrapper';
+import Colors from '../constants/Colors'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -38,27 +39,27 @@ const MatchingScreen = props => {
 
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
-    const [datingProfiles, setDatingProfiles] = useState([])
+    const datingProfiles = []
     const [currentIndex, setCurrentIndex] = useState(0);
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
-    // const [isSwipeable, setIsSwipeable] = useState(true)
 
     useEffect(()=> {
-        if(profile.uid) getProfiles()
+        console.log('rerendering')
+        setProfile(profileContext.profile)
     }, [])
     useEffect(()=> {
-        if(profile.uid) getProfiles()
+        if(profile.uid) {
+            getProfiles()
+        }
     }, [profile])  
     useEffect(()=> {
         setProfile(profileContext.profile)
-        console.log(datingProfiles)
-    }, [profileContext])    
+    }, [profileContext])
 
     const getProfiles = () => {
         let uid = profile.uid;
         const db = firebase.firestore;
-        console.log(profile.lookingFor)
         const query =
         (profile.lookingFor)?
             db.collection('profile').where('gender', 'in', profile.lookingFor)
@@ -70,11 +71,13 @@ const MatchingScreen = props => {
                 let user = doc.data()
                 if(user.likedBy && user.dislikedBy){
                     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
-                        setDatingProfiles([...datingProfiles, user]);
+                        datingProfiles.push(user);
                 } else {
-                    setDatingProfiles([...datingProfiles, user]);
+                    datingProfiles.push(user);
                 }
+                console.log('dating profiles: ', datingProfiles)
             });
+            console.log('done')
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
@@ -152,23 +155,19 @@ const MatchingScreen = props => {
         },
         onPanResponderRelease: (e, gestureState) => {
             if(gestureState.dx > 120){
-                console.log(gestureState.dy)
                 Animated.timing(position, {
                     toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy},
                     duration: 500
                 }).start(()=>{
-                    console.log('like')
                     setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                         position.setValue({x: 0, y: 0})
                     }
                 })
             } else if(gestureState.dx < -120){
-                console.log(gestureState.dy)
                 Animated.timing(position, {
                     toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy},
                     duration: 500
                 }).start(()=>{
-                    console.log('dislike')
                     setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                         position.setValue({x: 0, y: 0})
                     }
@@ -207,29 +206,21 @@ const MatchingScreen = props => {
     })
 
     const swipeRigth = () => {
-        console.log('called')
-        // setIsSwipeable(false)
         Animated.timing(position, {
             toValue: { x: SCREEN_WIDTH+100, y: 8},
             duration: 500
         }).start(()=>{
-            console.log('like')
-            console.log('done')
             setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                 position.setValue({x: 0, y: 0})
-                // setIsSwipeable(true)
             }
         })
     }
 
     const swipeLeft = () => {
-        // setIsSwipeable(false)
         Animated.timing(position, {
             toValue: { x: -SCREEN_WIDTH-100, y: 8},
             duration: 500
         }).start(()=>{
-            console.log('dislike')
-            // setIsSwipeable(true)
             setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
                 position.setValue({x: 0, y: 0})
             }
@@ -311,14 +302,14 @@ const MatchingScreen = props => {
                             <Text style={styles.profileInfo}>{item.id}</Text>
                         </View>
 
-                        {/* 
+                        
                         <TouchableOpacity
                             onPress={()=>setModalVisible(true)}
                             style={styles.showMoreContainer}>
                             <View style={styles.showMoreButton}>
                                 <Ionicons name='ios-arrow-down' size={50} color='white'/>
                             </View>
-                        </TouchableOpacity> */}
+                        </TouchableOpacity>
                     </Animated.View>
                 )
             }
@@ -333,19 +324,17 @@ const MatchingScreen = props => {
                         <View style={styles.swipeButtonsContainer}>
                             <TouchableOpacity 
                                 onPress={swipeLeft}
-                                // disabled={!isSwipeable}
                                 style={{
                                     ...styles.swipeButton, 
-                                    backgroundColor: 'red'
+                                    backgroundColor: Colors.closeColor
                                 }}>
                                 <Ionicons name='md-close' size={50} color='white'/>
                             </TouchableOpacity>
                             <TouchableOpacity 
                                 onPress={swipeRigth}
-                                // disabled={!isSwipeable}
                                 style={{
                                     ...styles.swipeButton, 
-                                    backgroundColor: 'green'
+                                    backgroundColor: Colors.checkColor
                                 }}>
 
                                 <Ionicons name='md-checkmark' size={50} color='white'/>

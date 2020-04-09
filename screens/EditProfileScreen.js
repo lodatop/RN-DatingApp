@@ -88,7 +88,7 @@ const EditProfileScreen = props => {
                         onChangeText={(aboutme) => handleChange("aboutMe", aboutme)}
                         style={
                             {...styles.textInput, 
-                                borderColor: aboutMeDisabled ? 'red':'green',
+                                borderColor: aboutMeDisabled ? Colors.closeColor: Colors.checkColor,
                                 opacity: aboutMeDisabled ? 0.6:1
                             }}
                         value={profile.aboutMe}
@@ -110,7 +110,7 @@ const EditProfileScreen = props => {
                         onChangeText={(prof) => handleChange("profession", prof)}
                         style={
                             {...styles.textInput, 
-                                borderColor: professionDisabled ? 'red':'green',
+                                borderColor: professionDisabled ? Colors.closeColor: Colors.checkColor,
                                 opacity: professionDisabled ? 0.6:1
                             }}
                         value={profile.profession}

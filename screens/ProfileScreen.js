@@ -153,27 +153,27 @@ const ProfileScreen = props => {
             <View style={styles.userOptionsContainer}>
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
-                        style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: '#ff96c0'}}} 
+                        style={{...styles.iconContainer, ...{width: 65, height: 65, borderColor: Colors.headerColor}}} 
                         activeOpacity={0.7}
                         onPress={() => props.navigation.navigate('EditProfile')}
                         >
-                            <MaterialIcons name="edit" size={40} color='#ff96c0'/>
+                            <MaterialIcons name="edit" size={40} color={Colors.headerColor}/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText} numberOfLines={2}>Edit your profile</Text>
                 </View>
                 <View style={styles.userOptions}>
                     <TouchableOpacity 
-                        style={{...styles.iconContainer, borderColor: '#ff66a3'}} 
+                        style={{...styles.iconContainer, borderColor: Colors.acceptColor}} 
                         activeOpacity={0.7}
                         onPress={handleChoosePhoto}>
-                            <MaterialIcons name="add-a-photo" size={40} color='#ff66a3'/>
+                            <MaterialIcons name="add-a-photo" size={40} color={Colors.acceptColor}/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Add a photo</Text>
                 </View>
                 <View style={styles.userOptions}>
                     <TouchableOpacity
                         onPress={logout}
-                        style={{...styles.iconContainer, ...{width: 65, height: 65, backgroundColor: 'red'}}} 
+                        style={{...styles.iconContainer, ...{width: 65, height: 65, backgroundColor: '#fc4242'}}} 
                         activeOpacity={0.7}>
                             <AntDesign name="logout" size={40} color='white' />
                     </TouchableOpacity>
@@ -302,7 +302,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 50,
-        backgroundColor: '#ffedf4',
+        backgroundColor: '#ffe6fa',
         borderWidth: 2
     }
 })
