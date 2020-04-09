@@ -21,8 +21,7 @@ export const ProfileModal = (props) => {
                 {/*Here the image has to be a carrusel, it will come in profile.photos array*/}
                 <Image
                     style={{width: width, height: height*0.6}}
-                    source={profile.uri}
-                />
+                    source={profile.photos ? {uri: profile.photos[0]}: require('../assets/default-user.png')}/>
                 <Text>Here goes the profile data</Text>
                 <Text>Name, age</Text>
                 <Text>About me, profession</Text>

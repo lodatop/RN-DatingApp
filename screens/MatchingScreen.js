@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Image, Dimensions, Animated, PanResponder, PushNotificationIOS, TouchableNativeFeedbackComponent, TouchableOpacity } from 'react-native';
 
+import {KoroProgress} from 'rn-koro-lib'
+
 import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext'
 import { Ionicons } from '@expo/vector-icons';
@@ -39,20 +41,28 @@ const MatchingScreen = props => {
 
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
-    const datingProfiles = []
+    const [datingProfiles, setDatingProfiles] = useState([])
     const [currentIndex, setCurrentIndex] = useState(0);
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
+    const [doneFetchin, setDoneFetchin] = useState(false)
 
+    useEffect(()=>{
+        setCurrentIndex(0)
+        setDoneFetchin(false)
+    }, [])
     useEffect(()=> {
+        
         if(profile.uid) getProfiles()
     }, [profile])  
     useEffect(()=> {
+        
         setProfile(profileContext.profile)
     }, [profileContext])
 
     const getProfiles = () => {
         setDatingProfiles([])
+        
         let uid = profile.uid;
         const db = firebase.firestore;
         const query =
@@ -64,15 +74,15 @@ const MatchingScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
-                if(user.likedBy && user.dislikedBy){
-                    if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
-                        setDatingProfiles(oldArray => [...oldArray, user]);
-                } else {
+                console.log(user)
+                // if(user.likedBy && user.dislikedBy){
+                //     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
+                //         setDatingProfiles(oldArray => [...oldArray, user]);
+                // } else {
                     setDatingProfiles(oldArray => [...oldArray, user]);
-                }
-                console.log('dating profiles: ', datingProfiles)
+                // }
             });
-            console.log('done')
+            setDoneFetchin(prev => true)
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
@@ -224,97 +234,99 @@ const MatchingScreen = props => {
 
 
     const renderUsers = () => {
-        return Users.map((item, i) => {
-            if (i < currentIndex) {
-                return null
-            }
-            else if (i == currentIndex) {
-                return (
-                    <Animated.View
-                        key={item.id}
+        if(doneFetchin){
+            return datingProfiles.map((user, i) => {
+                if (i < currentIndex) {
+                    return null
+                }
+                else if (i == currentIndex) {
+                    return (
+                        <Animated.View
+                        key={user.uid}
                         {...panResponder.panHandlers}
                         style={{
                             ...rotateAndTranslate,
                             ...styles.cardStyle
                         }}>
-                        <Animated.View 
-                            style={{ opacity: likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-                            <Text style={{ ...styles.label, borderColor: 'green', color: 'green' }}>
-                                LIKE
-                            </Text>
-                        </Animated.View>
-                        <Animated.View 
-                            style={{ opacity: dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-                            <Text style={{ ...styles.label, borderColor: 'red', color: 'red' }}>
-                                NOPE
-                            </Text>
-                        </Animated.View>
+                            <Animated.View 
+                                style={{ opacity: likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
+                                <Text style={{ ...styles.label, borderColor: 'green', color: 'green' }}>
+                                    LIKE
+                                </Text>
+                            </Animated.View>
+                            <Animated.View 
+                                style={{ opacity: dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
+                                <Text style={{ ...styles.label, borderColor: 'red', color: 'red' }}>
+                                    NOPE
+                                </Text>
+                            </Animated.View>
 
-                        <Image 
-                            style={{
-                                flex: 1,
-                                width: null,
-                                height: null
-                            }}
-                            resizeMode='cover'
-                            source={item.uri}/>
+                            <Image 
+                                style={{
+                                    flex: 1,
+                                    width: null,
+                                    height: null
+                                }}
+                                resizeMode='cover'
+                                source={user.photos ? {uri: user.photos[0]}: require('../assets/default-user.png')}/>
 
-                        <View style={styles.profileInfoContainer}>
-                            <Text style={styles.profileInfo}>{item.id}</Text>
-                        </View>
-
-                        <TouchableOpacity
-                            onPress={()=>setModalVisible(true)}
-                            style={styles.showMoreContainer}>
-                            <View style={styles.showMoreButton}>
-                                <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                            <View style={styles.profileInfoContainer}>
+                                <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
                             </View>
-                        </TouchableOpacity>
-                    </Animated.View>
-                )
-            }
-            else {
-                return (
-                    <Animated.View 
+
+                            <TouchableOpacity
+                                onPress={()=>setModalVisible(true)}
+                                style={styles.showMoreContainer}>
+                                <View style={styles.showMoreButton}>
+                                    <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                                </View>
+                            </TouchableOpacity>
+                        </Animated.View>
+                    )
+                }
+                else {
+                    return (
+                        <Animated.View 
                         // {...panResponder.panHandlers}
-                        key={item.id}
+                        key={user.uid}
                         style={{
                             opacity: nexCardOpacity,
                             transform: [{scale: nexCardScale}],
                             ...styles.cardStyle
                         }}>
 
-                        <Image 
-                            style={{
-                                flex: 1,
-                                width: null,
-                                height: null
-                            }}
-                            resizeMode='cover'
-                            source={item.uri}/>
+                            <Image 
+                                style={{
+                                    flex: 1,
+                                    width: null,
+                                    height: null
+                                }}
+                                resizeMode='cover'
+                                source={user.photos ? {uri: user.photos[0]}: require('../assets/default-user.png')}/>
 
-                        <View style={styles.profileInfoContainer}>
-                            <Text style={styles.profileInfo}>{item.id}</Text>
-                        </View>
-
-                        
-                        <TouchableOpacity
-                            onPress={()=>setModalVisible(true)}
-                            style={styles.showMoreContainer}>
-                            <View style={styles.showMoreButton}>
-                                <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                            <View style={styles.profileInfoContainer}>
+                                <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
                             </View>
-                        </TouchableOpacity>
-                    </Animated.View>
-                )
-            }
-        }).reverse()
+
+                            
+                            <TouchableOpacity
+                                onPress={()=>setModalVisible(true)}
+                                style={styles.showMoreContainer}>
+                                <View style={styles.showMoreButton}>
+                                    <Ionicons name='ios-arrow-down' size={50} color='white'/>
+                                </View>
+                            </TouchableOpacity>
+                        </Animated.View>
+                    )
+                }
+            }).reverse()
+        }
     }
     
     return (
-            <View style={styles.container}>
+        <View style={styles.container}>
                 {renderUsers()}
-                {currentIndex < Users.length ?
+                {currentIndex < datingProfiles.length ?
                     <Wrapper>
                         <View style={styles.swipeButtonsContainer}>
                             <TouchableOpacity 
@@ -335,10 +347,11 @@ const MatchingScreen = props => {
                                 <Ionicons name='md-checkmark' size={50} color='white'/>
                             </TouchableOpacity>
                         </View>
-                        <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={Users[currentIndex]}/>
+                        <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={datingProfiles[currentIndex]}/>
                     </Wrapper>
                     : <Text>No more profiles available yet</Text>
                 }
+                <KoroProgress visible={!doneFetchin} color='#ed1f63'/>
             </View>
     )
 }
