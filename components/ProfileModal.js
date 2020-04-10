@@ -14,7 +14,7 @@ export const ProfileModal = (props) => {
     }, [profile])
 
     const profLength = profile.photos ? profile.photos.length : 0;
-    const userPhotos = [...profile.photos]
+    const userPhotos = profile.photos ? [...profile.photos] : null
 
     let topPart = (
         userPhotos ? 
@@ -25,7 +25,7 @@ export const ProfileModal = (props) => {
                         paddingHorizontal: 5,
                         alignSelf: 'center'
                         }}
-                        key={photo}>
+                        key={photo + profile.user + i}>
                         <View style={{ ...styles.topBar, backgroundColor: i === currentIndex ? 'white': styles.topBar.backgroundColor}}></View>
                     </View>
                 )
@@ -56,7 +56,8 @@ export const ProfileModal = (props) => {
                     overflow: 'hidden', zIndex: 90,
                     flexDirection: 'row'}}>
                     <Image
-                        style={{...styles.image, width: width, height: height*0.6}}
+                        resizeMode='cover'
+                        style={{...styles.image}}
                         source={userPhotos ? {uri: userPhotos[currentIndex]}: require('../assets/default-user.png')}
                         />
                     <TouchableOpacity 
@@ -89,32 +90,32 @@ export const ProfileModal = (props) => {
                         {topPart}
                     </View>
                 </View>
-
-                <Text style={{fontSize: 50}}>{profile.name}, {profile.age}</Text>
-                <Text style={styles.label}>Gender: 
-                    <Text style={styles.text}> {profile.gender}</Text>
-                </Text>
-                <Text style={styles.label}>Lookinig for: 
-                    {profile.lookingFor ? 
-                        <Text style={styles.text}> {profile.lookingFor.join(', ')}</Text>
-                    : <Text style={styles.text}>No info provided</Text> }
-                </Text>
-                <Text style={styles.label}>About Me: 
-                    {profile.aboutMe ? 
-                        <Text style={styles.text}> {profile.aboutMe}</Text>
-                    : <Text style={styles.text}>No info provided</Text>}
-                </Text>
-                <Text style={styles.label}>Profession:
-                    {profile.profession ?
-                        <Text style={styles.text}> {profile.profession}</Text>
-                    : <Text style={styles.text}>No info provided</Text>}
-                </Text>
-                <Text style={styles.label}>Height:
-                    {profile.height ?
-                        <Text style={styles.text}> {profile.height}m</Text>
-                    : <Text style={styles.text}>No info provided</Text>}
-                </Text>
-                <View style={{height: 300, width: width}}></View>
+                <View style={styles.infoContainer}>
+                    <Text style={{fontSize: 40}}>{profile.name}, {profile.age}</Text>
+                    <Text style={styles.label}>Gender: 
+                        <Text style={{...styles.text, textTransform: 'capitalize'}}> {profile.gender}</Text>
+                    </Text>
+                    <Text style={styles.label}>Lookinig for: 
+                        {profile.lookingFor ? 
+                            <Text style={styles.text}> {profile.lookingFor.join(', ')}</Text>
+                            : <Text style={styles.text}> No info provided</Text> }
+                    </Text>
+                    <Text style={styles.label}>About Me: 
+                        {profile.aboutMe ? 
+                            <Text style={styles.text}> {profile.aboutMe}</Text>
+                            : <Text style={styles.text}>No info provided</Text>}
+                    </Text>
+                    <Text style={styles.label}>Profession:
+                        {profile.profession ?
+                            <Text style={styles.text}> {profile.profession}</Text>
+                            : <Text style={styles.text}>No info provided</Text>}
+                    </Text>
+                    <Text style={styles.label}>Height:
+                        {profile.height ?
+                            <Text style={styles.text}> {profile.height}m</Text>
+                            : <Text style={styles.text}>No info provided</Text>}
+                    </Text>
+                </View>
             </ScrollView>
             <TouchableOpacity
                 onPress={onClose}
@@ -139,7 +140,7 @@ const styles = StyleSheet.create({
     },
     closeButton:{
         position: 'absolute',
-        top: 20,
+        top: 25,
         right: 10,
         width: 40,
         height: 40,
@@ -180,11 +181,17 @@ const styles = StyleSheet.create({
 
     },
     image: {
-        position: 'absolute'
+        position: 'absolute',
+        height: '100%',
+        width: '100%'
     },
     topBar:{
         backgroundColor: '#919191',
         flex: 1, 
         borderRadius: 2
+    },
+    infoContainer: {
+        width: width,
+        paddingHorizontal: 20,
     }
 })

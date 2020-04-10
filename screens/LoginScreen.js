@@ -25,6 +25,7 @@ const LoginScreen = props => {
             setLoading(false);
             var user = result.user;
             await setProfileContext()
+            console.log('user logged in')
             props.navigation.navigate('Tabs');
         })
         .catch(function(error) {

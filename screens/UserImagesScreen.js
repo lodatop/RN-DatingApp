@@ -31,8 +31,6 @@ const UserImagesScreen = props => {
     }, [profileContext])
 
     const handleChoosePhoto = async () => {
-        console.log(profile)
-    
         let response = await ImagePicker.launchImageLibraryAsync();
         
         if(response.uri){
@@ -141,8 +139,9 @@ const UserImagesScreen = props => {
     return (
         // <View><Text>Hello im your pictures</Text></View>
         <ScrollView style={{flex:1}}>
-            <View style={styles.container}>
-                {photos ? 
+            <View style={{...styles.container, flexDirection: photos ? photos.length > 0 ? 'row' : 'column' : 'row'}}>
+                {photos ?
+                    photos.length > 0 ?
                     photos.map((photo, index) => {
                         return (
                             <View key={photo} style={styles.photo}>
@@ -159,7 +158,8 @@ const UserImagesScreen = props => {
                             </View>
                         )
                     })
-                    : <Text>No photos</Text>
+                    : <View style={{width: width, marginBottom: 10}}><Text style={{alignSelf: 'center', fontSize: 20, fontWeight: '700', textTransform: 'capitalize'}}>No photos</Text></View> 
+                    : <View style={{width: width, marginBottom: 10}}><Text style={{alignSelf: 'center', fontSize: 20, fontWeight: '700', textTransform: 'capitalize'}}>No photos</Text></View> 
                 }
                 <KoroModal 
                     visible={modalOpen} 
@@ -237,9 +237,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
-    // addButton: {
-    //     paddingHorizontal: 15
-    // },
     modalTitle:{
         marginVertical: 15,
         fontSize: 25,
