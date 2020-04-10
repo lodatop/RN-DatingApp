@@ -12,74 +12,83 @@ export const ProfileModal = (props) => {
     useEffect(()=>{
         setCurrentIndex(last => 0)
     }, [profile])
-    console.log(profile.photos.length)
+
+    const profLength = profile.photos ? profile.photos.length : 0;
+    const userPhotos = [...profile.photos]
+
     let topPart = (
-        profile.photos ? profile.photos.lenght > 0 ? 
-        profile.photos.map(photo => {
+        userPhotos ? 
+        userPhotos.map((photo, i) => {
             return (<View style={{
-                        width: profile.photos ? `${100/profile.photos.length}%`: '100%', 
+                        width:`${100/userPhotos.length}%`, 
                         height: 5, 
-                        paddingHorizontal: 5
-                        }}>
-                        <View style={{backgroundColor: 'white', flex: 1}}></View>
+                        paddingHorizontal: 5,
+                        alignSelf: 'center'
+                        }}
+                        key={photo}>
+                        <View style={{ ...styles.topBar, backgroundColor: i === currentIndex ? 'white': styles.topBar.backgroundColor}}></View>
                     </View>
                 )
             }
-        ) : (<View style={{
-                width: profile.photos ? `${100/profile.photos.lenght}%`: '100%', 
+        ) : (
+            <View style={{
+                width: '100%', 
                 height: 5, 
-                paddingHorizontal: 5
+                paddingHorizontal: 5,
+                alignSelf: 'center'
                 }}>
                 <View style={{backgroundColor: 'white', flex: 1}}></View>
-            </View>) : null
+            </View>
+        )
     )
+
     return (
         <Modal 
             visible={visible}
             style={styles.modal}
             onRequestClose={onClose}
         >
-            {/* <ScrollView
+            <ScrollView
                 style={styles.scrollView}
-            > */}
-                {/*Here the image has to be a carrusel, it will come in profile.photos array*/}
+            >
+                {/*Here the image has to be a carrusel, it will come in userPhotos array*/}
                 <View style={{width: width, height: height*0.6, 
                     overflow: 'hidden', zIndex: 90,
                     flexDirection: 'row'}}>
                     <Image
                         style={{...styles.image, width: width, height: height*0.6}}
-                        source={profile.photos ? {uri: profile.photos[0]}: require('../assets/default-user.png')}
+                        source={userPhotos ? {uri: userPhotos[currentIndex]}: require('../assets/default-user.png')}
                         />
-                    <TouchableOpacity style={{...styles.changePhotoContainer, left: 0}}>
+                    <TouchableOpacity 
+                        style={{...styles.changePhotoContainer, left: 0}}
+                        disabled={currentIndex === 0 ? true : false}
+                        onPress={()=> setCurrentIndex(prevIndex=> prevIndex - 1)}
+                        >
                         <View style={{...styles.changePhoto}}>
-                            <Text>left</Text>
+                            <Ionicons 
+                                name='ios-arrow-back' 
+                                size={50} 
+                                color={currentIndex === 0 ? 'grey': 'white'}
+                                />
                         </View>
                     </TouchableOpacity>
-                    <TouchableOpacity style={{...styles.changePhotoContainer, right: 0}}>
-                        <View style={{...styles.changePhoto}}>
-                            <Text>right</Text>
+                    <TouchableOpacity 
+                        style={{...styles.changePhotoContainer, right: 0}}
+                        disabled={currentIndex === (profLength - 1) ? true : false}
+                        onPress={()=> setCurrentIndex(prevIndex=> prevIndex + 1)}
+                        >
+                        <View style={{...styles.changePhoto, alignItems: 'flex-end'}}>
+                            <Ionicons 
+                                name='ios-arrow-forward' 
+                                size={50} 
+                                color={currentIndex === (profLength - 1) ? 'grey': 'white'}
+                                />
                         </View>
                     </TouchableOpacity>
                     <View style={{...styles.photoRollIndicator, flexDirection: 'row'}}>
-                        <View style={{
-                            width: `${100/profile.photos.length}%`,
-                            height: 5, 
-                            paddingHorizontal: 5,
-                            }}>
-                            <View style={{backgroundColor: 'white', width: '100%', height: '100%'}}></View>
-                        </View>
-                        <View style={{
-                            width: 50, 
-                            height: 5, 
-                            paddingHorizontal: 5,
-                            }}>
-                            <View style={{backgroundColor: 'white', width: '100%', height: '100%'}}></View>
-                        </View>
+                        {topPart}
                     </View>
                 </View>
-
-
-
 
                 <Text style={{fontSize: 50}}>{profile.name}, {profile.age}</Text>
                 <Text style={styles.label}>Gender: 
@@ -106,7 +115,7 @@ export const ProfileModal = (props) => {
                     : <Text style={styles.text}>No info provided</Text>}
                 </Text>
                 <View style={{height: 300, width: width}}></View>
-            {/* </ScrollView> */}
+            </ScrollView>
             <TouchableOpacity
                 onPress={onClose}
                 style={styles.closeButton}
@@ -130,7 +139,7 @@ const styles = StyleSheet.create({
     },
     closeButton:{
         position: 'absolute',
-        top: 10,
+        top: 20,
         right: 10,
         width: 40,
         height: 40,
@@ -154,7 +163,8 @@ const styles = StyleSheet.create({
         zIndex: 100,
         position: 'absolute',
         top: '5%',
-        padding: 30
+        padding: 30,
+        justifyContent: 'center'
     },
     changePhoto: {
         flex: 1,
@@ -165,12 +175,16 @@ const styles = StyleSheet.create({
         top: 0,
         width: width,
         height: '5%',
-        backgroundColor: 'green',
         justifyContent: 'center',
         paddingHorizontal: 10
 
     },
     image: {
         position: 'absolute'
+    },
+    topBar:{
+        backgroundColor: '#919191',
+        flex: 1, 
+        borderRadius: 2
     }
 })
