@@ -36,7 +36,7 @@ const UserImagesScreen = props => {
         setImagePickerOpen(false)
         let response = await ImagePicker.launchCameraAsync();
         
-        if(response.uri){
+        if(!response.cancelled){
             setPhoto(response)
             setModalOpen(true)
         }
@@ -46,7 +46,7 @@ const UserImagesScreen = props => {
         setImagePickerOpen(false)
         let response = await ImagePicker.launchImageLibraryAsync();
         
-        if(response.uri){
+        if(!response.cancelled){
             setPhoto(response)
             setModalOpen(true)
         }
