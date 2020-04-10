@@ -74,7 +74,6 @@ const MatchingScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
-                console.log(user)
                 // if(user.likedBy && user.dislikedBy){
                 //     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
                 //         setDatingProfiles(oldArray => [...oldArray, user]);

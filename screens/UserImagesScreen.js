@@ -7,6 +7,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext'
+import ImagePickerModal from '../components/ImagePickerModal'
 import Colors from '../constants/Colors';
 
 const { width } = Dimensions.get('window')
@@ -18,6 +19,7 @@ const UserImagesScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [loading, setLoading] = useState(false)
     const [modalOpen, setModalOpen] = useState(false)
+    const [imagePickerOpen, setImagePickerOpen] = useState(false)
     const [photo, setPhoto] = useState(null)
 
 
@@ -30,7 +32,18 @@ const UserImagesScreen = props => {
         }, 1000)
     }, [profileContext])
 
+    const handleTakePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchCameraAsync();
+        
+        if(response.uri){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
     const handleChoosePhoto = async () => {
+        setImagePickerOpen(false)
         let response = await ImagePicker.launchImageLibraryAsync();
         
         if(response.uri){
@@ -167,14 +180,14 @@ const UserImagesScreen = props => {
                     contentStyle={{borderRadius: 15, elevation: 15, backgroundColor: 'rgba(255, 227, 236, 1)'}}
                     onRequestClose={()=> setModalOpen(false)}>
                     <Text style={styles.modalTitle}>Image Preview</Text>
+                    <View style={{width: '100%', height: 2, marginVertical: 10, backgroundColor: Colors.headerColor}}></View>
                     {photo && (
                         <View
                             style={{ 
                                 overflow: 'hidden',
                                 marginVertical: 15,
-                                width: 300, 
-                                height: 300, 
-                                alignSelf: 'center', 
+                                width: '90%', 
+                                height: '60%',
                                 borderRadius: 10 }}>
                             <Image
                                 resizeMode='cover'
@@ -200,10 +213,16 @@ const UserImagesScreen = props => {
                 </KoroModal>
                 <TouchableOpacity 
                     activeOpacity={0.7}
-                    onPress={handleChoosePhoto}
+                    onPress={()=>setImagePickerOpen(true)}
                     style={{...styles.photo, alignItems: 'center', justifyContent: 'center'}}>
                         <MaterialIcons name='add' size={100} color='white'/>
                 </TouchableOpacity>
+                <ImagePickerModal 
+                    visible={imagePickerOpen} 
+                    onClose={()=>setImagePickerOpen(false)} 
+                    onRollPick={handleChoosePhoto}
+                    onCameraPick={handleTakePhoto}
+                />
                 <KoroProgress visible={loading} color='#ed1f63'/>
             </View>
         </ScrollView>

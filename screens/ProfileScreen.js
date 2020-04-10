@@ -13,6 +13,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { KoroProgress, KoroModal } from 'rn-koro-lib'
 import Colors from '../constants/Colors';
+import ImagePickerModal from '../components/ImagePickerModal';
 
 const ProfileScreen = props => {
 
@@ -20,6 +21,7 @@ const ProfileScreen = props => {
 
     const [profile, setProfile] = useState(profileContext.profile)
     const [modalOpen, setModalOpen] = useState(false)
+    const [imagePickerOpen, setImagePickerOpen] = useState(false)
     const [loading, setLoading] = useState(false)
     const [photo, setPhoto] = useState(null)
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
@@ -36,8 +38,18 @@ const ProfileScreen = props => {
         getProfileData();
     }
 
+    const handleTakePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchCameraAsync();
+        
+        if(response.uri){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
     const handleChoosePhoto = async () => {
-    
+        setImagePickerOpen(false)
         let response = await ImagePicker.launchImageLibraryAsync();
         
         if(response.uri){
@@ -165,7 +177,7 @@ const ProfileScreen = props => {
                     <TouchableOpacity 
                         style={{...styles.iconContainer, borderColor: Colors.acceptColor}} 
                         activeOpacity={0.7}
-                        onPress={handleChoosePhoto}>
+                        onPress={()=>setImagePickerOpen(true)}>
                             <MaterialIcons name="add-a-photo" size={40} color={Colors.acceptColor}/>
                     </TouchableOpacity>
                     <Text style={styles.userOptionText}>Add a photo</Text>
@@ -186,6 +198,7 @@ const ProfileScreen = props => {
                 contentStyle={{borderRadius: 15, elevation: 15, backgroundColor: 'rgba(255, 227, 236, 1)'}}
                 onRequestClose={()=> setModalOpen(false)}>
                 <Text style={styles.modalTitle}>Image Preview</Text>
+                <View style={{width: '100%', height: 2, marginVertical: 10, backgroundColor: Colors.headerColor}}></View>
                 {photo && (
                     <View
                         style={{ 
@@ -216,6 +229,12 @@ const ProfileScreen = props => {
                     <Text style={{...styles.modalText}}>Cancel</Text>
                 </TouchableOpacity>
             </KoroModal>
+            <ImagePickerModal 
+                visible={imagePickerOpen} 
+                onClose={()=>setImagePickerOpen(false)} 
+                onRollPick={handleChoosePhoto}
+                onCameraPick={handleTakePhoto}
+                />
             <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
     )
