@@ -37,7 +37,6 @@ const ProfileScreen = props => {
     }
 
     const handleChoosePhoto = async () => {
-        console.log(profile)
     
         let response = await ImagePicker.launchImageLibraryAsync();
         
@@ -115,6 +114,7 @@ const ProfileScreen = props => {
         .then(() => {
             profileContext.setProfile({})
             setLoading(false);
+            console.log('user logged out')
             props.navigation.navigate('Login')
         }).catch(err=> {
             setLoading(false);
@@ -191,9 +191,8 @@ const ProfileScreen = props => {
                         style={{ 
                             overflow: 'hidden',
                             marginVertical: 15,
-                            width: 300, 
-                            height: 300, 
-                            alignSelf: 'center', 
+                            width: '90%', 
+                            height: '60%',
                             borderRadius: 10 }}>
                         <Image
                             resizeMode='cover'
@@ -227,10 +226,11 @@ const styles = StyleSheet.create({
     viewPhotos: {
         position: 'absolute',
         top: 0,
-        right: 5,
-        backgroundColor: 'rgba(224, 224, 224, 0.7)',
+        right: 0,
+        backgroundColor: 'rgba(230, 230, 230, 0.7)',
         paddingHorizontal: 10,
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderBottomLeftRadius: 10
     },
     modalButton: {
         width: '80%',

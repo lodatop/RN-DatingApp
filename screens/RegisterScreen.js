@@ -22,6 +22,7 @@ const RegisterScreen = props => {
         .then(result => {
             setLoading(false);
             var user = result.user;
+            console.log('user registered')
             props.navigation.navigate('CreateProfile')
         })
         .catch(function(error) {
