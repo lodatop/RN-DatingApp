@@ -46,7 +46,6 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
-    const [currentProfile, setCurrentProfile] = useState()
 
     useEffect(()=>{
         setCurrentIndex(0)
@@ -71,25 +70,24 @@ const MatchingScreen = props => {
             db.collection('profile').where('gender', 'in', profile.lookingFor)
             : db.collection('profile').where('lookingFor', 'array-contains', profile.gender);
 
-        const profiles = []
-
         query.get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
-<<<<<<< Updated upstream
-=======
-                //console.log(user)
->>>>>>> Stashed changes
-                // if(user.likedBy && user.dislikedBy){
-                //     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
-                //         setDatingProfiles(oldArray => [...oldArray, user]);
-                // } else {
-                    //setDatingProfiles(oldArray => [...oldArray, user]);
-                // }
-                profiles.push(user)
+                
+                if(user.likedBy && user.dislikedBy){
+                    if(!user.likedBy.includes(uid) && !user.dislikedBy.includes(uid))
+                         setDatingProfiles(oldArray => [...oldArray, user]);
+                 } else if (user.likedBy) {
+                    if(!user.likedBy.includes(uid))
+                         setDatingProfiles(oldArray => [...oldArray, user]);
+                 } else if (user.dislikedBy) {
+                    if(!user.dislikedBy.includes(uid))
+                         setDatingProfiles(oldArray => [...oldArray, user]);
+                 } else {
+                    setDatingProfiles(oldArray => [...oldArray, user]);
+                 }
             });
-            setDatingProfiles(profiles)
             setDoneFetchin(prev => true)
         })
         .catch(function(error) {
@@ -98,7 +96,8 @@ const MatchingScreen = props => {
     }
 
     const checkMatch = (profileId) => {
-        if(profile.likedBy.contains(profileId))
+        if(profile.likedBy){
+            if(profile.likedBy.includes(profileId))
             {
                 const db = firebase.firestore;   
                 const chat = {
@@ -109,26 +108,28 @@ const MatchingScreen = props => {
                     alert('ITS A MOTHERFUCKING MATCH YOU MOTHERFUCKING BITCH SUCK MY DICK')
                 })
             }
+        }
     }
 
     const likeProfile = () => {
 
         var db = firebase.firestore;
         
-        db.collection("profile").where("uid", "==", currentProfile)
+        db.collection("profile").where("uid", "==", datingProfiles[currentIndex].uid)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach(function(doc) {
-            let userLikedBy = doc.data().likedBy;
-            userLikedBy.push(currentProfile)
+            let userLikedBy = doc.data().likedBy? doc.data().likedBy : [];
+            userLikedBy.push(profile.uid)
             let toUpdate = {
                 likedBy: userLikedBy
             }
             doc.ref.update(toUpdate);
-            checkMatch(currentProfile)
+            checkMatch(datingProfiles[currentIndex].uid)
             //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
+            console.log(error)
             alert("Error getting documents: ", error);
         }); 
 
@@ -138,14 +139,14 @@ const MatchingScreen = props => {
 
         var db = firebase.firestore;
         
-        db.collection("profile").where("uid", "==", currentProfile)
+        db.collection("profile").where("uid", "==", datingProfiles[currentIndex].uid)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach(function(doc) {
-            let userDislikedBy = doc.data().dislikedBy;
-            userDislikedBy.push(currentProfile)
+            let userDislikedBy = doc.data().dislikedBy? doc.data().dislikedBy : [];
+            userDislikedBy.push(profile.uid)
             let toUpdate = {
-                dislikedBy: userLikedBy
+                dislikedBy: userDislikedBy
             }
             doc.ref.update(toUpdate);
             //aqui haces pa q se pase al otro perfil
@@ -261,7 +262,6 @@ const MatchingScreen = props => {
                     return null
                 }
                 else if (i == currentIndex) {
-                    setCurrentProfile(user.uid)
                     return (
                         <Animated.View
                         key={user.uid}
