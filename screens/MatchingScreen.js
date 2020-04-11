@@ -46,6 +46,7 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
+    const [currentProfile, setCurrentProfile] = useState()
 
     useEffect(()=>{
         setCurrentIndex(0)
@@ -70,17 +71,25 @@ const MatchingScreen = props => {
             db.collection('profile').where('gender', 'in', profile.lookingFor)
             : db.collection('profile').where('lookingFor', 'array-contains', profile.gender);
 
+        const profiles = []
+
         query.get()
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
+<<<<<<< Updated upstream
+=======
+                //console.log(user)
+>>>>>>> Stashed changes
                 // if(user.likedBy && user.dislikedBy){
                 //     if(user.likedBy.contains(uid) && !user.dilikedBy.contains(uid))
                 //         setDatingProfiles(oldArray => [...oldArray, user]);
                 // } else {
-                    setDatingProfiles(oldArray => [...oldArray, user]);
+                    //setDatingProfiles(oldArray => [...oldArray, user]);
                 // }
+                profiles.push(user)
             });
+            setDatingProfiles(profiles)
             setDoneFetchin(prev => true)
         })
         .catch(function(error) {
@@ -90,24 +99,33 @@ const MatchingScreen = props => {
 
     const checkMatch = (profileId) => {
         if(profile.likedBy.contains(profileId))
-            alert('ITS A MOTHERFUCKING MATCH YOU MOTHERFUCKING BITCH SUCK MY DICK')
+            {
+                const db = firebase.firestore;   
+                const chat = {
+                    createdAt: Date.now(),
+                    participants: [profile.uid, profileId]
+                }
+                db.collection('chat').add(chat).then(ref => {
+                    alert('ITS A MOTHERFUCKING MATCH YOU MOTHERFUCKING BITCH SUCK MY DICK')
+                })
+            }
     }
 
-    const likeProfile = (profileId) => {
+    const likeProfile = () => {
 
         var db = firebase.firestore;
         
-        db.collection("profile").where("uid", "==", profileId)
+        db.collection("profile").where("uid", "==", currentProfile)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach(function(doc) {
             let userLikedBy = doc.data().likedBy;
-            userLikedBy.push(profileId)
+            userLikedBy.push(currentProfile)
             let toUpdate = {
                 likedBy: userLikedBy
             }
             doc.ref.update(toUpdate);
-            checkMatch(profileId)
+            checkMatch(currentProfile)
             //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
@@ -116,16 +134,16 @@ const MatchingScreen = props => {
 
     }
 
-    const dislikeProfile = (profileId) => {
+    const dislikeProfile = () => {
 
         var db = firebase.firestore;
         
-        db.collection("profile").where("uid", "==", profileId)
+        db.collection("profile").where("uid", "==", currentProfile)
         .get()
         .then((querySnapshot) => {
             querySnapshot.forEach(function(doc) {
             let userDislikedBy = doc.data().dislikedBy;
-            userDislikedBy.push(profileId)
+            userDislikedBy.push(currentProfile)
             let toUpdate = {
                 dislikedBy: userLikedBy
             }
@@ -159,6 +177,7 @@ const MatchingScreen = props => {
         },
         onPanResponderRelease: (e, gestureState) => {
             if(gestureState.dx > 120){
+                likeProfile()
                 Animated.timing(position, {
                     toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy},
                     duration: 500
@@ -168,6 +187,7 @@ const MatchingScreen = props => {
                     }
                 })
             } else if(gestureState.dx < -120){
+                dislikeProfile()
                 Animated.timing(position, {
                     toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy},
                     duration: 500
@@ -210,6 +230,7 @@ const MatchingScreen = props => {
     })
 
     const swipeRigth = () => {
+        likeProfile()
         Animated.timing(position, {
             toValue: { x: SCREEN_WIDTH+100, y: 8},
             duration: 500
@@ -221,6 +242,7 @@ const MatchingScreen = props => {
     }
 
     const swipeLeft = () => {
+        dislikeProfile()
         Animated.timing(position, {
             toValue: { x: -SCREEN_WIDTH-100, y: 8},
             duration: 500
@@ -239,6 +261,7 @@ const MatchingScreen = props => {
                     return null
                 }
                 else if (i == currentIndex) {
+                    setCurrentProfile(user.uid)
                     return (
                         <Animated.View
                         key={user.uid}
