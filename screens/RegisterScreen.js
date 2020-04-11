@@ -45,7 +45,7 @@ const RegisterScreen = props => {
                     style={{ borderColor: email !== '' ? Colors.checkColor: Colors.closeColor }}
                 />
             </View>
-            <View style={{marginBottom: 10}}>
+            <View style={{marginBottom: 10, zIndex: 100}}>
                 <Input
                     autoCorrect={false}
                     autoCompleteType='off'
@@ -57,7 +57,7 @@ const RegisterScreen = props => {
                     style={{ borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor }}
                 />
                 <TouchableOpacity 
-                    style={{...styles.showPassword}}
+                    style={{...styles.showPassword, zIndex: 200}}
                     onPressIn={()=>setPasswordIsHidden(false)}
                     onPressOut={()=>setPasswordIsHidden(true)}
                     >
@@ -86,7 +86,7 @@ const RegisterScreen = props => {
 const styles = StyleSheet.create({
     showPassword: {
         position: 'absolute',
-        top: '25%',
+        top: 10,
         right: 5,
         backgroundColor: 'rgba(224, 224, 224, 0.7)',
         paddingHorizontal: 10,
