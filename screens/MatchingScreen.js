@@ -351,7 +351,7 @@ const MatchingScreen = props => {
                     </Wrapper>
                     : <Text>No more profiles available yet</Text>
                 }
-                <KoroProgress visible={!doneFetchin} color='#ed1f63'/>
+                <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
             </View>
     )
 }

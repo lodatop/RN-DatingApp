@@ -139,7 +139,7 @@ const EditProfileScreen = props => {
                         <Text style={styles.buttonText}>Discard Changes</Text>
                     </TouchableOpacity>
                 </View>
-                <KoroProgress visible={loading} color='#ed1f63'/>
+                <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
             </View>
     )
 }

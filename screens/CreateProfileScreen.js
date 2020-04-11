@@ -14,6 +14,7 @@ import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 import Colors from '../constants/Colors';
 import { Input } from '../components/Input'
 import { Picker } from '../components/Picker'
+import {MultiPick} from '../components/MultiPick'
 import ImagePickerModal from '../components/ImagePickerModal'
 
 const CreateProfileScreen = props => {
@@ -42,26 +43,24 @@ const CreateProfileScreen = props => {
     }, [profile, lookingFor])
 
     const items = [{
-        id: '1',
-        name: 'male',
+        label: 'Male',
+        name: 'male'
       }, {
-        id: '2',
-        name: 'female',
+        label: 'Female',
+        name: 'female'
       }, {
-        id: '3',
-        name: 'non_binary',
+        label: 'Non Binary',
+        name: 'non_binary'
       }, {
-        id: '4',
-        name: 'trans_male',
+        label: 'Trans Male',
+        name: 'trans_male'
       }, {
-        id: '5',
+        label: 'Trans Female',
         name: 'trans_female'
-      }];
+      }
+    ];
 
     const onSelectedLookingFor = (selected) => {
-        /*let lookingFor = selected.map(function (obj) {
-            return obj.name;
-        });*/
         setLookingFor(selected);
     };
 
@@ -217,27 +216,11 @@ const CreateProfileScreen = props => {
                         style={{ borderColor: profile.height !== '' ? Colors.checkColor: Colors.closeColor }}
                         />
                 </View>
-
-                <View style={{ flex: 1, marginVertical: 2}}>
-                    <MultiSelect
-                        hideTags
-                        items={items}
-                        uniqueKey="name"
-                        onSelectedItemsChange={onSelectedLookingFor}
-                        selectedItems={lookingFor}
-                        selectText="Looking for..."
-                        searchInputPlaceholderText="Search..."
-                        tagRemoveIconColor="#CCC"
-                        tagBorderColor="#CCC"
-                        tagTextColor="#CCC"
-                        selectedItemTextColor="#CCC"
-                        selectedItemIconColor="#CCC"
-                        itemTextColor="#000"
-                        displayKey="name"
-                        fixedHeight={true}
-                        hideSubmitButton={true}
-                        searchInputStyle={{ color: '#CCC' }}
-                        />
+                <View style={{marginBottom: 10}}>
+                    <Text style={{color:'#b5b5b5'}}>Looking For</Text>
+                    <View style={{ ...styles.picker, borderColor: lookingFor.length > 0 ? Colors.checkColor: Colors.closeColor }}>
+                        <MultiPick options={items} visible={true} onValueChange={(answer)=>setLookingFor(answer)}/>
+                    </View>
                 </View>
 
                 {photo && (
@@ -264,7 +247,7 @@ const CreateProfileScreen = props => {
                 onRollPick={handleChoosePhoto}
                 onCameraPick={handleTakePhoto}
                 />
-            <KoroProgress visible={loading} color='#ed1f63'/>
+            <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
 }
