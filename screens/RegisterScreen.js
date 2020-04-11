@@ -5,6 +5,7 @@ import  { FirebaseContext } from '../components/Firebase';
 import Colors from '../constants/Colors';
 import { KoroProgress } from 'rn-koro-lib';
 import { Ionicons } from '@expo/vector-icons';
+import { Input } from '../components/Input'
 
 const RegisterScreen = props => {
 
@@ -35,23 +36,25 @@ const RegisterScreen = props => {
     return (
         <View style={{...styles.container}}>
             <Text style={styles.title}>Sign up to continue!</Text>
-            <Text>Email:</Text>
-            <TextInput
-                keyboardType='email-address'
-                onChangeText={(text)=>{setEmail(text.trim())}}
-                style={{...styles.textInput, borderColor: email !== '' ? Colors.checkColor: Colors.closeColor}}
-                value={email}
-            />
-            <Text>Password:</Text>
-            <View>
-                <TextInput
+            <View style={{marginBottom: 10}}>
+                <Input 
+                    onChange={(value)=>{setEmail(value.trim())}}
+                    type='email-address'
+                    value={email}
+                    label='Email'
+                    style={{ borderColor: email !== '' ? Colors.checkColor: Colors.closeColor }}
+                />
+            </View>
+            <View style={{marginBottom: 10}}>
+                <Input
                     autoCorrect={false}
                     autoCompleteType='off'
-                    secureTextEntry={passwordIsHidden}
-                    keyboardType='default'
-                    onChangeText={(text)=>{setPassword(text.trim())}}
-                    style={{...styles.textInput, borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor}}
+                    onChange={(value)=>{setPassword(value.trim())}}
+                    type='default'
                     value={password}
+                    label='Password'
+                    isHidden={passwordIsHidden}
+                    style={{ borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor }}
                 />
                 <TouchableOpacity 
                     style={{...styles.showPassword}}
@@ -63,17 +66,17 @@ const RegisterScreen = props => {
             </View>
             <TouchableOpacity
                 activeOpacity={0.7}
-                style={styles.loginButton} 
+                style={styles.registerButton} 
                 onPress={register}>
-                <Text style={styles.loginText}>Register</Text>
+                <Text style={styles.registerText}>Register</Text>
             </TouchableOpacity>
             <Text style={{fontWeight: 'bold', fontSize: 15, color: 'black', textAlign: 'center'}}>OR</Text>
             <TouchableOpacity
                 activeOpacity={0.7}
-                style={styles.registerButton} 
+                style={styles.loginButton} 
                 onPress={() => props.navigation.navigate('Login')}
                 >
-                <Text style={styles.registerText}>Go back to login</Text>
+                <Text style={styles.loginText}>Go back to login</Text>
             </TouchableOpacity>
             <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
@@ -83,19 +86,19 @@ const RegisterScreen = props => {
 const styles = StyleSheet.create({
     showPassword: {
         position: 'absolute',
-        top: 0,
+        top: '25%',
         right: 5,
         backgroundColor: 'rgba(224, 224, 224, 0.7)',
         paddingHorizontal: 10,
         paddingVertical: 5
     },
-    loginButton: {
+    registerButton: {
         marginVertical: 10,
         backgroundColor: Colors.acceptColor, 
         paddingVertical: 10,
         borderRadius: 10
     },
-    loginText: {
+    registerText: {
         textAlign: 'center',
         color: 'white',
         fontSize: 15,
@@ -103,15 +106,16 @@ const styles = StyleSheet.create({
         letterSpacing: 1.5,
         textTransform: 'uppercase'
     },
-    registerButton: {
+    loginButton: {
         marginVertical: 10,
-        backgroundColor: Colors.acceptColor, 
+        backgroundColor: Colors.cancelColor, 
         paddingVertical: 10,
         width: '70%',
         alignSelf: 'center',
         borderRadius: 10
+
     },
-    registerText: {
+    loginText: {
         textAlign: 'center',
         color: 'white',
         fontSize: 15,

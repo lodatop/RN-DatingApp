@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, Picker, TouchableOpacity} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, TouchableOpacity} from 'react-native';
 
 //import ImagePicker from 'react-native-image-picker';
 
@@ -12,6 +12,9 @@ import { KoroProgress } from 'rn-koro-lib';
 import { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 import Colors from '../constants/Colors';
+import { Input } from '../components/Input'
+import { Picker } from '../components/Picker'
+import ImagePickerModal from '../components/ImagePickerModal'
 
 const CreateProfileScreen = props => {
 
@@ -27,6 +30,8 @@ const CreateProfileScreen = props => {
     const [loading, setLoading] = useState(false);
     const [continueDisabled, setContinueDisabled] = useState(true);
     const [lookingFor, setLookingFor] = useState([]);
+    const [imagePickerOpen, setImagePickerOpen] = useState(false)
+
     
     const firebase = useContext(FirebaseContext);
     const profileContext = useContext(ProfileContext)
@@ -60,23 +65,23 @@ const CreateProfileScreen = props => {
         setLookingFor(selected);
     };
 
-    const handleChoosePhoto = async () => {
+    const handleTakePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchCameraAsync();
+        
+        if(response.uri){
+            setPhoto(response)
+        }
+    }
 
+    const handleChoosePhoto = async () => {
+        setImagePickerOpen(false)
         let response = await ImagePicker.launchImageLibraryAsync();
         
         if(response.uri){
             setPhoto(response)
         }
-
-        /*const options = {
-          noData: true,
-        }
-        ImagePicker.launchImageLibrary(options, response => {
-            if (response.uri) {
-            setPhoto(response)
-          }
-        })*/
-      }
+    }
 
     const handleChange = (name, value) => {
         setProfile({...profile,
@@ -147,61 +152,71 @@ const CreateProfileScreen = props => {
         <View style={styles.container}>
             <ScrollView>
                 <Text style={styles.title}>Tell us about yourself!</Text>
-                <Text>Name*:</Text>
-                <TextInput
-                    keyboardType='email-address'
-                    onChangeText={(txt) => handleChange("name", txt)}
-                    style={{...styles.textInput, borderColor: profile.name ? Colors.checkColor: Colors.closeColor}}
-                    value={profile.name}
-                />
-                <Text>Age*:</Text>
-                <TextInput
-                    keyboardType='number-pad'
-                    onChangeText={(txt) => 
-                        {
-                            (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
-                        }
-                    }
-                    style={{...styles.textInput, borderColor: eval(profile.age) > 17 ? Colors.checkColor: Colors.closeColor}}
-                    value={profile.age}
-                />
-                
-                <Text> Gender*: </Text>
-                <View style={{ ...styles.textInput, width: '100%', borderColor: profile.gender ? Colors.checkColor: Colors.closeColor }}>
-                    <Picker
-                        mode='dialog'
-                        selectedValue={profile.gender || 'Select...'}
-                        style={{ width: '100%', marginBottom: 10}}
-                        onValueChange={(itemValue, itemIndex) => handleChange("gender", itemValue)}
-                    >
-                        <Picker.Item label="Select..." value="" />
-                        <Picker.Item label="Male" value="male" />
-                        <Picker.Item label="Female" value="female" />
-                        <Picker.Item label="Non Binary" value="non_binary" />
-                        <Picker.Item label="Trans Male" value="trans_male" />
-                        <Picker.Item label="Trans Female" value="trans_female" />
-                    </Picker>
+                <View style={{marginBottom: 10}}>
+                    <Input 
+                        onChange={(txt) => handleChange("name", txt)}
+                        type='default'
+                        value={profile.name}
+                        label='Name'
+                        style={{ borderColor: profile.name !== '' ? Colors.checkColor: Colors.closeColor }}
+                        />
                 </View>
-
-                <Text>About You (Optional):</Text>
-                <TextInput
-                    onChangeText={(txt) => handleChange("aboutMe", txt)}
-                    style={{...styles.textInput, borderColor: profile.aboutMe ? Colors.checkColor: Colors.closeColor}}
-                    value={profile.aboutMe}
-                />
-                <Text>Profession (Optional):</Text>
-                <TextInput
-                    onChangeText={(txt) => handleChange("profession", txt)}
-                    style={{...styles.textInput, borderColor: profile.profession ? Colors.checkColor: Colors.closeColor}}
-                    value={profile.profession}
-                />
-                <Text>Height (Optional):</Text>
-                <TextInput
-                    keyboardType='number-pad'
-                    onChangeText={(txt) => handleChange("height", txt)}
-                    style={{...styles.textInput, borderColor: profile.height ? Colors.checkColor: Colors.closeColor}}
-                    value={profile.height}
-                />
+                <View style={{marginBottom: 10}}>
+                    <Input 
+                        onChange={(txt) => 
+                            {
+                                (txt <= 110 ) ? handleChange("age", txt.replace(/[^0-9]/g, '')) : {}
+                            }
+                        }
+                        type='number-pad'
+                        value={profile.age}
+                        label='Age'
+                        style={{ borderColor: profile.age > 17 ? Colors.checkColor: Colors.closeColor }}
+                        />
+                </View>
+                <View style={{marginBottom: 10}}>
+                    <Text style={{color:'#b5b5b5'}}>Gender</Text>
+                    <View style={{ ...styles.picker, borderColor: profile.gender ? Colors.checkColor: Colors.closeColor }}>
+                        <Picker 
+                            onValueChange={(itemValue) => handleChange("gender", itemValue)} 
+                            options={
+                                [
+                                    { label: "Male", value: "male" }, 
+                                    { label: "Female", value: "female" }, 
+                                    { label: "Non Binary", value: "non_binary" }, 
+                                    { label: "Trans Male", value: "trans_male" },
+                                    { label: "Trans Female", value: "trans_female" }
+                                ]}
+                            />
+                    </View>
+                </View>
+                <View style={{marginBottom: 10}}>
+                    <Input 
+                        onChange={(txt) => handleChange("aboutMe", txt)}
+                        type='default'
+                        value={profile.aboutMe}
+                        label='About You'
+                        style={{ borderColor: profile.aboutMe !== '' ? Colors.checkColor: Colors.closeColor }}
+                        />
+                </View>
+                <View style={{marginBottom: 10}}>
+                    <Input 
+                        onChange={(txt) => handleChange("profession", txt)}
+                        type='default'
+                        value={profile.profession}
+                        label='Profession'
+                        style={{ borderColor: profile.profession !== '' ? Colors.checkColor: Colors.closeColor }}
+                        />
+                </View>
+                <View style={{marginBottom: 10}}>
+                    <Input 
+                        onChange={(txt) => handleChange("height", txt)}
+                        type='number-pad'
+                        value={profile.height}
+                        label='Height'
+                        style={{ borderColor: profile.height !== '' ? Colors.checkColor: Colors.closeColor }}
+                        />
+                </View>
 
                 <View style={{ flex: 1, marginVertical: 2}}>
                     <MultiSelect
@@ -228,12 +243,12 @@ const CreateProfileScreen = props => {
                 {photo && (
                         <Image
                             source={{ uri: photo.uri }}
-                            style={{ width: 300, height: 300, alignSelf: 'center' }}
+                            style={{ width: '80%', height: 400, alignSelf: 'center', borderRadius: 10 }}
                         />
                 )}
                 <TouchableOpacity 
                     style={styles.choosePhotoButton} 
-                    onPress={handleChoosePhoto}>
+                    onPress={()=>setImagePickerOpen(true)}>
                     <Text style={styles.choosePhotoText}>Choose Photo</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
@@ -243,6 +258,12 @@ const CreateProfileScreen = props => {
                     <Text style={{...styles.continueText, opacity: continueDisabled ? 0.7 : null}}>Continue</Text>
                 </TouchableOpacity>
             </ScrollView>
+            <ImagePickerModal 
+                visible={imagePickerOpen} 
+                onClose={()=>setImagePickerOpen(false)} 
+                onRollPick={handleChoosePhoto}
+                onCameraPick={handleTakePhoto}
+                />
             <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
     )
@@ -252,7 +273,8 @@ const styles = StyleSheet.create({
     choosePhotoButton: {
         marginVertical: 10,
         backgroundColor: '#ff3888', 
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderRadius: 10
     },
     choosePhotoText: {
         textAlign: 'center',
@@ -265,7 +287,8 @@ const styles = StyleSheet.create({
     continueButton: {
         marginVertical: 10,
         backgroundColor: Colors.acceptColor, 
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderRadius: 10
     },
     continueText: {
         textAlign: 'center',
@@ -293,6 +316,12 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         paddingBottom: 15,
         marginBottom: 15
+    },
+    picker: {
+        borderBottomWidth: 3, 
+        borderColor: 'red', 
+        margin: 5,
+        alignItems: 'center'
     }
 })
 

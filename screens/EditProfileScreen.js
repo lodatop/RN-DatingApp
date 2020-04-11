@@ -52,8 +52,8 @@ const EditProfileScreen = props => {
 
         const toUpdate = {};
 
-        toUpdate.aboutMe = profile.aboutMe;
-        toUpdate.profession = profile.profession;
+        toUpdate.aboutMe = profile.aboutMe ? profile.aboutMe : '';
+        toUpdate.profession = profile.profession ? profile.profession : '';
 
         if(toUpdate.length !== 0){
             db.collection("profile").where("uid", "==", uid)
