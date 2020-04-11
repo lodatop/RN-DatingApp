@@ -76,6 +76,9 @@ const LoginScreen = props => {
                     onChangeText={(text)=>{setPassword(text.trim())}}
                     style={{...styles.textInput, borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor}}
                     value={password}
+                    label='Password'
+                    isHidden={passwordIsHidden}
+                    style={{ borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor }}
                 />
                 <TouchableOpacity 
                     style={{...styles.showPassword}}

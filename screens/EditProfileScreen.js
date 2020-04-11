@@ -7,6 +7,7 @@ import { KoroProgress } from 'rn-koro-lib'
 import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 import Colors from '../constants/Colors';
+import { Input } from '../components/Input'
 
 const EditProfileScreen = props => {
 
@@ -51,10 +52,8 @@ const EditProfileScreen = props => {
 
         const toUpdate = {};
 
-        if(profile.aboutMe != '' && profile.aboutMe)
-            toUpdate.aboutMe = profile.aboutMe;
-        if(profile.profession != '' && profile.profession)
-            toUpdate.profession = profile.profession;
+        toUpdate.aboutMe = profile.aboutMe;
+        toUpdate.profession = profile.profession;
 
         if(toUpdate.length !== 0){
             db.collection("profile").where("uid", "==", uid)
@@ -80,20 +79,21 @@ const EditProfileScreen = props => {
 
     return (
         <View style={styles.container}>
-                <Text style={styles.label}>About me:</Text>
                 <View style={styles.inputContainer}>
-                    <TextInput
-                        keyboardType='default'
-                        editable={aboutMeDisabled ? false: true}
-                        onChangeText={(aboutme) => handleChange("aboutMe", aboutme)}
-                        style={
-                            {...styles.textInput, 
+                    <View style={{marginBottom: 10, width: '87%'}}>
+                        <Input 
+                            onChange={(aboutme) => handleChange("aboutMe", aboutme)}
+                            editable={aboutMeDisabled ? false: true}
+                            value={profile.aboutMe}
+                            style={{
+                                ...styles.textInput, 
                                 borderColor: aboutMeDisabled ? Colors.closeColor: Colors.checkColor,
-                                opacity: aboutMeDisabled ? 0.6:1
+                                opacity: aboutMeDisabled ? 0.6 : 1,
+                                backgroundColor: aboutMeDisabled ? 'lightgrey' : 'transparent'
                             }}
-                        value={profile.aboutMe}
-                        placeholder='Tell us something about you'
-                    />
+                            label='About Me'
+                            />
+                    </View>
                     <TouchableOpacity 
                         style={{flex: 1, alignSelf:'center', marginLeft: 8}} 
                         activeOpacity={0.6}
@@ -102,20 +102,21 @@ const EditProfileScreen = props => {
                         <MaterialIcons name='mode-edit' size={35} color='#ff73a1'/>
                     </TouchableOpacity>
                 </View>
-                <Text style={styles.label}>profession:</Text>
                 <View style={styles.inputContainer}>
-                    <TextInput
-                        keyboardType='default'
-                        editable={professionDisabled ? false: true}
-                        onChangeText={(prof) => handleChange("profession", prof)}
-                        style={
-                            {...styles.textInput, 
+                    <View style={{marginBottom: 10, width: '87%'}}>
+                        <Input 
+                            onChange={(prof) => handleChange("profession", prof)}
+                            value={profile.profession}
+                            editable={professionDisabled ? false: true}
+                            style={{
+                                ...styles.textInput, 
                                 borderColor: professionDisabled ? Colors.closeColor: Colors.checkColor,
-                                opacity: professionDisabled ? 0.6:1
+                                opacity: professionDisabled ? 0.6:1,
+                                backgroundColor: professionDisabled ? 'lightgrey' : 'transparent'
                             }}
-                        value={profile.profession}
-                        placeholder='What is your profession'
-                    />
+                            label='Profession'
+                            />
+                    </View>
                     <TouchableOpacity 
                         style={{flex: 1, alignSelf:'center', marginLeft: 8}} 
                         activeOpacity={0.6}
@@ -159,7 +160,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.acceptColor, 
         paddingVertical: 10,
         width: '100%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        borderRadius: 10
     },
     buttonText: {
         textAlign: 'center',
@@ -174,7 +176,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.cancelColor, 
         paddingVertical: 10,
         width: '70%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        borderRadius: 10
     },
     inputContainer:{
         width: '100%',
@@ -190,12 +193,6 @@ const styles = StyleSheet.create({
         fontWeight: '100'
     },
     textInput:{
-        width: '85%',
-        height: 40,
-        borderBottomWidth: 3,
-        // borderRightWidth: 3,
-        borderColor: 'red',
-        backgroundColor: '#fae3ef',
         margin: 5,
         paddingHorizontal: 10
     }

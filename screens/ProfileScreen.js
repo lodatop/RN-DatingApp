@@ -254,7 +254,8 @@ const styles = StyleSheet.create({
     modalButton: {
         width: '80%',
         marginVertical: 10,
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderRadius: 10
     },
     modalTitle:{
         marginVertical: 15,

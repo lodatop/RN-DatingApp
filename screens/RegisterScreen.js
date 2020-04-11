@@ -91,8 +91,9 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         marginVertical: 10,
-        backgroundColor: Colors.cancelColor, 
-        paddingVertical: 10
+        backgroundColor: Colors.acceptColor, 
+        paddingVertical: 10,
+        borderRadius: 10
     },
     loginText: {
         textAlign: 'center',
@@ -107,7 +108,8 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.acceptColor, 
         paddingVertical: 10,
         width: '70%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        borderRadius: 10
     },
     registerText: {
         textAlign: 'center',
