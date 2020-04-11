@@ -7,7 +7,6 @@ import Colors from '../constants/Colors';
 import { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext';
 import { Input } from '../components/Input'
-import {Picker} from '../components/Picker'
 
 const LoginScreen = props => {
 
@@ -104,7 +103,7 @@ const LoginScreen = props => {
                 >
                 <Text style={styles.registerText}>Register</Text>
             </TouchableOpacity>
-            <KoroProgress visible={loading} color='#ed1f63'/>
+            <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
 }

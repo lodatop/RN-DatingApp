@@ -78,7 +78,7 @@ const RegisterScreen = props => {
                 >
                 <Text style={styles.loginText}>Go back to login</Text>
             </TouchableOpacity>
-            <KoroProgress visible={loading} color='#ed1f63'/>
+            <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
 }

@@ -223,7 +223,7 @@ const UserImagesScreen = props => {
                     onRollPick={handleChoosePhoto}
                     onCameraPick={handleTakePhoto}
                 />
-                <KoroProgress visible={loading} color='#ed1f63'/>
+                <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
             </View>
         </ScrollView>
         )
