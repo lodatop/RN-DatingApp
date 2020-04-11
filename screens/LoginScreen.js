@@ -1,11 +1,13 @@
 import React, { useState, useContext } from 'react';
 import { View, Text, ScrollView, StyleSheet, Button, Alert, TextInput, TouchableOpacity } from 'react-native';
-import { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext';
-
 import { KoroProgress } from 'rn-koro-lib';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+
+import { FirebaseContext } from '../components/Firebase';
+import { ProfileContext } from '../components/ProfileContext/ProfileContext';
+import { Input } from '../components/Input'
+import {Picker} from '../components/Picker'
 
 const LoginScreen = props => {
 
@@ -34,7 +36,7 @@ const LoginScreen = props => {
             alert(errorMessage)
         });
     }
-
+    
     const setProfileContext = async () => {
         setLoading(true);
 
@@ -59,22 +61,21 @@ const LoginScreen = props => {
     return (
         <View style={styles.container}>
             <Text style={styles.title}>Sign in to continue!</Text>
-            <Text>Email:</Text>
-            <TextInput
-                keyboardType='email-address'
-                onChangeText={(text)=>{setEmail(text.trim())}}
-                style={{...styles.textInput, borderColor: email !== '' ? Colors.checkColor: Colors.closeColor}}
-                value={email}
-            />
-            <Text>Password:</Text>
-            <View>
-                <TextInput
+            <View style={{marginBottom: 10}}>
+                <Input 
+                    onChange={(value)=>{setEmail(value.trim())}}
+                    type='email-address'
+                    value={email}
+                    label='Email'
+                    style={{ borderColor: email !== '' ? Colors.checkColor: Colors.closeColor }}
+                    />
+            </View>
+            <View style={{marginBottom: 10}}>
+                <Input
                     autoCorrect={false}
                     autoCompleteType='off'
-                    secureTextEntry={passwordIsHidden}
-                    keyboardType='default'
-                    onChangeText={(text)=>{setPassword(text.trim())}}
-                    style={{...styles.textInput, borderColor: password.length > 5 ? Colors.checkColor: Colors.closeColor}}
+                    onChange={(value)=>{setPassword(value.trim())}}
+                    type='default'
                     value={password}
                     label='Password'
                     isHidden={passwordIsHidden}
@@ -88,6 +89,7 @@ const LoginScreen = props => {
                     <Ionicons name='md-eye' size={30} color='black'/>
                 </TouchableOpacity>
             </View>
+
             <TouchableOpacity
                 activeOpacity={0.7}
                 style={styles.loginButton} 
@@ -100,7 +102,7 @@ const LoginScreen = props => {
                 style={styles.registerButton} 
                 onPress={() => props.navigation.navigate('Register')}
                 >
-                <Text style={styles.registerText}>Sign up</Text>
+                <Text style={styles.registerText}>Register</Text>
             </TouchableOpacity>
             <KoroProgress visible={loading} color='#ed1f63'/>
         </View>
@@ -110,7 +112,7 @@ const LoginScreen = props => {
 const styles = StyleSheet.create({
     showPassword: {
         position: 'absolute',
-        top: 0,
+        top: '25%',
         right: 5,
         backgroundColor: 'rgba(224, 224, 224, 0.7)',
         paddingHorizontal: 10,
@@ -119,7 +121,8 @@ const styles = StyleSheet.create({
     loginButton: {
         marginVertical: 10,
         backgroundColor: Colors.acceptColor, 
-        paddingVertical: 10
+        paddingVertical: 10,
+        borderRadius: 10
     },
     loginText: {
         textAlign: 'center',
@@ -134,7 +137,9 @@ const styles = StyleSheet.create({
         backgroundColor: Colors.cancelColor, 
         paddingVertical: 10,
         width: '70%',
-        alignSelf: 'center'
+        alignSelf: 'center',
+        borderRadius: 10
+
     },
     registerText: {
         textAlign: 'center',
@@ -145,7 +150,7 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase'
     },
     textInput:{
-        height: 40,
+        height: 60,
         borderBottomWidth: 3,
         borderColor: 'red',
         margin: 5,

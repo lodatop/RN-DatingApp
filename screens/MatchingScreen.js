@@ -12,28 +12,6 @@ import Colors from '../constants/Colors'
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
-const Users = [
-    { id: "1", uri: require('../assets/1.jpg') },
-    { id: "2", uri: require('../assets/2.jpg') },
-    { id: "3", uri: require('../assets/3.jpg') },
-    { id: "4", uri: require('../assets/4.jpg') },
-    { id: "5", uri: require('../assets/5.jpg') },
-    { id: "6", uri: require('../assets/1.jpg') },
-    { id: "7", uri: require('../assets/2.jpg') },
-    { id: "8", uri: require('../assets/3.jpg') },
-    { id: "9", uri: require('../assets/4.jpg') },
-    { id: "10", uri: require('../assets/5.jpg') },
-    { id: "11", uri: require('../assets/1.jpg') },
-    { id: "12", uri: require('../assets/2.jpg') },
-    { id: "13", uri: require('../assets/3.jpg') },
-    { id: "14", uri: require('../assets/4.jpg') },
-    { id: "15", uri: require('../assets/5.jpg') },
-    { id: "16", uri: require('../assets/1.jpg') },
-    { id: "17", uri: require('../assets/2.jpg') },
-    { id: "18", uri: require('../assets/3.jpg') },
-    { id: "19", uri: require('../assets/4.jpg') },
-    { id: "20", uri: require('../assets/5.jpg') },
-  ]
 
 const MatchingScreen = props => {
 
@@ -398,8 +376,6 @@ const styles = StyleSheet.create({
         width: 60, 
         height: 60, 
         borderRadius: 30,
-        borderColor: 'black',
-        borderWidth: 1,
         alignItems: 'center',
         justifyContent: 'center',
         elevation: 10
