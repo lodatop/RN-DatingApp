@@ -1,5 +1,5 @@
 import React, { useState, useContext, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, Image, Dimensions, Animated, PanResponder, PushNotificationIOS, TouchableNativeFeedbackComponent, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, Vibration, StyleSheet, Image, Dimensions, Animated, PanResponder, PushNotificationIOS, TouchableNativeFeedbackComponent, TouchableOpacity } from 'react-native';
 
 import {KoroProgress} from 'rn-koro-lib'
 
@@ -7,6 +7,7 @@ import  { FirebaseContext } from '../components/Firebase';
 import { ProfileContext } from '../components/ProfileContext/ProfileContext'
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileModal } from '../components/ProfileModal';
+import { MatchModal } from '../components/MatchModal'
 import { Wrapper } from '../hoc/Wrapper';
 import Colors from '../constants/Colors'
 
@@ -26,6 +27,7 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
+    const [thereIsMatch, setThereIsMatch] = useState(false)
     const [notification, setNotification] = useState({})
 
     useEffect(()=>{
@@ -43,7 +45,7 @@ const MatchingScreen = props => {
     }, [profileContext])
 
     const handleNotification = (notification) => {
-        Vibration.vibrate();
+        Vibration.vibrate(1000)
         setNotification(notification)
     }
 
@@ -52,7 +54,7 @@ const MatchingScreen = props => {
         const message = {
           to: expoToken,
           sound: 'default',
-          title: 'NEW MATCH, BITCH',
+          title: 'NEW MATCH, COME CHECK THIS OUT',
           body: "You've matched with " + name + "!",
           data: { data: 'goes here' },
           _displayInForeground: true,
@@ -116,7 +118,7 @@ const MatchingScreen = props => {
                 }
                 db.collection('chat').add(chat).then(ref => {
                     if(expoToken && expoToken !== '') sendPushNotification(expoToken, profile.name)
-                    alert('ITS A MOTHERFUCKING MATCH YOU MOTHERFUCKING BITCH SUCK MY DICK')
+                        setThereIsMatch(true)
                 })
             }
         }
@@ -385,6 +387,7 @@ const MatchingScreen = props => {
                     : <Text>No more profiles available yet</Text>
                 }
                 <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
+                <MatchModal visible={thereIsMatch} onClose={() => {setThereIsMatch(false)}} />
             </View>
     )
 }
