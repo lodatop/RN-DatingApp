@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1012519144320",
+    "firebase_url": "https://allaboutthatace-bh.firebaseio.com",
+    "project_id": "allaboutthatace-bh",
+    "storage_bucket": "allaboutthatace-bh.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1012519144320:android:2dea6ac232bf45d36d0f65",
+        "android_client_info": {
+          "package_name": "com.acemate.wamt"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1012519144320-otcq3ao80k30hcaklg35tc9l8d1fn8ca.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDG4cyvCtL0Gh-JPyB8nE-Xw5QLRCRZWJ8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1012519144320-otcq3ao80k30hcaklg35tc9l8d1fn8ca.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

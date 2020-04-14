@@ -8,6 +8,7 @@
     "version": "0.0.1",
     "android": {
       "package": "com.acemate.wamt",
+      "googleServicesFile": "./google-services.json",
       "versionCode": 1
     }
   }

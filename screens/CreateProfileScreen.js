@@ -1,10 +1,11 @@
 import React, { useState, useContext, useEffect } from 'react';
 import {View, Text, ScrollView, StyleSheet, Button, TextInput, Image, TouchableOpacity} from 'react-native';
 
-//import ImagePicker from 'react-native-image-picker';
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
 
 import * as ImagePicker from 'expo-image-picker';
-import MultiSelect from 'react-native-multiple-select';
 
 
 import { KoroProgress } from 'rn-koro-lib';
@@ -25,7 +26,8 @@ const CreateProfileScreen = props => {
         gender: '',
         aboutMe: '',
         profession: '',
-        height: ''
+        height: '',
+        expoToken: ''
     })
     const [photo, setPhoto] = useState(null)
     const [loading, setLoading] = useState(false);
@@ -37,6 +39,9 @@ const CreateProfileScreen = props => {
     const firebase = useContext(FirebaseContext);
     const profileContext = useContext(ProfileContext)
 
+    useEffect(()=> {
+        registerForPushNotificationsAsync()
+    }, [])
     useEffect(() => {
         (profile.name === '' || eval(profile.age) < 18 || profile.gender === '' || lookingFor.length == 0) ?
         setContinueDisabled(true) : setContinueDisabled(false)
@@ -60,9 +65,36 @@ const CreateProfileScreen = props => {
       }
     ];
 
-    const onSelectedLookingFor = (selected) => {
-        setLookingFor(selected);
-    };
+    //creates an expoPushToken for notification purposes.
+    const registerForPushNotificationsAsync = async () => {
+        if (Constants.isDevice) {
+          const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          let token = await Notifications.getExpoPushTokenAsync();
+          setProfile({...profile,
+            expoToken: token})
+          console.log(token)
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+    
+        if (Platform.OS === 'android') {
+          Notifications.createChannelAndroidAsync('default', {
+            name: 'default',
+            sound: true,
+            priority: 'max',
+            vibrate: [0, 250, 250, 250],
+          });
+        }
+      };
 
     const handleTakePhoto = async () => {
         setImagePickerOpen(false)
@@ -107,7 +139,8 @@ const CreateProfileScreen = props => {
                         age: profile.age,
                         gender: profile.gender,
                         lookingFor: lookingFor,
-                        photos: [url]
+                        photos: [url],
+                        expoToken: profile.expoToken
                     }
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
@@ -130,7 +163,8 @@ const CreateProfileScreen = props => {
                 name: profile.name,
                 age: profile.age,
                 gender: profile.gender,
-                lookingFor: lookingFor
+                lookingFor: lookingFor,
+                expoToken: profile.expoToken
             }
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;

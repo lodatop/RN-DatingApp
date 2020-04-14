@@ -10,6 +10,8 @@ import { ProfileModal } from '../components/ProfileModal';
 import { Wrapper } from '../hoc/Wrapper';
 import Colors from '../constants/Colors'
 
+import { Notifications } from 'expo';
+
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
@@ -24,20 +26,49 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
+    const [notification, setNotification] = useState({})
 
     useEffect(()=>{
         setCurrentIndex(0)
         setDoneFetchin(false)
+        Notifications.addListener(handleNotification);
     }, [])
+
     useEffect(()=> {
-        
         if(profile.uid) getProfiles()
-    }, [profile])  
+    }, [profile])
+
     useEffect(()=> {
-        
         setProfile(profileContext.profile)
     }, [profileContext])
 
+    const handleNotification = (notification) => {
+        Vibration.vibrate();
+        setNotification(notification)
+    }
+
+    //sends notification when users match
+    const sendPushNotification = async (expoToken, name) => {
+        const message = {
+          to: expoToken,
+          sound: 'default',
+          title: 'NEW MATCH, BITCH',
+          body: "You've matched with " + name + "!",
+          data: { data: 'goes here' },
+          _displayInForeground: true,
+        };
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      };
+
+    //the algorithm to get the profiles for the user to match with
     const getProfiles = () => {
         setDatingProfiles([])
         
@@ -73,7 +104,8 @@ const MatchingScreen = props => {
         });
     }
 
-    const checkMatch = (profileId) => {
+    //checks if users have matched
+    const checkMatch = (profileId, expoToken) => {
         if(profile.likedBy){
             if(profile.likedBy.includes(profileId))
             {
@@ -83,6 +115,7 @@ const MatchingScreen = props => {
                     participants: [profile.uid, profileId]
                 }
                 db.collection('chat').add(chat).then(ref => {
+                    if(expoToken && expoToken !== '') sendPushNotification(expoToken, profile.name)
                     alert('ITS A MOTHERFUCKING MATCH YOU MOTHERFUCKING BITCH SUCK MY DICK')
                 })
             }
@@ -103,7 +136,7 @@ const MatchingScreen = props => {
                 likedBy: userLikedBy
             }
             doc.ref.update(toUpdate);
-            checkMatch(datingProfiles[currentIndex].uid)
+            (datingProfiles[currentIndex].expoToken)? checkMatch(datingProfiles[currentIndex].uid, datingProfiles[currentIndex].expoToken) : checkMatch(datingProfiles[currentIndex].uid) ;
             //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
