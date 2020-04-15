@@ -24,11 +24,13 @@ const MatchingScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [datingProfiles, setDatingProfiles] = useState([])
     const [currentIndex, setCurrentIndex] = useState(0);
-    const position = new Animated.ValueXY();
     const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
     const [thereIsMatch, setThereIsMatch] = useState(false)
     const [notification, setNotification] = useState({})
+    const [matchedName, setMatchedName] = useState('')
+
+    const position = new Animated.ValueXY();
 
     useEffect(()=>{
         setCurrentIndex(0)
@@ -107,7 +109,7 @@ const MatchingScreen = props => {
     }
 
     //checks if users have matched
-    const checkMatch = (profileId, expoToken) => {
+    const checkMatch = (profileId, name, expoToken) => {
         if(profile.likedBy){
             if(profile.likedBy.includes(profileId))
             {
@@ -118,9 +120,21 @@ const MatchingScreen = props => {
                 }
                 db.collection('chat').add(chat).then(ref => {
                     if(expoToken && expoToken !== '') sendPushNotification(expoToken, profile.name)
-                        setThereIsMatch(true)
+                        showModal(name)
                 })
             }
+        }
+    }
+
+    //shows modal when matched if previous one was closed
+    const showModal = (name) => {
+        if(thereIsMatch){
+            setInterval(()=>{
+                showModal(name)
+            }, 1000)
+        } else {
+            setMatchedName(name)
+            setThereIsMatch(true)
         }
     }
 
@@ -138,7 +152,7 @@ const MatchingScreen = props => {
                 likedBy: userLikedBy
             }
             doc.ref.update(toUpdate);
-            (datingProfiles[currentIndex].expoToken)? checkMatch(datingProfiles[currentIndex].uid, datingProfiles[currentIndex].expoToken) : checkMatch(datingProfiles[currentIndex].uid) ;
+            (datingProfiles[currentIndex].expoToken)? checkMatch(datingProfiles[currentIndex].uid, datingProfiles[currentIndex].name, datingProfiles[currentIndex].expoToken) : checkMatch(datingProfiles[currentIndex].uid) ;
             //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
@@ -387,7 +401,7 @@ const MatchingScreen = props => {
                     : <Text>No more profiles available yet</Text>
                 }
                 <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
-                <MatchModal visible={thereIsMatch} onClose={() => {setThereIsMatch(false)}} />
+                <MatchModal visible={thereIsMatch} name={matchedName} onClose={() => {setThereIsMatch(false)}} />
             </View>
     )
 }
