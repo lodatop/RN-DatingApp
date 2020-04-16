@@ -3,8 +3,8 @@ import { View, Text, ScrollView, Vibration, StyleSheet, Image, Dimensions, Anima
 
 import {KoroProgress} from 'rn-koro-lib'
 
-import  { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext'
+import  { FirebaseContext } from '../context/Firebase';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext'
 import { Ionicons } from '@expo/vector-icons';
 import { ProfileModal } from '../components/ProfileModal';
 import { MatchModal } from '../components/MatchModal'

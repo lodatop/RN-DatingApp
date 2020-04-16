@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, StyleSheet, Image, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
-import  { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext'
+import  { FirebaseContext } from '../context/Firebase';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext'
 
 import { MaterialIcons, AntDesign } from '@expo/vector-icons'
 

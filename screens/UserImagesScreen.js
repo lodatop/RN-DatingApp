@@ -5,8 +5,8 @@ import { KoroProgress, KoroModal } from 'rn-koro-lib'
 import * as ImagePicker from 'expo-image-picker';
 
 
-import  { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext'
+import  { FirebaseContext } from '../context/Firebase';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext'
 import ImagePickerModal from '../components/ImagePickerModal'
 import Colors from '../constants/Colors';
 

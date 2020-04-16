@@ -10,8 +10,8 @@ import * as ImagePicker from 'expo-image-picker';
 
 import { KoroProgress } from 'rn-koro-lib';
 
-import { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext';
+import { FirebaseContext } from '../context/Firebase';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import Colors from '../constants/Colors';
 import { Input } from '../components/Input'
 import { Picker } from '../components/Picker'

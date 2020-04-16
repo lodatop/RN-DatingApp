@@ -4,8 +4,8 @@ import { KoroProgress } from 'rn-koro-lib';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
 
-import { FirebaseContext } from '../components/Firebase';
-import { ProfileContext } from '../components/ProfileContext/ProfileContext';
+import { FirebaseContext } from '../context/Firebase';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import { Input } from '../components/Input'
 
 const LoginScreen = props => {

@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, TextInput} from 'react-native';
-import  { FirebaseContext } from '../components/Firebase';
+import  { FirebaseContext } from '../context/Firebase';
 
 import Colors from '../constants/Colors';
 import { KoroProgress } from 'rn-koro-lib';

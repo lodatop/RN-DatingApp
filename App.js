@@ -1,6 +1,6 @@
 import React  from 'react';
-import Firebase, { FirebaseContext } from './components/Firebase';
-import { ProfileProvider } from './components/ProfileContext/ProfileContext'
+import Firebase, { FirebaseContext } from './context/Firebase';
+import { ProfileProvider } from './context/ProfileContext/ProfileContext'
 import { YellowBox } from 'react-native';
 import { enableScreens } from 'react-native-screens';
 import _ from 'lodash';
