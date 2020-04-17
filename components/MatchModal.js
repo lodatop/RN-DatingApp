@@ -1,6 +1,7 @@
+//This modal appeas when the user has made
+
 import React, {useState, useEffect} from 'react';
 import { View, Modal, Text, Image, ScrollView, TouchableWithoutFeedback, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
 import Colors from '../constants/Colors';
 
 const {width, height} = Dimensions.get('window')

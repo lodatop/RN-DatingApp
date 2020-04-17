@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons'
+//Here is handled the rest of the data from the profile
 
 const ProfileData = props => {
 

@@ -4,13 +4,14 @@ import { MaterialIcons } from '@expo/vector-icons'
 import { KoroProgress, KoroModal } from 'rn-koro-lib'
 import * as ImagePicker from 'expo-image-picker';
 
-
 import  { FirebaseContext } from '../context/Firebase';
 import { ProfileContext } from '../context/ProfileContext/ProfileContext'
 import ImagePickerModal from '../components/ImagePickerModal'
 import Colors from '../constants/Colors';
 
 const { width } = Dimensions.get('window')
+
+//Here are shown the images of the user, add more or delete the existing ones
 
 const UserImagesScreen = props => {
     const profileContext = useContext(ProfileContext);

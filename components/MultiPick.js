@@ -1,6 +1,7 @@
+//This component is the multipicker we see at the create profile screen, it allows to pick M from N options being M <= N
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity, SectionList } from 'react-native';
-import Colors from '../constants/Colors'
 import { AntDesign } from '@expo/vector-icons'
 
 const MultiPick = (props) => {

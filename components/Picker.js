@@ -1,6 +1,7 @@
+//This component is the picker we see at the create profile screen, it allows to pick one from N options
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Modal, TouchableOpacity, SectionList } from 'react-native';
-import Colors from '../constants/Colors'
 import { AntDesign } from '@expo/vector-icons'
 
 const Picker = (props) => {
@@ -17,7 +18,6 @@ const Picker = (props) => {
     }
 
     return(
-        // <View><Text>Im the picker</Text></View>
         <TouchableOpacity 
             activeOpacity={0.7}
             style={styles.container}

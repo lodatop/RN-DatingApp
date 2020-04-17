@@ -119,6 +119,8 @@ const CreateProfileScreen = props => {
             [name]: value})
     }
 
+
+    //Gets all data entered by the user and adds it to the profile
     const createProfile = async () => {
 
         let uid = await firebase.auth.currentUser.uid;

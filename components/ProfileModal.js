@@ -1,3 +1,6 @@
+//This component shows the user data in the matching cards section, letting other
+//users see the profile data of each user that appears to them
+
 import React, {useState, useEffect} from 'react';
 import { View, Modal, Text, Image, ScrollView, TouchableWithoutFeedback, StyleSheet, Dimensions, TouchableOpacity } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
@@ -16,6 +19,7 @@ export const ProfileModal = (props) => {
     const profLength = profile.photos ? profile.photos.length : 0;
     const userPhotos = profile.photos ? [...profile.photos] : null
 
+    //If the user doesn't have any photos, it will be displayed the default photo
     let topPart = (
         userPhotos ? 
         userPhotos.map((photo, i) => {
@@ -51,7 +55,7 @@ export const ProfileModal = (props) => {
             <ScrollView
                 style={styles.scrollView}
             >
-                {/*Here the image has to be a carrusel, it will come in userPhotos array*/}
+                {/*Here are shown all the images of the user, one by once by clicking left or rigth*/}
                 <View style={{width: width, height: height*0.6, 
                     overflow: 'hidden', zIndex: 90,
                     flexDirection: 'row'}}>
@@ -90,6 +94,7 @@ export const ProfileModal = (props) => {
                         {topPart}
                     </View>
                 </View>
+                {/*Here goes the profile data*/}
                 <View style={styles.infoContainer}>
                     <Text style={{fontSize: 40}}>{profile.name}, {profile.age}</Text>
                     <Text style={styles.label}>Gender: 

@@ -1,3 +1,5 @@
+//This is a customized Input
+
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, TextInput, View, Animated } from 'react-native';
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 
-
+//Here are handled the profile photos shown in the carrusel
 const UserImages = props => {
 
     const { images = [] } = props

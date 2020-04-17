@@ -153,7 +153,6 @@ const MatchingScreen = props => {
             }
             doc.ref.update(toUpdate);
             (datingProfiles[currentIndex].expoToken)? checkMatch(datingProfiles[currentIndex].uid, datingProfiles[currentIndex].name, datingProfiles[currentIndex].expoToken) : checkMatch(datingProfiles[currentIndex].uid) ;
-            //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
             console.log(error)
@@ -176,7 +175,6 @@ const MatchingScreen = props => {
                 dislikedBy: userDislikedBy
             }
             doc.ref.update(toUpdate);
-            //aqui haces pa q se pase al otro perfil
             });
         }).catch(function(error) {
             alert("Error getting documents: ", error);
@@ -184,6 +182,7 @@ const MatchingScreen = props => {
 
     }
 
+    //This is the logic for the card to rotate ad=nd translate
     const rotate = position.x.interpolate({
         inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
         outputRange:['-10deg', '0deg', '10deg'],
@@ -281,7 +280,7 @@ const MatchingScreen = props => {
         })
     }
 
-
+    //This function render all users being looked for by the actual user that havent being swiped yet
     const renderUsers = () => {
         if(doneFetchin){
             return datingProfiles.map((user, i) => {
@@ -372,6 +371,7 @@ const MatchingScreen = props => {
         }
     }
     
+    //Here is managed the order of the cards and the current card being shown
     return (
         <View style={styles.container}>
                 {renderUsers()}

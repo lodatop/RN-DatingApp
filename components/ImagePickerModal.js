@@ -1,3 +1,5 @@
+//This component allows the user to pick between using the manera or the camera roll
+
 import React from 'react'
 import {View, TouchableOpacity, Text, StyleSheet, Modal, Dimensions} from 'react-native'
 import { MaterialIcons } from '@expo/vector-icons'

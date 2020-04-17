@@ -22,6 +22,10 @@ const defaultStackConfig = {
     headerTintColor: 'white'
   }
 
+//We divided the tab navigation in multiple stacks, so every tab has its own stack
+//But we start with a stack nav so the user can register or login without being able to navigate throught the tabs
+
+//Here is handled the matching tab and subsecuent screens
 const MatchingStackNavigator = createStackNavigator();
 export const MatchingNavigator = () => {
   return (
@@ -35,6 +39,7 @@ export const MatchingNavigator = () => {
   )
 }
 
+//Here is handled the inbox tab and subsecuent screens
 const InboxStackNavigator = createStackNavigator();
 export const InboxNavigator = () => {
   return (
@@ -48,6 +53,7 @@ export const InboxNavigator = () => {
   )
 }
 
+//Here is handled the profile tab and subsecuent screens
 const ProfileStackNavigator = createStackNavigator();
 export const ProfileNavigator = () => {
   return (
@@ -78,6 +84,7 @@ export const ProfileNavigator = () => {
   )
 }
 
+//Here we navigate between the tabs
 const AppTabNavigator = createBottomTabNavigator();
 export const TabNavigator = () => {
   return (
@@ -118,6 +125,7 @@ export const TabNavigator = () => {
   )
 }
 
+//Here is handled the login and register process before navigating to the tabs
 const LoginStackNavigator = createStackNavigator();
 export const LoginNavigator = () => {
   return (

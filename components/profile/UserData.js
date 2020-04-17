@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, Dimensions, Image} from 'react-native';
 
-import { Ionicons } from '@expo/vector-icons'
+//Here is handled the profile picture and basic data
 
 const UserData = props => {
 
@@ -10,9 +10,6 @@ const UserData = props => {
     return (
             <View style={styles.infoContainer}>
                 <View style={styles.imageContainer}>
-                    {/* <TouchableOpacity style={styles.changePhoto}>
-                        <Ionicons name='ios-add' size={30}/>
-                    </TouchableOpacity> */}
                     <View style={styles.profileImg}>
                         {
                             (photo)? 

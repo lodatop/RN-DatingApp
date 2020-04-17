@@ -43,6 +43,7 @@ const EditProfileScreen = props => {
         });
     }
 
+    //THe new data is taken and updated to the preview data, so the profile can be updated
     const updateProfile = async () => {
 
         let uid = profile.uid;
