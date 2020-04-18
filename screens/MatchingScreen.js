@@ -80,7 +80,7 @@ const MatchingScreen = props => {
         const db = firebase.firestore;
         const query =
         (profile.lookingFor)?
-            db.collection('profile').where('gender', 'in', profile.lookingFor)
+            db.collection('profile').where('gender', 'in', profile.lookingFor).where('lookingFor', 'array-contains', profile.gender)
             : db.collection('profile').where('lookingFor', 'array-contains', profile.gender);
 
         query.get()
