@@ -9,6 +9,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { ProfileModal } from '../components/ProfileModal';
 import { MatchModal } from '../components/MatchModal'
 import { Wrapper } from '../hoc/Wrapper';
+import ProfileCard from '../components/ProfileCard';
 import Colors from '../constants/Colors'
 
 import { Notifications } from 'expo';
@@ -138,7 +139,7 @@ const MatchingScreen = props => {
         }
     }
 
-    const likeProfile = () => {
+    const likeProfile = (currentIndex) => {
 
         var db = firebase.firestore;
         
@@ -161,7 +162,7 @@ const MatchingScreen = props => {
 
     }
 
-    const dislikeProfile = () => {
+    const dislikeProfile = (currentIndex) => {
 
         var db = firebase.firestore;
         
@@ -181,228 +182,14 @@ const MatchingScreen = props => {
         }); 
 
     }
-
-    //This is the logic for the card to rotate ad=nd translate
-    const rotate = position.x.interpolate({
-        inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-        outputRange:['-10deg', '0deg', '10deg'],
-        extrapolate: 'clamp'
-    })
-
-    const rotateAndTranslate = {
-        transform: [{
-            rotate: rotate
-        },
-        ...position.getTranslateTransform()
-        ]
-    }
-
-    const panResponder = PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onPanResponderMove: (e, gestureState)=> {
-            position.setValue({x: gestureState.dx, y: gestureState.dy});
-        },
-        onPanResponderRelease: (e, gestureState) => {
-            if(gestureState.dx > 120){
-                likeProfile()
-                Animated.timing(position, {
-                    toValue: { x: SCREEN_WIDTH+100, y: gestureState.dy},
-                    duration: 500
-                }).start(()=>{
-                    setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
-                        position.setValue({x: 0, y: 0})
-                    }
-                })
-            } else if(gestureState.dx < -120){
-                dislikeProfile()
-                Animated.timing(position, {
-                    toValue: { x: -SCREEN_WIDTH-100, y: gestureState.dy},
-                    duration: 500
-                }).start(()=>{
-                    setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
-                        position.setValue({x: 0, y: 0})
-                    }
-                })
-            } else {
-                Animated.spring(position, {
-                        toValue: { x: 0, y: 0 },
-                        friction: 4
-                    }).start()
-                }
-        }
-    });
-
-    const likeOpacity = position.x.interpolate({
-        inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-        outputRange:[0, 0, 1],
-        extrapolate: 'clamp'
-    })
-
-    const dislikeOpacity = position.x.interpolate({
-        inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-        outputRange:[1, 0, 0],
-        extrapolate: 'clamp'
-    })
-
-    const nexCardOpacity = position.x.interpolate({
-        inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-        outputRange:[1, 0, 1],
-        extrapolate: 'clamp'
-    })
-
-    const nexCardScale = position.x.interpolate({
-        inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
-        outputRange:[1, 0.8, 1],
-        extrapolate: 'clamp'
-    })
-
-    const swipeRigth = () => {
-        likeProfile()
-        Animated.timing(position, {
-            toValue: { x: SCREEN_WIDTH+100, y: 8},
-            duration: 500
-        }).start(()=>{
-            setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
-                position.setValue({x: 0, y: 0})
-            }
-        })
-    }
-
-    const swipeLeft = () => {
-        dislikeProfile()
-        Animated.timing(position, {
-            toValue: { x: -SCREEN_WIDTH-100, y: 8},
-            duration: 500
-        }).start(()=>{
-            setCurrentIndex(currentIndex=> currentIndex + 1), ()=>{
-                position.setValue({x: 0, y: 0})
-            }
-        })
-    }
-
-    //This function render all users being looked for by the actual user that havent being swiped yet
-    const renderUsers = () => {
-        if(doneFetchin){
-            return datingProfiles.map((user, i) => {
-                if (i < currentIndex) {
-                    return null
-                }
-                else if (i == currentIndex) {
-                    return (
-                        <Animated.View
-                        key={user.uid}
-                        {...panResponder.panHandlers}
-                        style={{
-                            ...rotateAndTranslate,
-                            ...styles.cardStyle
-                        }}>
-                            <Animated.View 
-                                style={{ opacity: likeOpacity, transform: [{ rotate: '-30deg' }], position: 'absolute', top: 50, left: 40, zIndex: 1000 }}>
-                                <Text style={{ ...styles.label, borderColor: 'green', color: 'green' }}>
-                                    LIKE
-                                </Text>
-                            </Animated.View>
-                            <Animated.View 
-                                style={{ opacity: dislikeOpacity, transform: [{ rotate: '30deg' }], position: 'absolute', top: 50, right: 40, zIndex: 1000 }}>
-                                <Text style={{ ...styles.label, borderColor: 'red', color: 'red' }}>
-                                    NOPE
-                                </Text>
-                            </Animated.View>
-
-                            <Image 
-                                style={{
-                                    flex: 1,
-                                    width: null,
-                                    height: null
-                                }}
-                                resizeMode='cover'
-                                source={user.photos ? {uri: user.photos[0]}: require('../assets/default-user.png')}/>
-
-                            <View style={styles.profileInfoContainer}>
-                                <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
-                            </View>
-
-                            <TouchableOpacity
-                                onPress={()=>setModalVisible(true)}
-                                style={styles.showMoreContainer}>
-                                <View style={styles.showMoreButton}>
-                                    <Ionicons name='ios-arrow-down' size={50} color='white'/>
-                                </View>
-                            </TouchableOpacity>
-                        </Animated.View>
-                    )
-                }
-                else {
-                    return (
-                        <Animated.View 
-                        // {...panResponder.panHandlers}
-                        key={user.uid}
-                        style={{
-                            opacity: nexCardOpacity,
-                            transform: [{scale: nexCardScale}],
-                            ...styles.cardStyle
-                        }}>
-
-                            <Image 
-                                style={{
-                                    flex: 1,
-                                    width: null,
-                                    height: null
-                                }}
-                                resizeMode='cover'
-                                source={user.photos ? {uri: user.photos[0]}: require('../assets/default-user.png')}/>
-
-                            <View style={styles.profileInfoContainer}>
-                                <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
-                            </View>
-
-                            
-                            <TouchableOpacity
-                                onPress={()=>setModalVisible(true)}
-                                style={styles.showMoreContainer}>
-                                <View style={styles.showMoreButton}>
-                                    <Ionicons name='ios-arrow-down' size={50} color='white'/>
-                                </View>
-                            </TouchableOpacity>
-                        </Animated.View>
-                    )
-                }
-            }).reverse()
-        }
-    }
     
     //Here is managed the order of the cards and the current card being shown
     return (
         <View style={styles.container}>
-                {renderUsers()}
-                {currentIndex < datingProfiles.length ?
-                    <Wrapper>
-                        <View style={styles.swipeButtonsContainer}>
-                            <TouchableOpacity 
-                                onPress={swipeLeft}
-                                style={{
-                                    ...styles.swipeButton, 
-                                    backgroundColor: Colors.closeColor
-                                }}>
-                                <Ionicons name='md-close' size={50} color='white'/>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                                onPress={swipeRigth}
-                                style={{
-                                    ...styles.swipeButton, 
-                                    backgroundColor: Colors.checkColor
-                                }}>
-
-                                <Ionicons name='md-checkmark' size={50} color='white'/>
-                            </TouchableOpacity>
-                        </View>
-                        <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={datingProfiles[currentIndex]}/>
-                    </Wrapper>
-                    : <Text>No more profiles available yet</Text>
-                }
-                <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
-                <MatchModal visible={thereIsMatch} name={matchedName} onClose={() => {setThereIsMatch(false)}} />
-            </View>
+            <ProfileCard profiles={datingProfiles} onLike={(index)=>likeProfile(index)} onDislike={(index)=>dislikeProfile(index)}/>
+            <MatchModal visible={thereIsMatch} name={matchedName} onClose={() => {setThereIsMatch(false)}} />
+            <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
+        </View>
     )
 }
 
@@ -411,11 +198,11 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        paddingVertical: 20
+        paddingTop: 10
     },
     swipeButtonsContainer: {
         position: 'absolute', 
-        bottom: 0, 
+        bottom: 0,
         width: SCREEN_WIDTH*0.9, 
         flexDirection: 'row',
         justifyContent: 'space-evenly', 
