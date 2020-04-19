@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
+import { ProfileContext } from '../context/ProfileContext/ProfileContext';
+import  { FirebaseContext } from '../context/Firebase';
 
 const InboxScreen = props => {
 

@@ -5,12 +5,8 @@ import {KoroProgress} from 'rn-koro-lib'
 
 import  { FirebaseContext } from '../context/Firebase';
 import { ProfileContext } from '../context/ProfileContext/ProfileContext'
-import { Ionicons } from '@expo/vector-icons';
-import { ProfileModal } from '../components/ProfileModal';
 import { MatchModal } from '../components/MatchModal'
-import { Wrapper } from '../hoc/Wrapper';
 import ProfileCard from '../components/ProfileCard';
-import Colors from '../constants/Colors'
 
 import { Notifications } from 'expo';
 
@@ -24,8 +20,6 @@ const MatchingScreen = props => {
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
     const [datingProfiles, setDatingProfiles] = useState([])
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [modalVisible, setModalVisible] = useState(false)
     const [doneFetchin, setDoneFetchin] = useState(false)
     const [thereIsMatch, setThereIsMatch] = useState(false)
     const [notification, setNotification] = useState({})
@@ -34,7 +28,6 @@ const MatchingScreen = props => {
     const position = new Animated.ValueXY();
 
     useEffect(()=>{
-        setCurrentIndex(0)
         setDoneFetchin(false)
         Notifications.addListener(handleNotification);
     }, [])

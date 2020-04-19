@@ -6,9 +6,9 @@ import { AntDesign } from '@expo/vector-icons'
 
 const MultiPick = (props) => {
 
-    const { placeholder = 'What are you interested in?', options = null, onValueChange = () => {} } = props
+    const { placeholder = 'What are you interested in?', options = null, onValueChange = () => {}, value=[], disabled = false } = props
 
-    const [selectedValues, setSelectedValues] = useState([])
+    const [selectedValues, setSelectedValues] = useState(value)
     const [visible, setVisible] = useState(false)
 
     const handleChange = (newValue) => {
@@ -29,6 +29,7 @@ const MultiPick = (props) => {
             activeOpacity={0.7}
             style={styles.container}
             onPress={()=>setVisible(true)}
+            disabled={disabled}
         >
             <View style={{width: '90%'}}>
                 <Text

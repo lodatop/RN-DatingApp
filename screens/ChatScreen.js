@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect, useContext} from 'react';
 import {View, Text, ScrollView, StyleSheet} from 'react-native';
 
 const ChatScreen = props => {
