@@ -1,12 +1,21 @@
 import React, {useState, useEffect, useContext} from 'react';
-import {View, Text, ScrollView, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image} from 'react-native';
+
+import { KoroProgress } from 'rn-koro-lib'
+
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
+
+import UserChat from '../components/UserChat'
+
+const SCREEN_WIDTH = Dimensions.get('window').width
+const SCREEN_HEIGHT = Dimensions.get('window').height
 
 const InboxScreen = props => {
 
     const profileContext = useContext(ProfileContext);
-
+    
+    const [loading, setLoading] = useState(false);
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatList, setChatList] = useState([]);
@@ -14,7 +23,7 @@ const InboxScreen = props => {
 
     useEffect(()=>{
         if(profile.uid) {
-            getMatches()
+            setLoading(true)
             getChats()
         }
     }, [])
@@ -24,17 +33,15 @@ const InboxScreen = props => {
             getMatches()
             getChats()
         }
-        console.log(matches)
     }, [profile])
 
     useEffect(()=> {
         setProfile(profileContext.profile)
     }, [profileContext])
 
-    const getMatches = () => {
 
+    const getMatches = () => {
         setMatches([]);
-        
         let uid = profile.uid;
         const db = firebase.firestore;
         if(profile.matches){
@@ -45,7 +52,7 @@ const InboxScreen = props => {
                 querySnapshot.forEach(async function(doc) {
                     let user = doc.data()
                     setMatches(oldArray => [...oldArray, user]);
-                    
+                    setLoading(false)
                 });
             })
             .catch(function(error) {
@@ -87,24 +94,19 @@ const InboxScreen = props => {
 
     const renderChats = () => {
         return matches.map((user, i) => {
-            return (
-            <View>
-                <Text> {user.name} </Text>
-                <TouchableOpacity 
-                        style={styles.choosePhotoButton} 
-                        onPress={()=>accessChat(user.uid)}>
-                        <Text style={styles.choosePhotoText}>Chat</Text>
-                </TouchableOpacity>
-            </View>
-            ) 
+            return <UserChat user={user} onPress={()=>console.log(user.name)}/>
         })
     }
 
     return (
         <View style={styles.container}>
-            {renderChats()}
-            <Text>This is the inbox screen</Text>
-
+            <View style={styles.stories}>
+                <Text style={{alignSelf: 'center'}}>Here goes the stories</Text>
+            </View>
+            <ScrollView>
+                {renderChats()}
+            </ScrollView>
+            <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
 }
@@ -112,10 +114,17 @@ const InboxScreen = props => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center'
-    }
+        width: SCREEN_WIDTH,
+        height: '100%',
+    },
+    stories: {
+        height: 80,
+        width: '100%',
+        backgroundColor: '#fac5e8',
+        justifyContent: 'center',
+        marginBottom: 5
+    },
+    
 })
 
 export default InboxScreen;

@@ -20,7 +20,7 @@ export const MatchModal = (props) => {
                 
                 <View
                 style={{...styles.textContainter}}>
-                    <Text style={{...styles.text, color: Colors.acceptColor}}>YOU HAVE A MATCH WITH {name}, CHECK INBOX FOR MORE INFO!</Text>
+                    <Text style={{...styles.text, color: Colors.acceptColor}}>You have matched with <Text style={{fontWeight:'bold', color: Colors.cancelColor}}>{name}</Text>, check the inbox for more info!</Text>
                     <View style={{width: '100%', backgroundColor: Colors.cancelColor, height: 2, marginVertical: 10}}></View>
                     <TouchableOpacity onPress={onClose}>
                         <Text style={{...styles.text, color: Colors.cancelColor}}>Continue</Text>
