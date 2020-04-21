@@ -81,25 +81,28 @@ const MatchingScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
+                if(user.uid != profile.uid){
+                    if(user.likedBy && user.dislikedBy){
+                        if(!user.likedBy.includes(uid) && !user.dislikedBy.includes(uid))
+                             setDatingProfiles(oldArray => [...oldArray, user]);
+                     } else if (user.likedBy) {
+                        if(!user.likedBy.includes(uid))
+                             setDatingProfiles(oldArray => [...oldArray, user]);
+                     } else if (user.dislikedBy) {
+                        if(!user.dislikedBy.includes(uid))
+                             setDatingProfiles(oldArray => [...oldArray, user]);
+                     } else {
+                        setDatingProfiles(oldArray => [...oldArray, user]);
+                     }
+                }
                 
-                if(user.likedBy && user.dislikedBy){
-                    if(!user.likedBy.includes(uid) && !user.dislikedBy.includes(uid))
-                         setDatingProfiles(oldArray => [...oldArray, user]);
-                 } else if (user.likedBy) {
-                    if(!user.likedBy.includes(uid))
-                         setDatingProfiles(oldArray => [...oldArray, user]);
-                 } else if (user.dislikedBy) {
-                    if(!user.dislikedBy.includes(uid))
-                         setDatingProfiles(oldArray => [...oldArray, user]);
-                 } else {
-                    setDatingProfiles(oldArray => [...oldArray, user]);
-                 }
             });
             setDoneFetchin(prev => true)
         })
         .catch(function(error) {
             alert("Error getting documents: ", error);
         });
+
     }
 
     //checks if users have matched
@@ -110,14 +113,39 @@ const MatchingScreen = props => {
                 const db = firebase.firestore;   
                 const chat = {
                     createdAt: Date.now(),
-                    participants: [profile.uid, profileId]
+                    participants: [profile.uid, profileId],
+                    messages: []
                 }
                 db.collection('chat').add(chat).then(ref => {
                     if(expoToken && expoToken !== '') sendPushNotification(expoToken, profile.name)
                         showModal(name)
                 })
+                addMatch(profileId)
+               
             }
         }
+    }
+
+    const addMatch = (profileId) => {
+
+        const db = firebase.firestore; 
+
+        db.collection("profile").where("uid", "in", [profileId, profile.uid])
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(async function(doc) {
+                let uid = (doc.data().uid == profile.uid)? profileId : profile.uid;
+                let matches = (doc.data().matches)? doc.data().matches : [];
+                matches.push(uid)
+                let toUpdate = {
+                    matches: matches
+                }
+                doc.ref.update(toUpdate);
+            });
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+        });
     }
 
     //shows modal when matched if previous one was closed
