@@ -9,6 +9,7 @@ const ChatScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatPartner, setChatPartner] = useState({})
     const [messages, setMessages] = useState([])
+    const [stories, setStories] = useState([])
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState(null)
 
@@ -58,6 +59,7 @@ const ChatScreen = props => {
                     db.collection('chat').doc(chatId).update({
                         messages: db.FieldValue.arrayUnion(message)
                     })
+                    setMessages(oldArray => [...oldArray, message]);
                 })
             
             })
@@ -73,6 +75,27 @@ const ChatScreen = props => {
             })
         }
 
+    }
+
+    const getChatPartner = () => {
+        const db = firebase.firestore; 
+
+        db.collection("profile").where("uid", "==", chatPartner.uid)
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(async function(doc) {
+                setChatPartner(doc.data()) 
+                doc.ref.collection("story").get().then((querySnapshot) => {
+                    setStories(querySnapshot.docs.data()) 
+                    /*querySnapshot.forEach(async function(doc) {
+                        setStories(oldArray => [...oldArray, doc.data()]);
+                    })*/
+                  });
+            });
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+        });
     }
 
 

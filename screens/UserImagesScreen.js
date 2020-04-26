@@ -22,16 +22,39 @@ const UserImagesScreen = props => {
     const [modalOpen, setModalOpen] = useState(false)
     const [imagePickerOpen, setImagePickerOpen] = useState(false)
     const [photo, setPhoto] = useState(null)
+    const [stories, setStories] = useState(null)
 
 
     useEffect(()=> {
         setLoading(true);
         setPhotos(profileContext.profile.photos)
         setProfile(profileContext.profile)
+        getStories()
         setTimeout(()=>{
             setLoading(false)
         }, 1000)
     }, [profileContext])
+
+    const getStories = () => {
+        const db = firebase.firestore; 
+
+        db.collection("profile").where("uid", "==", profile.uid)
+        .get()
+        .then(function(querySnapshot) {
+            querySnapshot.forEach(async function(doc) {
+                doc.ref.collection("story").get().then((querySnapshot) => {
+                    setStories(querySnapshot.docs.data()) 
+                    /*querySnapshot.forEach(async function(doc) {
+                        setStories(oldArray => [...oldArray, doc.data()]);
+                    })*/
+                  });
+            });
+        })
+        .catch(function(error) {
+            alert("Error getting documents: ", error);
+        });
+    }
+
 
     const handleTakePhoto = async () => {
         setImagePickerOpen(false)
@@ -53,9 +76,45 @@ const UserImagesScreen = props => {
         }
     }
 
+    const uploadStory = async () => {
+
+        let uid = profile.uid;
+
+        var db = firebase.firestore;
+
+        setLoading(true);
+
+        var storageRef = firebase.storage.ref()
+        var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
+        const response = await fetch(photo.uri);
+        const blob = await response.blob();
+        ref.put(blob).then(snapshot => {
+            snapshot.ref.getDownloadURL().then(downloadURL => {
+                let url = downloadURL
+                const story = {
+                    url,
+                    uploadedAt: Date.now()
+                }
+                db.collection("profile").where("uid", "==", uid)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach(function(doc) {
+                        doc.ref.collection("story").add(story).then(ref => {
+                            setLoading(false);
+                        })
+                    });
+                }).catch(function(error) {
+                    alert("Error getting documents: ", error);
+                    setLoading(false);
+                });  
+            })
+        
+        })
+    }
+
     const uploadPhoto = async () => {
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 
