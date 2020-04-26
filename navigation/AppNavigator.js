@@ -13,6 +13,7 @@ import CreateProfileScreen from '../screens/CreateProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import Colors from '../constants/Colors';
 import UserImagesScreen, { userImagesConfig } from '../screens/UserImagesScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const defaultStackConfig = {
   headerTitleAlign: 'center',
@@ -48,6 +49,11 @@ export const InboxNavigator = () => {
         name='Inbox' 
         component={InboxScreen}
         options={{title: 'Your Inbox', headerLeft: null}}
+        />
+      <InboxStackNavigator.Screen 
+        name='Chat' 
+        component={ChatScreen}
+        options={{headerShown: false}}
         />
     </InboxStackNavigator.Navigator>
   )

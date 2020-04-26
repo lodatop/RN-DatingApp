@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useReducer} from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image} from 'react-native';
 
 import { KoroProgress } from 'rn-koro-lib'
@@ -7,6 +7,8 @@ import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
 
 import UserChat from '../components/UserChat'
+import { Ionicons } from '@expo/vector-icons';
+import Colors from '../constants/Colors';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -84,24 +86,27 @@ const InboxScreen = props => {
 
     }
 
-    const accessChat = (userId) => {
-        console.log(userId)
-        let chat = chatList.find(chat => chat.participants.includes(userId) )
-        console.log(chat)
+    const accessChat = (user) => {
+        // console.log(userId)
+        let chat = chatList.find(chat => chat.participants.includes(user.uid) )
+        // console.log(chat.ref)
+        props.navigation.navigate('Chat', {ref: chat.ref, user: user})
         //chat.ref es el id con el q se va a redireccionar
         //hacer la navegacion con el chatId como parametro "chat/:id"
     }
 
     const renderChats = () => {
         return matches.map((user, i) => {
-            return <UserChat user={user} onPress={()=>console.log(user.name)}/>
+            return <UserChat key={user.uid} user={user} onPress={()=>accessChat(user)}/>
         })
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.stories}>
-                <Text style={{alignSelf: 'center'}}>Here goes the stories</Text>
+                <TouchableOpacity style={styles.addStory}>
+                    <Ionicons name='md-add' size={50} color='#ffcffb'/>
+                </TouchableOpacity>
             </View>
             <ScrollView>
                 {renderChats()}
@@ -121,9 +126,19 @@ const styles = StyleSheet.create({
         height: 80,
         width: '100%',
         backgroundColor: '#fac5e8',
-        justifyContent: 'center',
-        marginBottom: 5
+        marginBottom: 5,
+        flexDirection: 'row',
+        alignItems: 'center'
     },
+    addStory:{
+        backgroundColor: '#f0f0f0',
+        width: 60, 
+        height: 60, 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        marginHorizontal: 10,
+        borderRadius: 30
+    }
     
 })
 

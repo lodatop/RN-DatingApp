@@ -6,7 +6,7 @@ const UserChat = props => {
     const { user, onPress } = props
 
     return (
-        <View key={user.uid} style={styles.matches}>
+        <View style={styles.matches}>
             <TouchableOpacity 
                     style={styles.chat} 
                     onPress={onPress}
