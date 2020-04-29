@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useReducer } from 'react'
 import { View, TouchableOpacity, Text, StyleSheet, Dimensions, Image, Modal } from 'react-native'
 import { Ionicons } from '@expo/vector-icons'
 import Colors from '../constants/Colors'
@@ -18,7 +18,7 @@ const ChatHeader = props => {
                 <Ionicons name='md-arrow-back' size={25} color='white'/>
             </TouchableOpacity>
             <View style={styles.userName}>
-                <Text style={{color: 'white', fontSize: 20}}>{user ? user.name : ''}</Text>
+                <Text style={{color: 'white', fontSize: 20}}>{user.name.length > 25 ? user.name.slice(0, 25) + '...' : user.name}</Text>
             </View>
             <TouchableOpacity style={styles.profilePicture} onPress={()=>{setViewPhotoVisible(true)}}>
                 {
