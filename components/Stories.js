@@ -20,7 +20,7 @@ const Stories = props => {
                             {
                                 <Image
                                 style={styles.image}
-                                resizeMode='contain'
+                                resizeMode='cover'
                                 source={{uri: story.images[0]}}/>      
                             }
                         </TouchableOpacity>

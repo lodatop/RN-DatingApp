@@ -23,12 +23,13 @@ const InboxScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatList, setChatList] = useState([]);
     const [matches, setMatches] = useState([]);
+    const img = 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2019/11/12/15735360845312.jpg'
 
     const stories = [
-        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
-        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
-        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
-        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] }
+        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+        { userId: '1234', images: [img] }, { userId: '1234', images: [img] }
     ]
 
     useEffect(()=>{
