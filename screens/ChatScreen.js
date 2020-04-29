@@ -189,7 +189,17 @@ const ChatScreen = props => {
 
     const renderMessages = () => {
         return messages.map((msg, i) => {
-            if(msg.userId == profile.uid){
+            if(msg.uid == profile.uid){
+                return (
+                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
+                        <Text style={{textAlign: 'right'}}>{msg.content}</Text>
+                        <View style={{position: 'absolute', bottom: 5, right: 10}}>
+                            <Text style={{fontSize: 10}}>Time</Text>
+                        </View>
+                    </View>   
+                )
+            }
+            else {
                 return (
                     <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
                         <Text>{msg.content}</Text>
@@ -197,16 +207,6 @@ const ChatScreen = props => {
                             <Text style={{fontSize: 10}}>Time</Text>
                         </View>
                     </View> 
-                )
-            }
-            else {
-                return (
-                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
-                        <Text style={{textAlign: 'right'}}>{msg.content}</Text>
-                        <View style={{position: 'absolute', bottom: 5, right: 10}}>
-                            <Text style={{fontSize: 10}}>Time</Text>
-                        </View>
-                    </View>
                 )
             }
         })

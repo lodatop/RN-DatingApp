@@ -73,15 +73,17 @@ const InboxScreen = props => {
                             if(!user.stories) user.stories = []
                             user.stories.push(doc.data());
                         })
-                    });
-                    if(user.stories) {
-                        let userStories = {
-                            userId: user.uid,
-                            images: user.stories
+                        if(user.stories) {
+                            let userStories = {
+                                userId: user.uid,
+                                images: user.stories
+                            }
+                            console.log(userStories)
+                            setStories(oldArray => [...oldArray, userStories]);
                         }
-                        setStories(oldArray => [...oldArray, userStories]);
-                    }
-                    setMatches(oldArray => [...oldArray, user]);
+                        setMatches(oldArray => [...oldArray, user]);
+                    });
+                    
                 });
                 setLoading(false)
             })
@@ -114,7 +116,7 @@ const InboxScreen = props => {
     }
 
     const accessChat = (user) => {
-        console.log(matches)
+        //console.log(stories)
         // console.log(userId)
         let chat = chatList.find(chat => chat.participants.includes(user.uid) )
         // console.log(chat.ref)
