@@ -57,9 +57,9 @@ const InboxScreen = props => {
         setProfile(profileContext.profile)
     }, [profileContext])
 
-
     const getMatches = () => {
         setMatches([]);
+        setStories([]);
         const db = firebase.firestore;
         if(profile.matches){
             const query = db.collection('profile').where('uid', 'in', profile.matches);
@@ -76,6 +76,7 @@ const InboxScreen = props => {
                         if(user.stories) {
                             let userStories = {
                                 userId: user.uid,
+                                userName: user.name,
                                 images: user.stories
                             }
                             console.log(userStories)
@@ -83,7 +84,6 @@ const InboxScreen = props => {
                         }
                         setMatches(oldArray => [...oldArray, user]);
                     });
-                    
                 });
                 setLoading(false)
             })
@@ -200,7 +200,7 @@ const InboxScreen = props => {
                 <Stories stories={stories} />
             </View>
             <ScrollView>
-                {renderChats()}
+                {matches ? renderChats() : <Text>You have no matches yet</Text>}
             </ScrollView>
             <KoroModal 
                     visible={modalOpen} 

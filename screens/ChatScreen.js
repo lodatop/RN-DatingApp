@@ -28,73 +28,10 @@ const ChatScreen = props => {
 
     const scrollViewRef = useRef(null)
 
-    useEffect(()=>{
+    const scrollDown = () => {
         scrollViewRef.current.scrollToEnd()
-    },[])
-/*
-    let messages = [
-        {
-            userId: otherUser.uid,
-            value: 'hola soy wisam',
-        },
-        {
-            userId: profile.uid,
-            value: 'hola soy ester',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'como te va',
-        },
-        {
-            userId: profile.uid,
-            value: 'bien y a ti',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'todo bien',
-        },
-        {
-            userId: profile.uid,
-            value: 'me alegro',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'Que te gusta hacer por las tardes?',
-        },
-        {
-            userId: profile.uid,
-            value: 'Escuchar musica y a ti?',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'Verte en Elite',
-        },
-        {
-            userId: profile.uid,
-            value: 'Jaja gracias, me alegra de que seas fan',
-        },
-        {
-            userId: profile.uid,
-            value: 'me alegro',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'Que te gusta hacer por las tardes?',
-        },
-        {
-            userId: profile.uid,
-            value: 'Escuchar musica y a ti?',
-        },
-        {
-            userId: otherUser.uid,
-            value: 'Verte en Elite',
-        },
-        {
-            userId: profile.uid,
-            value: 'Jaja gracias, me alegra de que seas fan',
-        },
-    ]
-    */
+    }
+
     useEffect(() => {
         const unsubscribe = firebase
           .firestore.collection('chat').doc(chatId)
@@ -133,7 +70,7 @@ const ChatScreen = props => {
                         uid,
                         sendAt: Date.now(),
                         content,
-                        attachment: [url],
+                        attachment: [url]
                     }
                     db.collection('chat').doc(chatId).update({
                         messages: db.FieldValue.arrayUnion(message)
@@ -158,7 +95,6 @@ const ChatScreen = props => {
             console.log(chatId)
             setNewMsg('')
         }
-
     }
 
     // const sendMessageHandler = (msg) => {
@@ -192,7 +128,21 @@ const ChatScreen = props => {
             if(msg.uid == profile.uid){
                 return (
                     <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
-                        <Text style={{textAlign: 'right'}}>{msg.content}</Text>
+
+                        {msg.attachment ? 
+                            (
+                                <TouchableOpacity>
+                                    <Image
+                                    style={styles.photo}
+                                    resizeMode='cover'
+                                    source={{uri: msg.attachment}}/>
+                                </TouchableOpacity>
+                            ) 
+                            : (
+                                <Text style={{textAlign: 'right'}}>{msg.content}</Text>        
+                            )    
+                        }
+
                         <View style={{position: 'absolute', bottom: 5, right: 10}}>
                             <Text style={{fontSize: 10}}>Time</Text>
                         </View>
@@ -202,7 +152,20 @@ const ChatScreen = props => {
             else {
                 return (
                     <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
-                        <Text>{msg.content}</Text>
+
+                        {msg.attachment ? (
+                                <TouchableOpacity>
+                                    <Image
+                                    style={styles.photo}
+                                    resizeMode='cover'
+                                    source={{uri: msg.attachment}}/>
+                                </TouchableOpacity>
+                            )  :
+                            (
+                                <Text>{msg.content}</Text>
+                            )  
+                        }
+
                         <View style={{position: 'absolute', bottom: 5, left: 10}}>
                             <Text style={{fontSize: 10}}>Time</Text>
                         </View>
@@ -216,7 +179,7 @@ const ChatScreen = props => {
         <View style={styles.container}>
             <ChatHeader user={otherUser} goBack={()=>{props.navigation.navigate('Inbox')}}/>
             <View style={styles.chatLayout}>
-                <ScrollView ref={scrollViewRef} >
+                <ScrollView ref={scrollViewRef} onContentSizeChange={()=>scrollDown()}>
                     {renderMessages()}
                 </ScrollView>
             </View>
@@ -289,12 +252,20 @@ const styles = StyleSheet.create({
         elevation: 5
     },
     message: {
-        maxWidth: '80%', 
+        maxWidth: '80%',
+        minWidth: '15%', 
         padding: 10,
         borderRadius: 10,
         margin: 5,
         paddingBottom: 20, 
         elevation: 8
+    },
+    photo: {
+        width: 100,
+        height: 100,
+        borderRadius: 10,
+        padding: 10,
+        elevation: 5
     }
 })
 

@@ -9,14 +9,28 @@ const Stories = props => {
 
     const { stories } = props
     const [actualStory, setActualStory] = useState(null)
+    const [actualIndex, setActualIndex] = useState(0)
     const [modalOpen, setModalOpen] = useState(false)
+
+    const openStoryHandler = (userStory) => {
+        console.log(userStory)
+        setActualStory(userStory)
+        setModalOpen(true)
+        setActualIndex(0)
+    }
+
+    const closeModalHandler = () => {
+        setActualStory(null)
+        setModalOpen(false)
+        setActualIndex(0)
+    }
     
     return (
         <View style={styles.container}>
             <ScrollView horizontal={true}>
                 {stories.map((story, i) => {
                     return (
-                        <TouchableOpacity key={i} style={styles.stories}>
+                        <TouchableOpacity key={i} style={{...styles.stories, backgroundColor: 'lightgrey'}} onPress={()=>openStoryHandler(story)}>
                             {
                                 <Image
                                 style={styles.image}
@@ -29,26 +43,30 @@ const Stories = props => {
             </ScrollView>
             <Modal 
                 visible={modalOpen} transparent={true}
-                onRequestClose={()=>{setModalOpen(false)}}
+                onRequestClose={()=>{closeModalHandler()}}
                 >
-                <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center'}}>
-                    <View style={{width: '80%', height: '80%'}}>
-                        <Image
-                                    style={styles.image}
-                                    resizeMode='contain'
-                                    source={require('../assets/default-user.png')}/>
+                {actualStory ? (
+                    <View style={{flex: 1, backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center'}}>
+                        <View style={{width: '80%', height: '80%'}}>
+                            <Text>{actualStory.userName}</Text>
+                            <Image
+                                        style={styles.image}
+                                        resizeMode='contain'
+                                        source={{uri: actualStory.images[actualIndex].url}}/>
+                        </View>
+                        <TouchableOpacity 
+                            style={{position: 'absolute', top: 0, right: 20}} 
+                            onPress={()=>{closeModalHandler()}} 
+                            >
+                            <Ionicons name='ios-close' size={70} color='white'/>
+                        </TouchableOpacity>
                     </View>
-                    <TouchableOpacity 
-                        style={{position: 'absolute', top: 0, right: 20}} 
-                        onPress={()=>{setModalOpen(false)}} 
-                        >
-                        <Ionicons name='ios-close' size={70} color='white'/>
-                    </TouchableOpacity>
-                </View>
+                    )
+                : null}
             </Modal>
         </View>
-    )
-}
+        )
+    }
 
 const styles = StyleSheet.create({
     container: {
@@ -77,4 +95,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Stories;
+export default Stories
