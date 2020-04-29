@@ -21,9 +21,7 @@ const ChatScreen = props => {
 
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
-    const [chatPartner, setChatPartner] = useState({})
-    // const [messages, setMessages] = useState([])
-    const [stories, setStories] = useState([])
+    const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState(null)
     const [newMsg, setNewMsg] = useState('')
@@ -33,7 +31,7 @@ const ChatScreen = props => {
     useEffect(()=>{
         scrollViewRef.current.scrollToEnd()
     },[])
-
+/*
     let messages = [
         {
             userId: otherUser.uid,
@@ -96,73 +94,77 @@ const ChatScreen = props => {
             value: 'Jaja gracias, me alegra de que seas fan',
         },
     ]
-    // useEffect(() => {
-    //     const unsubscribe = firebase
-    //       .db.collection('chat').doc(chatId)
-    //       .onSnapshot(snapshot => {
-    //         console.log(snapshot)
-    //         if (snapshot.exists) {
-    //           // we have something
-    //           let participants = snapshot.data().participants;
-    //           (participants[0] == profile.uid)? setChatPartner({...chatPartner, uid: participants[1] }) : setChatPartner({...chatPartner, uid: participants[0] }) ;
-    //           setMessages(snapshot.data().messages)
-    //           setLoading(false)
-    //         } else {
-    //           // it's empty
-    //           setLoading(false)
-    //         }
-    //       })
-    //   return () => {
-    //       unsubscribe()
-    //     }
-    //   }, [firebase])
+    */
+    useEffect(() => {
+        const unsubscribe = firebase
+          .firestore.collection('chat').doc(chatId)
+          .onSnapshot(snapshot => {
+            if (snapshot.exists) {
+              // we have something
+              setMessages(snapshot.data().messages.sort((a, b) => b.date - a.date))
+              setLoading(false)
+            } else {
+              // it's empty
+              setLoading(false)
+            }
+          })
+      return () => {
+          unsubscribe()
+        }
+      }, [firebase])
 
     //aqui agarramos el chat id del parametro en la ruta, dado q esta ruta es un chat/:id
 
-    // const sendMessage = async (content) => {
+    const sendMessage = async (content) => {
 
-    //     let uid = profile.uid;
+        let uid = profile.uid;
 
-    //     var db = firebase.firestore;
+        var db = firebase.firestore;
 
-    //     if(photo){
-    //         var storageRef = firebase.storage.ref()
-    //         var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
-    //         const response = await fetch(photo.uri);
-    //         const blob = await response.blob();
-    //         ref.put(blob).then(snapshot => {
-    //             snapshot.ref.getDownloadURL().then(downloadURL => {
-    //                 let url = downloadURL
-    //                 const message = {
-    //                     uid,
-    //                     sendAt: Date.now(),
-    //                     content,
-    //                     attachment: [url],
-    //                 }
-    //                 db.collection('chat').doc(chatId).update({
-    //                     messages: db.FieldValue.arrayUnion(message)
-    //                 })
-    //             })
+        if(photo){
+            var storageRef = firebase.storage.ref()
+            var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
+            const response = await fetch(photo.uri);
+            const blob = await response.blob();
+            ref.put(blob).then(snapshot => {
+                snapshot.ref.getDownloadURL().then(downloadURL => {
+                    let url = downloadURL
+                    const message = {
+                        uid,
+                        sendAt: Date.now(),
+                        content,
+                        attachment: [url],
+                    }
+                    db.collection('chat').doc(chatId).update({
+                        messages: db.FieldValue.arrayUnion(message)
+                    })
+                })
             
-    //         })
+            })
 
-    //     } else {
-    //         const message = {
-    //             uid,
-    //             sendAt: Date.now(),
-    //             content
-    //         }
-    //         db.collection('chat').doc(chatId).update({
-    //             messages: db.FieldValue.arrayUnion(message)
-    //         })
-    //     }
+        } else {
+            const message = {
+                uid,
+                sendAt: Date.now(),
+                content
+            }
+            let messagesX = messages
+            messagesX.push(message)
+            setMessages(oldArray => [...oldArray, message]);
+            const toUpdate = {
+                messages: messagesX
+            }
+            db.collection('chat').doc(chatId).update(toUpdate)
+            console.log(chatId)
+            setNewMsg('')
+        }
 
-    // }
-
-    const sendMessageHandler = (msg) => {
-        console.log(msg)
-        setNewMsg('')
     }
+
+    // const sendMessageHandler = (msg) => {
+    //     console.log(msg)
+    //     setNewMsg('')
+    // }
 
     // const getChatPartner = () => {
     //     const db = firebase.firestore; 
@@ -171,40 +173,40 @@ const ChatScreen = props => {
     //     .get()
     //     .then(function(querySnapshot) {
     //         querySnapshot.forEach(async function(doc) {
-    //             setChatPartner(doc.data()) 
+    //             setChatPartner(doc.data())/*
     //             doc.ref.collection("story").get().then((querySnapshot) => {
     //                 setStories(querySnapshot.docs.data()) 
-    //                 /*querySnapshot.forEach(async function(doc) {
+    //                 querySnapshot.forEach(async function(doc) {
     //                     setStories(oldArray => [...oldArray, doc.data()]);
-    //                 })*/
-    //               });
+    //                 })
+    //               });*/
     //         });
     //     })
     //     .catch(function(error) {
     //         alert("Error getting documents: ", error);
     //     });
     // }
+
     const renderMessages = () => {
-        // console.log(profile.name)
         return messages.map((msg, i) => {
             if(msg.userId == profile.uid){
                 return (
-                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
-                        <Text style={{textAlign: 'right'}}>{msg.value}</Text>
-                        <View style={{position: 'absolute', bottom: 5, right: 10}}>
-                            <Text style={{fontSize: 10}}>Time</Text>
-                        </View>
-                    </View>
-                )
-            }
-            else {
-                return (
                     <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
-                        <Text>{msg.value}</Text>
+                        <Text>{msg.content}</Text>
                         <View style={{position: 'absolute', bottom: 5, left: 10}}>
                             <Text style={{fontSize: 10}}>Time</Text>
                         </View>
                     </View> 
+                )
+            }
+            else {
+                return (
+                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
+                        <Text style={{textAlign: 'right'}}>{msg.content}</Text>
+                        <View style={{position: 'absolute', bottom: 5, right: 10}}>
+                            <Text style={{fontSize: 10}}>Time</Text>
+                        </View>
+                    </View>
                 )
             }
         })
@@ -228,7 +230,7 @@ const ChatScreen = props => {
                         <Ionicons name='ios-camera' size={25} />
                     </TouchableOpacity>
                 </View>
-                <TouchableOpacity style={styles.send} onPress={()=>sendMessageHandler(newMsg)}>
+                <TouchableOpacity style={styles.send} onPress={()=>sendMessage(newMsg)}>
                     <Ionicons name='ios-send' size={30} color='white'/>
                 </TouchableOpacity>
             </View>

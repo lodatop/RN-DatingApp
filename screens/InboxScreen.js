@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useContext, useReducer} from 'react';
 import {View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions, Image} from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
 
-import { KoroProgress } from 'rn-koro-lib'
+import { KoroProgress, KoroModal } from 'rn-koro-lib'
 
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
@@ -9,6 +10,7 @@ import  { FirebaseContext } from '../context/Firebase';
 import UserChat from '../components/UserChat'
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+import ImagePickerModal from '../components/ImagePickerModal'
 import Stories from '../components/Stories';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
@@ -23,14 +25,19 @@ const InboxScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatList, setChatList] = useState([]);
     const [matches, setMatches] = useState([]);
+    const [stories, setStories] = useState([]);
+    const [photo, setPhoto] = useState(null)
+    const [modalOpen, setModalOpen] = useState(false)
+    const [imagePickerOpen, setImagePickerOpen] = useState(false)
+
     const img = 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2019/11/12/15735360845312.jpg'
 
-    const stories = [
-        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-        { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-        { userId: '1234', images: [img] }, { userId: '1234', images: [img] }
-    ]
+    // const stories = [
+    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
+    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] }
+    // ]
 
     useEffect(()=>{
         if(profile.uid) {
@@ -53,7 +60,6 @@ const InboxScreen = props => {
 
     const getMatches = () => {
         setMatches([]);
-        let uid = profile.uid;
         const db = firebase.firestore;
         if(profile.matches){
             const query = db.collection('profile').where('uid', 'in', profile.matches);
@@ -62,9 +68,22 @@ const InboxScreen = props => {
             .then(function(querySnapshot) {
                 querySnapshot.forEach(async function(doc) {
                     let user = doc.data()
+                    doc.ref.collection("story").where('uploadedAt', '>', Date.now() - 86400000).get().then((querySnapshot) => {
+                        querySnapshot.forEach(async function(doc) {
+                            if(!user.stories) user.stories = []
+                            user.stories.push(doc.data());
+                        })
+                    });
+                    if(user.stories) {
+                        let userStories = {
+                            userId: user.uid,
+                            images: user.stories
+                        }
+                        setStories(oldArray => [...oldArray, userStories]);
+                    }
                     setMatches(oldArray => [...oldArray, user]);
-                    setLoading(false)
                 });
+                setLoading(false)
             })
             .catch(function(error) {
                 alert("Error getting documents: ", error);
@@ -75,7 +94,6 @@ const InboxScreen = props => {
 
     const getChats = () => {
         
-        let uid = profile.uid;
         const db = firebase.firestore;
         const query = db.collection('chat').where('participants', 'array-contains', profile.uid);
 
@@ -96,12 +114,71 @@ const InboxScreen = props => {
     }
 
     const accessChat = (user) => {
+        console.log(matches)
         // console.log(userId)
         let chat = chatList.find(chat => chat.participants.includes(user.uid) )
         // console.log(chat.ref)
         props.navigation.navigate('Chat', {ref: chat.ref, user: user})
         //chat.ref es el id con el q se va a redireccionar
         //hacer la navegacion con el chatId como parametro "chat/:id"
+    }
+
+    
+    const handleTakePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchCameraAsync();
+        
+        if(!response.cancelled){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
+    const handleChoosePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchImageLibraryAsync();
+        
+        if(!response.cancelled){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
+    const uploadStory = async () => {
+
+        let uid = profile.uid;
+
+        var db = firebase.firestore;
+
+        setLoading(true);
+
+        var storageRef = firebase.storage.ref()
+        var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
+        const response = await fetch(photo.uri);
+        const blob = await response.blob();
+        ref.put(blob).then(snapshot => {
+            snapshot.ref.getDownloadURL().then(downloadURL => {
+                let url = downloadURL
+                const story = {
+                    url,
+                    uploadedAt: Date.now()
+                }
+                db.collection("profile").where("uid", "==", uid)
+                .get()
+                .then((querySnapshot) => {
+                    querySnapshot.forEach(function(doc) {
+                        doc.ref.collection("story").add(story).then(ref => {
+                            setModalOpen(false)
+                            setLoading(false);
+                        })
+                    });
+                }).catch(function(error) {
+                    alert("Error getting documents: ", error);
+                    setLoading(false);
+                });  
+            })
+        
+        })
     }
 
     const renderChats = () => {
@@ -113,7 +190,9 @@ const InboxScreen = props => {
     return (
         <View style={styles.container}>
             <View style={styles.stories}>
-                <TouchableOpacity style={styles.addStory}>
+                <TouchableOpacity 
+                    style={styles.addStory}
+                    onPress={()=> setImagePickerOpen(true)}>
                     <Ionicons name='md-add' size={50} color='#ffcffb'/>
                 </TouchableOpacity>
                 <Stories stories={stories} />
@@ -121,6 +200,49 @@ const InboxScreen = props => {
             <ScrollView>
                 {renderChats()}
             </ScrollView>
+            <KoroModal 
+                    visible={modalOpen} 
+                    borderStyle={{padding: 20}} 
+                    contentStyle={{borderRadius: 15, elevation: 15, backgroundColor: 'rgba(255, 227, 236, 1)'}}
+                    onRequestClose={()=> setModalOpen(false)}>
+                    <Text style={styles.modalTitle}>Image Preview</Text>
+                    <View style={{width: '100%', height: 2, marginVertical: 10, backgroundColor: Colors.headerColor}}></View>
+                    {photo && (
+                        <View
+                            style={{ 
+                                overflow: 'hidden',
+                                marginVertical: 15,
+                                width: '90%', 
+                                height: '60%',
+                                borderRadius: 10 }}>
+                            <Image
+                                resizeMode='cover'
+                                source={{ uri: photo.uri }}
+                                style={{
+                                    width: '100%', 
+                                    height: '100%'}}
+                            />
+                        </View>
+                    )}
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{...styles.modalButton, backgroundColor: Colors.acceptColor}}
+                        onPress={uploadStory}>
+                        <Text style={styles.modalText}>Add image</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{...styles.modalButton, backgroundColor: Colors.cancelColor}} 
+                        onPress={()=> setModalOpen(false)}>
+                        <Text style={{...styles.modalText}}>Cancel</Text>
+                    </TouchableOpacity>
+                </KoroModal>
+                <ImagePickerModal 
+                    visible={imagePickerOpen} 
+                    onClose={()=>setImagePickerOpen(false)} 
+                    onRollPick={handleChoosePhoto}
+                    onCameraPick={handleTakePhoto}
+                />
             <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
