@@ -9,6 +9,7 @@ import  { FirebaseContext } from '../context/Firebase';
 import UserChat from '../components/UserChat'
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+import Stories from '../components/Stories';
 
 const SCREEN_WIDTH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
@@ -22,6 +23,13 @@ const InboxScreen = props => {
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatList, setChatList] = useState([]);
     const [matches, setMatches] = useState([]);
+
+    const stories = [
+        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
+        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
+        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] },
+        { userId: '1234', images: [profile.photos[0]] }, { userId: '1234', images: [profile.photos[0]] }
+    ]
 
     useEffect(()=>{
         if(profile.uid) {
@@ -107,6 +115,7 @@ const InboxScreen = props => {
                 <TouchableOpacity style={styles.addStory}>
                     <Ionicons name='md-add' size={50} color='#ffcffb'/>
                 </TouchableOpacity>
+                <Stories stories={stories} />
             </View>
             <ScrollView>
                 {renderChats()}

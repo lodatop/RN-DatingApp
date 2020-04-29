@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, {useState, useEffect, useContext, useRef} from 'react';
 import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions} from 'react-native';
 
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
@@ -15,19 +15,87 @@ const SCREEN_HEIGHT = Dimensions.get('window').height
 const ChatScreen = props => {
 
     const chatId = props.route.params.ref
-    const user = props.route.params.user
+    const otherUser = props.route.params.user
 
     const profileContext = useContext(ProfileContext);
 
     const [firebase, setFirebase] = useState(useContext(FirebaseContext))
     const [profile, setProfile] = useState(profileContext.profile)
     const [chatPartner, setChatPartner] = useState({})
-    const [messages, setMessages] = useState([])
+    // const [messages, setMessages] = useState([])
     const [stories, setStories] = useState([])
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState(null)
     const [newMsg, setNewMsg] = useState('')
 
+    const scrollViewRef = useRef(null)
+
+    useEffect(()=>{
+        scrollViewRef.current.scrollToEnd()
+    },[])
+
+    let messages = [
+        {
+            userId: otherUser.uid,
+            value: 'hola soy wisam',
+        },
+        {
+            userId: profile.uid,
+            value: 'hola soy ester',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'como te va',
+        },
+        {
+            userId: profile.uid,
+            value: 'bien y a ti',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'todo bien',
+        },
+        {
+            userId: profile.uid,
+            value: 'me alegro',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'Que te gusta hacer por las tardes?',
+        },
+        {
+            userId: profile.uid,
+            value: 'Escuchar musica y a ti?',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'Verte en Elite',
+        },
+        {
+            userId: profile.uid,
+            value: 'Jaja gracias, me alegra de que seas fan',
+        },
+        {
+            userId: profile.uid,
+            value: 'me alegro',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'Que te gusta hacer por las tardes?',
+        },
+        {
+            userId: profile.uid,
+            value: 'Escuchar musica y a ti?',
+        },
+        {
+            userId: otherUser.uid,
+            value: 'Verte en Elite',
+        },
+        {
+            userId: profile.uid,
+            value: 'Jaja gracias, me alegra de que seas fan',
+        },
+    ]
     // useEffect(() => {
     //     const unsubscribe = firebase
     //       .db.collection('chat').doc(chatId)
@@ -116,17 +184,41 @@ const ChatScreen = props => {
     //         alert("Error getting documents: ", error);
     //     });
     // }
-
+    const renderMessages = () => {
+        // console.log(profile.name)
+        return messages.map((msg, i) => {
+            if(msg.userId == profile.uid){
+                return (
+                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
+                        <Text style={{textAlign: 'right'}}>{msg.value}</Text>
+                        <View style={{position: 'absolute', bottom: 5, right: 10}}>
+                            <Text style={{fontSize: 10}}>Time</Text>
+                        </View>
+                    </View>
+                )
+            }
+            else {
+                return (
+                    <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
+                        <Text>{msg.value}</Text>
+                        <View style={{position: 'absolute', bottom: 5, left: 10}}>
+                            <Text style={{fontSize: 10}}>Time</Text>
+                        </View>
+                    </View> 
+                )
+            }
+        })
+    }
 
     return (
         <View style={styles.container}>
-            <ChatHeader user={user} goBack={()=>{props.navigation.navigate('Inbox')}}/>
+            <ChatHeader user={otherUser} goBack={()=>{props.navigation.navigate('Inbox')}}/>
             <View style={styles.chatLayout}>
-                <ScrollView>
-                    <Text>This is the chat screen</Text>
-                    <Text>{chatId}</Text>
+                <ScrollView ref={scrollViewRef} >
+                    {renderMessages()}
                 </ScrollView>
             </View>
+            {/* This is the Input and send */}
             <View style={styles.sendContainer}>
                 <View style={styles.inputContainer}>
                     <View style={styles.input}>
@@ -147,22 +239,24 @@ const ChatScreen = props => {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        padding: 20
+        flex: 1
     },
     sendContainer: {
         padding: 10,
+        height: 80,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         position: 'absolute',
         bottom: 0,
-        alignSelf: 'center'
+        alignSelf: 'center',
+        // backgroundColor: 'red',
+        width: SCREEN_WITDH*0.95
     },
     inputContainer:{
         borderWidth: 1, 
         borderColor: 'rgba(0,0,0,0.4)',
-        width: SCREEN_WITDH*0.8,
+        width: '88%',
         marginRight: 10,
         padding: 10,
         paddingLeft: 15,
@@ -181,8 +275,24 @@ const styles = StyleSheet.create({
         borderRadius: 30,
     },
     chatLayout: {
-        marginTop: 80,
-        // height: SCREEN_HEIGHT*0.73
+        position: 'absolute',
+        bottom: 80,
+        height: SCREEN_HEIGHT*0.72,
+        width: SCREEN_WITDH*0.95,
+        marginHorizontal: 10,
+        justifyContent: 'center',
+        padding: 5,
+        borderRadius: 10,
+        backgroundColor: '#fcd9ff',
+        elevation: 5
+    },
+    message: {
+        maxWidth: '80%', 
+        padding: 10,
+        borderRadius: 10,
+        margin: 5,
+        paddingBottom: 20, 
+        elevation: 8
     }
 })
 
