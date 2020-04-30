@@ -9,6 +9,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
 
+import { Notifications } from 'expo';
+
 const SCREEN_WITDH = Dimensions.get('window').width
 const SCREEN_HEIGHT = Dimensions.get('window').height
 
@@ -24,6 +26,7 @@ const ChatScreen = props => {
     const [messages, setMessages] = useState([])
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState(null)
+    const [notification, setNotification] = useState({})
     const [newMsg, setNewMsg] = useState('')
     let KeyboardHiddenListener
     let KeyboardShownListener
@@ -37,7 +40,8 @@ const ChatScreen = props => {
 
     useEffect(()=>{
         KeyboardHiddenListener = Keyboard.addListener('keyboardDidHide', keyboardIsHidden)
-        KeyboardShownListener = Keyboard.addListener('keyboardDidShow', keyboardIsVisible) 
+        KeyboardShownListener = Keyboard.addListener('keyboardDidShow', keyboardIsVisible)
+        Notifications.addListener(handleNotification); 
     }, [])
 
     const keyboardIsHidden = () => {
@@ -47,6 +51,31 @@ const ChatScreen = props => {
     const keyboardIsVisible = () => {
         setChatContainerStyle({height: SCREEN_HEIGHT*0.3})
     }
+
+    const handleNotification = (notification) => {
+        Vibration.vibrate(1000)
+        setNotification(notification)
+    }
+
+    const sendPushNotification = async (message) => {
+        const message = {
+          to: otherUser.expoToken,
+          sound: 'default',
+          title: 'New message from ' + profile.name,
+          body: message,
+          data: { data: 'goes here' },
+          _displayInForeground: true,
+        };
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+          method: 'POST',
+          headers: {
+            Accept: 'application/json',
+            'Accept-encoding': 'gzip, deflate',
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(message),
+        });
+      };
 
     useEffect(() => {
         const unsubscribe = firebase
@@ -109,6 +138,7 @@ const ChatScreen = props => {
             }
             db.collection('chat').doc(chatId).update(toUpdate)
             console.log(chatId)
+            sendPushNotification(newMsg)
             setNewMsg('')
         }
     }

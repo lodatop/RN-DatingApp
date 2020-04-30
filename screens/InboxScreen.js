@@ -48,7 +48,7 @@ const InboxScreen = props => {
 
     useEffect(()=> {
         if(profile.uid) {
-            getMatches()
+            //getMatches()
             getChats()
         }
     }, [profile])
@@ -57,16 +57,16 @@ const InboxScreen = props => {
         setProfile(profileContext.profile)
     }, [profileContext])
 
-    const getMatches = () => {
+    //probar esto
+
+    useEffect(() => {
         setMatches([]);
-        setStories([]);
         const db = firebase.firestore;
         if(profile.matches){
-            const query = db.collection('profile').where('uid', 'in', profile.matches);
-
-            query.get()
-            .then(function(querySnapshot) {
-                querySnapshot.forEach(async function(doc) {
+            const unsubscribe = db.collection('profile')
+            .where('uid', 'in', profile.matches)
+            .onSnapshot(function(snapshot) {
+                snapshot.forEach(async function(doc) {
                     let user = doc.data()
                     doc.ref.collection("story").where('uploadedAt', '>', Date.now() - 86400000).get().then((querySnapshot) => {
                         querySnapshot.forEach(async function(doc) {
@@ -76,7 +76,6 @@ const InboxScreen = props => {
                         if(user.stories) {
                             let userStories = {
                                 userId: user.uid,
-                                userName: user.name,
                                 images: user.stories
                             }
                             console.log(userStories)
@@ -84,17 +83,56 @@ const InboxScreen = props => {
                         }
                         setMatches(oldArray => [...oldArray, user]);
                     });
+                    
                 });
                 setLoading(false)
             })
-            .catch(function(error) {
-                alert("Error getting documents: ", error);
-            });
-        } else {
-            setLoading(false)
         }
+      return () => {
+          if(unsubscribe)
+          unsubscribe()
+        }
+      }, [firebase])
+
+
+    // const getMatches = () => {
+    //     setMatches([]);
+    //     setStories([]);
+    //     const db = firebase.firestore;
+    //     if(profile.matches){
+    //         const query = db.collection('profile').where('uid', 'in', profile.matches);
+
+    //         query.get()
+    //         .then(function(querySnapshot) {
+    //             querySnapshot.forEach(async function(doc) {
+    //                 let user = doc.data()
+    //                 doc.ref.collection("story").where('uploadedAt', '>', Date.now() - 86400000).get().then((querySnapshot) => {
+    //                     querySnapshot.forEach(async function(doc) {
+    //                         if(!user.stories) user.stories = []
+    //                         user.stories.push(doc.data());
+    //                     })
+    //                     if(user.stories) {
+    //                         let userStories = {
+    //                             userId: user.uid,
+    //                             userName: user.name,
+    //                             images: user.stories
+    //                         }
+    //                         console.log(userStories)
+    //                         setStories(oldArray => [...oldArray, userStories]);
+    //                     }
+    //                     setMatches(oldArray => [...oldArray, user]);
+    //                 });
+    //             });
+    //             setLoading(false)
+    //         })
+    //         .catch(function(error) {
+    //             alert("Error getting documents: ", error);
+    //         });
+    //     } else {
+    //         setLoading(false)
+    //     }
         
-    }
+    // }
 
     const getChats = () => {
         
