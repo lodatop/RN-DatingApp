@@ -27,6 +27,19 @@ const Stories = props => {
         setActualIndex(0)
     }
 
+    const transformTime = (ms) => {
+        let time = new Date(ms)
+        let date = time.getDate()
+        let month = time.getMonth()
+        let year = time.getFullYear()
+        let hour = time.getHours()
+        let min = time.getMinutes()
+
+        let newTime = `${date}/${month}/${year} ${hour}:${min}`
+
+        return newTime
+    }
+
     let topPart = (
         actualStory ? 
         actualStory.images.map((photo, i) => {
@@ -37,7 +50,7 @@ const Stories = props => {
                         alignSelf: 'center',
                         zIndex: 200
                         }}
-                        key={actualStory.images[i]}>
+                        key={actualStory.images[i].url}>
                         <View style={{ ...styles.topBar, backgroundColor: i === actualIndex ? 'white': styles.topBar.backgroundColor}}></View>
                     </View>
                 )
@@ -109,6 +122,9 @@ const Stories = props => {
                             </View>
                             <View style={{position: 'absolute', top: 30, width: '100%', zIndex: 200}}>
                                 <Text style={{alignSelf: 'center', color: 'white', fontSize: 20}}>{actualStory.userName}</Text>
+                            </View>
+                            <View style={{position: 'absolute', bottom: 10, right: 20, zIndex: 200}}>
+                                <Text style={{color: 'white', fontSize: 20}}>{transformTime(actualStory.images[actualIndex].uploadedAt)}</Text>
                             </View>
                             <Image
                                         style={{...styles.image, backgroundColor: 'lightgrey'}}

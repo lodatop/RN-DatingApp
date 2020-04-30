@@ -1,13 +1,14 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions, Keyboard} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions, Keyboard, Image, TouchableOpacity} from 'react-native';
 
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
-
+import ImagePickerModal from '../components/ImagePickerModal'
+import { KoroModal, KoroProgress } from 'rn-koro-lib'
 import ChatHeader from '../components/ChatHeader'
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native-gesture-handler';
 import Colors from '../constants/Colors';
+import * as ImagePicker from 'expo-image-picker';
 
 import { Notifications } from 'expo';
 
@@ -31,6 +32,8 @@ const ChatScreen = props => {
     let KeyboardHiddenListener
     let KeyboardShownListener
     const [chatContainerStyle, setChatContainerStyle] = useState({})
+    const [modalOpen, setModalOpen] = useState(false)
+    const [imagePickerOpen, setImagePickerOpen] = useState(false)
 
     const scrollViewRef = useRef(null)
 
@@ -57,8 +60,28 @@ const ChatScreen = props => {
         setNotification(notification)
     }
 
+    const handleTakePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchCameraAsync();
+        
+        if(!response.cancelled){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
+    const handleChoosePhoto = async () => {
+        setImagePickerOpen(false)
+        let response = await ImagePicker.launchImageLibraryAsync();
+        
+        if(!response.cancelled){
+            setPhoto(response)
+            setModalOpen(true)
+        }
+    }
+
     const sendPushNotification = async (message) => {
-        const message = {
+        const msg = {
           to: otherUser.expoToken,
           sound: 'default',
           title: 'New message from ' + profile.name,
@@ -73,7 +96,7 @@ const ChatScreen = props => {
             'Accept-encoding': 'gzip, deflate',
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(message),
+          body: JSON.stringify(msg),
         });
       };
 
@@ -104,6 +127,7 @@ const ChatScreen = props => {
         var db = firebase.firestore;
 
         if(photo){
+            setLoading(true)
             var storageRef = firebase.storage.ref()
             var ref = storageRef.child(photo.uri.split("/")[photo.uri.split("/").length - 1])
             const response = await fetch(photo.uri);
@@ -114,14 +138,15 @@ const ChatScreen = props => {
                     const message = {
                         uid,
                         sendAt: Date.now(),
-                        content,
-                        attachment: [url]
+                        content: null,
+                        attachment: url
                     }
-                    db.collection('chat').doc(chatId).update({
-                        messages: db.FieldValue.arrayUnion(message)
-                    })
+                    // db.collection('chat').doc(chatId).update({
+                    //     messages: db.FieldValue.arrayUnion(message)
+                    // })
                 })
-            
+                setLoading(false)
+                setModalOpen(false)
             })
 
         } else {
@@ -183,11 +208,12 @@ const ChatScreen = props => {
     }
 
     const renderMessages = () => {
+        console.log(messages)
         return messages.map((msg, i) => {
-            if(msg.uid == profile.uid){
-                return (
-                    <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
-
+            if(msg.content || msg.attachment) {
+                if(msg.uid == profile.uid){
+                    return (
+                        <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
                         {msg.attachment ? 
                             (
                                 <TouchableOpacity>
@@ -199,37 +225,37 @@ const ChatScreen = props => {
                             ) 
                             : (
                                 <Text style={{textAlign: 'right'}}>{msg.content}</Text>        
-                            )    
+                                )    
                         }
-
                         <View style={{position: 'absolute', bottom: 5, right: 10}}>
                             <Text style={{fontSize: 10}}>{transformTime(msg.sendAt)}</Text>
                         </View>
                     </View>   
                 )
-            }
-            else {
-                return (
-                    <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
+                }
+                else {
+                    return (
+                        <View key={i} style={{...styles.message, borderTopLeftRadius: 0, backgroundColor: '#fbc9ff', alignSelf: 'flex-start'}}>
 
-                        {msg.attachment ? (
-                                <TouchableOpacity>
-                                    <Image
-                                    style={styles.photo}
-                                    resizeMode='cover'
-                                    source={{uri: msg.attachment}}/>
-                                </TouchableOpacity>
-                            )  :
-                            (
-                                <Text>{msg.content}</Text>
-                            )  
-                        }
+                            {msg.attachment ? (
+                                    <TouchableOpacity>
+                                        <Image
+                                        style={styles.photo}
+                                        resizeMode='cover'
+                                        source={{uri: msg.attachment}}/>
+                                    </TouchableOpacity>
+                                )  :
+                                (
+                                    <Text>{msg.content}</Text>
+                                )  
+                            }
 
-                        <View style={{position: 'absolute', bottom: 5, left: 10}}>
-                            <Text style={{fontSize: 10}}>{transformTime(msg.sendAt)}</Text>
-                        </View>
-                    </View> 
-                )
+                            <View style={{position: 'absolute', bottom: 5, left: 10}}>
+                                <Text style={{fontSize: 10}}>{transformTime(msg.sendAt)}</Text>
+                            </View>
+                        </View> 
+                    )
+                }
             }
         })
     }
@@ -251,7 +277,7 @@ const ChatScreen = props => {
                         onBlur={()=>{console.log('im blur')}}
                         />
                     </View>
-                    <TouchableOpacity style={styles.camera}>
+                    <TouchableOpacity style={styles.camera} onPress={()=>setImagePickerOpen(true)}>
                         <Ionicons name='ios-camera' size={25} />
                     </TouchableOpacity>
                 </View>
@@ -259,6 +285,50 @@ const ChatScreen = props => {
                     <Ionicons name='ios-send' size={30} color='white'/>
                 </TouchableOpacity>
             </View>
+            <KoroModal 
+                    visible={modalOpen} 
+                    borderStyle={{padding: 20}} 
+                    contentStyle={{borderRadius: 15, elevation: 15, backgroundColor: 'rgba(255, 227, 236, 1)'}}
+                    onRequestClose={()=> setModalOpen(false)}>
+                    <Text style={styles.modalTitle}>Image Preview</Text>
+                    <View style={{width: '100%', height: 2, marginVertical: 10, backgroundColor: Colors.headerColor}}></View>
+                    {photo && (
+                        <View
+                            style={{ 
+                                overflow: 'hidden',
+                                marginVertical: 15,
+                                width: '90%', 
+                                height: '60%',
+                                borderRadius: 10 }}>
+                            <Image
+                                resizeMode='cover'
+                                source={{ uri: photo.uri }}
+                                style={{
+                                    width: '100%', 
+                                    height: '100%'}}
+                            />
+                        </View>
+                    )}
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{...styles.modalButton, backgroundColor: Colors.acceptColor}}
+                        onPress={sendMessage}>
+                        <Text style={styles.modalText}>Send image</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        activeOpacity={0.7}
+                        style={{...styles.modalButton, backgroundColor: Colors.cancelColor}} 
+                        onPress={()=> setModalOpen(false)}>
+                        <Text style={{...styles.modalText}}>Cancel</Text>
+                    </TouchableOpacity>
+                </KoroModal>
+            <ImagePickerModal 
+                visible={imagePickerOpen} 
+                onClose={()=>setImagePickerOpen(false)} 
+                onRollPick={handleChoosePhoto}
+                onCameraPick={handleTakePhoto}
+            />
+            <KoroProgress visible={loading} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>
     )
 }
@@ -328,7 +398,27 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         padding: 10,
         elevation: 5
-    }
+    },
+    modalButton: {
+        width: '80%',
+        marginVertical: 10,
+        paddingVertical: 10,
+        borderRadius: 10
+    },
+    modalTitle:{
+        marginVertical: 15,
+        fontSize: 25,
+        textTransform: 'uppercase',
+        fontWeight: 'bold'
+    },
+    modalText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
 })
 
 export default ChatScreen;

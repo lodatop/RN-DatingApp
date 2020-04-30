@@ -61,6 +61,7 @@ const InboxScreen = props => {
 
     useEffect(() => {
         setMatches([]);
+        setStories([]);
         const db = firebase.firestore;
         if(profile.matches){
             const unsubscribe = db.collection('profile')
@@ -76,7 +77,8 @@ const InboxScreen = props => {
                         if(user.stories) {
                             let userStories = {
                                 userId: user.uid,
-                                images: user.stories
+                                images: user.stories,
+                                userName: user.name
                             }
                             console.log(userStories)
                             setStories(oldArray => [...oldArray, userStories]);
@@ -87,11 +89,12 @@ const InboxScreen = props => {
                 });
                 setLoading(false)
             })
-        }
-      return () => {
-          if(unsubscribe)
-          unsubscribe()
-        }
+            console.log(stories)
+            return () => {
+                    if(unsubscribe)
+                        unsubscribe()
+                }
+            }
       }, [firebase])
 
 
