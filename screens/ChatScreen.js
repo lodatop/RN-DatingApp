@@ -137,13 +137,17 @@ const ChatScreen = props => {
                     let url = downloadURL
                     const message = {
                         uid,
+                        attachment: url,
                         sendAt: Date.now(),
-                        content: null,
-                        attachment: url
+                        content
                     }
-                    // db.collection('chat').doc(chatId).update({
-                    //     messages: db.FieldValue.arrayUnion(message)
-                    // })
+                    let messagesX = messages
+                    messagesX.push(message)
+                    setMessages(oldArray => [...oldArray, message]);
+                    const toUpdate = {
+                        messages: messagesX
+                    }
+                    db.collection('chat').doc(chatId).update(toUpdate)
                 })
                 setLoading(false)
                 setModalOpen(false)
