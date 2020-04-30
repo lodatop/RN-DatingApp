@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions} from 'react-native';
+import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions, Keyboard} from 'react-native';
 
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
@@ -25,11 +25,27 @@ const ChatScreen = props => {
     const [loading, setLoading] = useState(true)
     const [photo, setPhoto] = useState(null)
     const [newMsg, setNewMsg] = useState('')
+    let KeyboardHiddenListener
+    let KeyboardShownListener
+    const [chatContainerStyle, setChatContainerStyle] = useState({})
 
     const scrollViewRef = useRef(null)
 
     const scrollDown = () => {
         scrollViewRef.current.scrollToEnd()
+    }
+
+    useEffect(()=>{
+        KeyboardHiddenListener = Keyboard.addListener('keyboardDidHide', keyboardIsHidden)
+        KeyboardShownListener = Keyboard.addListener('keyboardDidShow', keyboardIsVisible) 
+    }, [])
+
+    const keyboardIsHidden = () => {
+        setChatContainerStyle({height: SCREEN_HEIGHT*0.72})
+    }
+
+    const keyboardIsVisible = () => {
+        setChatContainerStyle({height: SCREEN_HEIGHT*0.3})
     }
 
     useEffect(() => {
@@ -123,6 +139,19 @@ const ChatScreen = props => {
     //     });
     // }
 
+    const transformTime = (ms) => {
+        let time = new Date(ms)
+        let date = time.getDate()
+        let month = time.getMonth()
+        let year = time.getFullYear()
+        let hour = time.getHours()
+        let min = time.getMinutes()
+
+        let newTime = `${date}/${month}/${year} ${hour}:${min}`
+
+        return newTime
+    }
+
     const renderMessages = () => {
         return messages.map((msg, i) => {
             if(msg.uid == profile.uid){
@@ -144,7 +173,7 @@ const ChatScreen = props => {
                         }
 
                         <View style={{position: 'absolute', bottom: 5, right: 10}}>
-                            <Text style={{fontSize: 10}}>Time</Text>
+                            <Text style={{fontSize: 10}}>{transformTime(msg.sendAt)}</Text>
                         </View>
                     </View>   
                 )
@@ -167,7 +196,7 @@ const ChatScreen = props => {
                         }
 
                         <View style={{position: 'absolute', bottom: 5, left: 10}}>
-                            <Text style={{fontSize: 10}}>Time</Text>
+                            <Text style={{fontSize: 10}}>{transformTime(msg.sendAt)}</Text>
                         </View>
                     </View> 
                 )
@@ -178,7 +207,7 @@ const ChatScreen = props => {
     return (
         <View style={styles.container}>
             <ChatHeader user={otherUser} goBack={()=>{props.navigation.navigate('Inbox')}}/>
-            <View style={styles.chatLayout}>
+            <View style={{...styles.chatLayout, ...chatContainerStyle}}>
                 <ScrollView ref={scrollViewRef} onContentSizeChange={()=>scrollDown()}>
                     {renderMessages()}
                 </ScrollView>
@@ -187,7 +216,10 @@ const ChatScreen = props => {
             <View style={styles.sendContainer}>
                 <View style={styles.inputContainer}>
                     <View style={styles.input}>
-                        <TextInput placeholder='Write a message' onChangeText={(text)=>setNewMsg(text)} value={newMsg}/>
+                        <TextInput placeholder='Write a message' onChangeText={(text)=>setNewMsg(text)} value={newMsg} 
+                        onFocus={()=>{console.log('im focussed')}}
+                        onBlur={()=>{console.log('im blur')}}
+                        />
                     </View>
                     <TouchableOpacity style={styles.camera}>
                         <Ionicons name='ios-camera' size={25} />
@@ -253,7 +285,7 @@ const styles = StyleSheet.create({
     },
     message: {
         maxWidth: '80%',
-        minWidth: '15%', 
+        minWidth: '30%', 
         padding: 10,
         borderRadius: 10,
         margin: 5,

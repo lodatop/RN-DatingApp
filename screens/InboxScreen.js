@@ -90,8 +90,10 @@ const InboxScreen = props => {
             .catch(function(error) {
                 alert("Error getting documents: ", error);
             });
+        } else {
+            setLoading(false)
         }
-
+        
     }
 
     const getChats = () => {
@@ -200,7 +202,7 @@ const InboxScreen = props => {
                 <Stories stories={stories} />
             </View>
             <ScrollView>
-                {matches ? renderChats() : <Text>You have no matches yet</Text>}
+                {matches.length > 0 ? renderChats() : <Text>You have no matches yet</Text>}
             </ScrollView>
             <KoroModal 
                     visible={modalOpen} 
@@ -272,7 +274,27 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         marginHorizontal: 10,
         borderRadius: 30
-    }
+    },
+    modalButton: {
+        width: '80%',
+        marginVertical: 10,
+        paddingVertical: 10,
+        borderRadius: 10
+    },
+    modalTitle:{
+        marginVertical: 15,
+        fontSize: 25,
+        textTransform: 'uppercase',
+        fontWeight: 'bold'
+    },
+    modalText: {
+        textAlign: 'center',
+        color: 'white',
+        fontSize: 15,
+        fontWeight: 'bold',
+        letterSpacing: 1.5,
+        textTransform: 'uppercase'
+    },
     
 })
 
