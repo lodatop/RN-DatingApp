@@ -6,6 +6,7 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 
 
 import { KoroProgress } from 'rn-koro-lib';
@@ -34,6 +35,7 @@ const CreateProfileScreen = props => {
     const [continueDisabled, setContinueDisabled] = useState(true);
     const [lookingFor, setLookingFor] = useState([]);
     const [imagePickerOpen, setImagePickerOpen] = useState(false)
+    const [location, setLocation] = useState(null);
 
     
     const firebase = useContext(FirebaseContext);
@@ -41,6 +43,7 @@ const CreateProfileScreen = props => {
 
     useEffect(()=> {
         registerForPushNotificationsAsync()
+        getGeolocation()
     }, [])
     useEffect(() => {
         (profile.name === '' || eval(profile.age) < 18 || profile.gender === '' || lookingFor.length == 0) ?
@@ -64,6 +67,19 @@ const CreateProfileScreen = props => {
         name: 'trans_female'
       }
     ];
+
+    //gets location
+    const getGeolocation = async () => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Permission to access location was denied');
+            }
+      
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+          })();
+    }
 
     //creates an expoPushToken for notification purposes.
     const registerForPushNotificationsAsync = async () => {
@@ -125,6 +141,8 @@ const CreateProfileScreen = props => {
 
         let uid = await firebase.auth.currentUser.uid;
 
+        console.log(location)
+
         var db = firebase.firestore;
         setLoading(true);
         if(photo){
@@ -144,6 +162,8 @@ const CreateProfileScreen = props => {
                         photos: [url],
                         expoToken: profile.expoToken
                     }
+                    if(location)
+                        postProfile.geolocation = location;
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
                     if(profile.height != '')
@@ -168,6 +188,8 @@ const CreateProfileScreen = props => {
                 lookingFor: lookingFor,
                 expoToken: profile.expoToken
             }
+            if(location)
+                postProfile.geolocation = location;
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
             if(profile.height != '')
