@@ -10,7 +10,7 @@ const {width, height} = Dimensions.get('window')
 
 export const ProfileModal = (props) => {
 
-    const { profile, visible = false, onClose } = props
+    const { profile, visible = false, onClose, myProfile } = props
     const [currentIndex, setCurrentIndex] = useState(0)
     useEffect(()=>{
         setCurrentIndex(last => 0)
@@ -45,6 +45,28 @@ export const ProfileModal = (props) => {
             </View>
         )
     )
+    
+    //se calcula la distancia en Kilometros entre el usuario logeado y el usuario que se desee
+    const distance = (lat1, lon1, lat2, lon2, unit) => {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            let radlat1 = Math.PI * lat1/180;
+            let radlat2 = Math.PI * lat2/180;
+            let theta = lon1-lon2;
+            let radtheta = Math.PI * theta/180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit=="K") { dist = dist * 1.609344 }
+            return dist;
+        }
+    }
 
     return (
         <Modal 
@@ -79,14 +101,14 @@ export const ProfileModal = (props) => {
                     </TouchableOpacity>
                     <TouchableOpacity 
                         style={{...styles.changePhotoContainer, right: 0}}
-                        disabled={currentIndex === (profLength - 1) ? true : false}
+                        disabled={profLength > 0 ? currentIndex === (profLength - 1) ? true : false : true}
                         onPress={()=> setCurrentIndex(prevIndex=> prevIndex + 1)}
                         >
                         <View style={{...styles.changePhoto, alignItems: 'flex-end'}}>
                             <Ionicons 
                                 name='ios-arrow-forward' 
                                 size={50} 
-                                color={currentIndex === (profLength - 1) ? 'grey': 'white'}
+                                color={profLength > 0 ? currentIndex === (profLength - 1) ? 'grey': 'white' : 'grey'}
                                 />
                         </View>
                     </TouchableOpacity>
@@ -108,17 +130,20 @@ export const ProfileModal = (props) => {
                     <Text style={styles.label}>About Me: 
                         {profile.aboutMe ? 
                             <Text style={styles.text}> {profile.aboutMe}</Text>
-                            : <Text style={styles.text}>No info provided</Text>}
+                            : <Text style={styles.text}> No info provided</Text>}
                     </Text>
                     <Text style={styles.label}>Profession:
                         {profile.profession ?
                             <Text style={styles.text}> {profile.profession}</Text>
-                            : <Text style={styles.text}>No info provided</Text>}
+                            : <Text style={styles.text}> No info provided</Text>}
                     </Text>
                     <Text style={styles.label}>Height:
                         {profile.height ?
                             <Text style={styles.text}> {profile.height}m</Text>
-                            : <Text style={styles.text}>No info provided</Text>}
+                            : <Text style={styles.text}> No info provided</Text>}
+                    </Text>
+                    <Text style={styles.label}>
+                    {myProfile ? Math.floor(distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, profile.geolocation.latitude, profile.geolocation.longitude, 'K')) : null} Km away from you
                     </Text>
                 </View>
             </ScrollView>

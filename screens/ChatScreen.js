@@ -221,12 +221,12 @@ const ChatScreen = props => {
                         <View key={i} style={{...styles.message, borderTopRightRadius: 0, backgroundColor: '#f8b0ff', alignSelf: 'flex-end' }}>
                         {msg.attachment ? 
                             (
-                                <TouchableOpacity>
+                                <View>
                                     <Image
                                     style={styles.photo}
                                     resizeMode='cover'
                                     source={{uri: msg.attachment}}/>
-                                </TouchableOpacity>
+                                </View>
                             ) 
                             : (
                                 <Text style={{textAlign: 'right'}}>{msg.content}</Text>        
@@ -352,7 +352,6 @@ const styles = StyleSheet.create({
         position: 'absolute',
         bottom: 0,
         alignSelf: 'center',
-        // backgroundColor: 'red',
         width: SCREEN_WITDH*0.95
     },
     inputContainer:{
@@ -398,10 +397,11 @@ const styles = StyleSheet.create({
         elevation: 8
     },
     photo: {
-        width: 100,
-        height: 100,
+        width: 250,
+        height: 250,
         borderRadius: 10,
-        padding: 10
+        marginBottom: 5,
+        backgroundColor: 'lightgrey'
     },
     modalButton: {
         width: '80%',

@@ -244,7 +244,7 @@ const InboxScreen = props => {
                 <Stories stories={stories} />
             </View>
             <ScrollView>
-                {matches.length > 0 ? renderChats() : <Text>You have no matches yet</Text>}
+                {matches.length > 0 ? renderChats() : <Text style={{padding: 20, alignSelf: 'center', fontSize: 15}}>You have no matches yet</Text>}
             </ScrollView>
             <KoroModal 
                     visible={modalOpen} 

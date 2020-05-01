@@ -134,8 +134,7 @@ const CreateProfileScreen = props => {
         setProfile({...profile,
             [name]: value})
     }
-
-
+    // console.log(location)
     //Gets all data entered by the user and adds it to the profile
     const createProfile = async () => {
 
@@ -161,8 +160,10 @@ const CreateProfileScreen = props => {
                         expoToken: profile.expoToken
                     }
                     if(location) {
-                        postProfile.geolocation.latitude = location.coords.latitude;
-                        postProfile.geolocation.longitude = location.coords.longitude;
+                        postProfile.geolocation = {
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude
+                        }
                     }
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
@@ -189,8 +190,10 @@ const CreateProfileScreen = props => {
                 expoToken: profile.expoToken
             }
             if(location) {
-                postProfile.geolocation.latitude = location.coords.latitude;
-                postProfile.geolocation.longitude = location.coords.longitude;
+                postProfile.geolocation = {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                }
             }
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
@@ -368,8 +371,8 @@ const styles = StyleSheet.create({
     }
 })
 
-CreateProfileScreen.navigationOptions = {
-    headerTitle: 'Edit Profile'
+export const createProfileConfig = {
+    headerTitle: 'Create Profile'
 }
 
 export default CreateProfileScreen;

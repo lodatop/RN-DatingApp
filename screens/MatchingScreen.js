@@ -81,21 +81,22 @@ const MatchingScreen = props => {
         .then(function(querySnapshot) {
             querySnapshot.forEach(async function(doc) {
                 let user = doc.data()
-                if(user.uid != profile.uid){
-                    if(user.likedBy && user.dislikedBy){
-                        if(!user.likedBy.includes(uid) && !user.dislikedBy.includes(uid))
-                             setDatingProfiles(oldArray => [...oldArray, user]);
-                     } else if (user.likedBy) {
-                        if(!user.likedBy.includes(uid))
-                             setDatingProfiles(oldArray => [...oldArray, user]);
-                     } else if (user.dislikedBy) {
-                        if(!user.dislikedBy.includes(uid))
-                             setDatingProfiles(oldArray => [...oldArray, user]);
-                     } else {
-                        setDatingProfiles(oldArray => [...oldArray, user]);
-                     }
+                if (user.geolocation){
+                    if(user.uid != profile.uid){
+                        if(user.likedBy && user.dislikedBy){
+                            if(!user.likedBy.includes(uid) && !user.dislikedBy.includes(uid))
+                                setDatingProfiles(oldArray => [...oldArray, user]);
+                        } else if (user.likedBy) {
+                            if(!user.likedBy.includes(uid))
+                                setDatingProfiles(oldArray => [...oldArray, user]);
+                        } else if (user.dislikedBy) {
+                            if(!user.dislikedBy.includes(uid))
+                                setDatingProfiles(oldArray => [...oldArray, user]);
+                        } else {
+                            setDatingProfiles(oldArray => [...oldArray, user]);
+                        }
+                    }
                 }
-                
             });
             setDoneFetchin(prev => true)
         })
@@ -204,10 +205,59 @@ const MatchingScreen = props => {
 
     }
     
+    console.log(datingProfiles)
+    
+    //se calcula la distancia en Kilometros entre el usuario logeado y el usuario que se desee
+    const distance = (lat1, lon1, lat2, lon2, unit) => {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            let radlat1 = Math.PI * lat1/180;
+            let radlat2 = Math.PI * lat2/180;
+            let theta = lon1-lon2;
+            let radtheta = Math.PI * theta/180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit=="K") { dist = dist * 1.609344 }
+            return dist;
+        }
+    }
+
+    //se ordenan del mas cercano al mas lejano
+    const sortProfiles = (arr) => {
+        if(profile.geolocation){
+            
+            let aux = [...arr]
+            let n = arr.length
+            for (let i = 0; i < n ; i++) {
+                let distA = distance(profile.geolocation.latitude, profile.geolocation.longitude, arr[i].geolocation.latitude, arr[i].geolocation.longitude, 'K')
+                for (let j = i+1; j < n ; j++){
+                    let distB = distance(profile.geolocation.latitude, profile.geolocation.longitude, arr[j].geolocation.latitude, arr[j].geolocation.longitude, 'K')
+                    if(distB < distA){
+                        let temp = aux[i]
+                        aux[i] = aux[j]
+                        aux[j] = temp                      
+                    }
+                }
+            }
+            return aux
+            } else {
+                return []
+            }
+    }
+    
     //Here is managed the order of the cards and the current card being shown
     return (
         <View style={styles.container}>
-            <ProfileCard profiles={datingProfiles} onLike={(index)=>likeProfile(index)} onDislike={(index)=>dislikeProfile(index)}/>
+            {profile ?
+                (<ProfileCard myProfile={profile} profiles={sortProfiles(datingProfiles)} onLike={(index)=>likeProfile(index)} onDislike={(index)=>dislikeProfile(index)}/>)
+                : null }
             <MatchModal visible={thereIsMatch} name={matchedName} onClose={() => {setThereIsMatch(false)}} />
             <KoroProgress visible={!doneFetchin} contentStyle={{borderRadius: 10}} color='#ed1f63'/>
         </View>

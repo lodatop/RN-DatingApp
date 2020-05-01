@@ -18,13 +18,60 @@ const SCREEN_HEIGHT = Dimensions.get('window').height
 
 const ProfileCard = props => {
 
-    const { profiles = [], doneFetchin = false, onLike, onDislike } = props
-
-
+    const { profiles = [], doneFetchin = false, onLike, onDislike, myProfile } = props
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false)
+    const [sortedProfiles, setSortedProfiles] = useState([])
+    // const [myProfile, setMyProfile] = useState({...props.myProfile})
+
+    // useEffect(()=>{
+    //     setMyProfile({...props.myProfile})
+    // }, [props.myProfile])
+
+    // useEffect(()=>{
+    //     if(myProfile) setSortedProfiles(sortProfiles(profiles))
+    // }, [myProfile])
+    
+    // const sortProfiles = (arr) => {
+    //     let aux = [...arr]
+    //     let n = arr.length
+    //     for (let i = 0; i < n ; i++) {
+    //         let distA = distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, profiles[i].geolocation.latitude, profiles[i].geolocation.longitude, 'K')
+    //         for (let j = i+1; j < n ; j++){
+    //             let distB = distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, profiles[j].geolocation.latitude, profiles[j].geolocation.longitude, 'K')
+    //             if(distB < distA){
+    //                 let temp = aux[i]
+    //                 aux[i] = aux[j]
+    //                 aux[j] = temp                      
+    //             }
+    //         }
+    //     }
+    //     return aux
+    // }
 
     const position = new Animated.ValueXY();
+
+    //se calcula la distancia en Kilometros entre el usuario logeado y el usuario que se desee
+    const distance = (lat1, lon1, lat2, lon2, unit) => {
+        if ((lat1 == lat2) && (lon1 == lon2)) {
+            return 0;
+        }
+        else {
+            let radlat1 = Math.PI * lat1/180;
+            let radlat2 = Math.PI * lat2/180;
+            let theta = lon1-lon2;
+            let radtheta = Math.PI * theta/180;
+            let dist = Math.sin(radlat1) * Math.sin(radlat2) + Math.cos(radlat1) * Math.cos(radlat2) * Math.cos(radtheta);
+            if (dist > 1) {
+                dist = 1;
+            }
+            dist = Math.acos(dist);
+            dist = dist * 180/Math.PI;
+            dist = dist * 60 * 1.1515;
+            if (unit=="K") { dist = dist * 1.609344 }
+            return dist;
+        }
+    }
 
     //This is the logic for the card to rotate ad=nd translate
     const rotate = position.x.interpolate({
@@ -126,6 +173,7 @@ const ProfileCard = props => {
 
     //This function render all users being looked for by the actual user that havent being swiped yet
     const renderUsers = () => {
+        // if(myProfile) {
             return profiles.map((user, i) => {
                 if (i < currentIndex) {
                     return null
@@ -162,7 +210,12 @@ const ProfileCard = props => {
                                 source={user.photos ? {uri: user.photos[0]}: require('../assets/default-user.png')}/>
 
                             <View style={styles.profileInfoContainer}>
-                                <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
+                                <Text style={styles.profileInfo}>
+                                    {user.name.length > 15 ? user.name.slice(0, 15) + '...' : user.name}, {user.age}
+                                </Text>
+                                <Text style={styles.location}>
+                                    {myProfile ? Math.floor(distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, user.geolocation.latitude, user.geolocation.longitude, 'K')) : null} Km from you
+                                </Text>
                             </View>
 
                             <TouchableOpacity
@@ -197,6 +250,9 @@ const ProfileCard = props => {
 
                             <View style={styles.profileInfoContainer}>
                                 <Text style={styles.profileInfo}>{user.name}, {user.age}</Text>
+                                <Text style={styles.location}>
+                                    {myProfile ? Math.floor(distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, user.geolocation.latitude, user.geolocation.longitude, 'K')) : null} Km from you
+                                </Text>
                             </View>
 
                             
@@ -211,7 +267,7 @@ const ProfileCard = props => {
                     )
                 }
             }).reverse()
-        
+        // }
     }
     
     //Here is managed the order of the cards and the current card being shown
@@ -239,7 +295,7 @@ const ProfileCard = props => {
                                 <Ionicons name='md-checkmark' size={50} color='white'/>
                             </TouchableOpacity>
                         </View>
-                        <ProfileModal visible={modalVisible} onClose={()=>setModalVisible(false)} profile={profiles[currentIndex]}/>
+                        <ProfileModal myProfile={myProfile} visible={modalVisible} onClose={()=>setModalVisible(false)} profile={profiles[currentIndex]}/>
                     </Wrapper>
                     : <Text>No more profiles available yet</Text>
                 }
@@ -298,6 +354,15 @@ const styles = StyleSheet.create({
         textShadowColor: 'black', 
         textShadowOffset: { width: 0, height: 0 }, 
         textShadowRadius: 1,
+    },
+    location: {
+        fontSize: 18,
+        alignSelf: 'flex-end',
+        color: 'white',
+        textShadowColor: 'black', 
+        textShadowOffset: { width: 0, height: 0 }, 
+        textShadowRadius: 1,
+        marginBottom: 20
     },
     profileInfoContainer: {
         position: 'absolute',

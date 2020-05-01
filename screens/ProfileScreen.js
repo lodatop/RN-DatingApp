@@ -133,7 +133,7 @@ const ProfileScreen = props => {
             alert("Couldn't logout, try again");
         })
     }
-
+    console.log(profile)
     return (
         <View style={styles.container}>
             <View style={styles.userDataContainer}>
