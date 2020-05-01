@@ -6,6 +6,7 @@ import * as Permissions from 'expo-permissions';
 import Constants from 'expo-constants';
 
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 
 
 import { KoroProgress } from 'rn-koro-lib';
@@ -34,6 +35,7 @@ const CreateProfileScreen = props => {
     const [continueDisabled, setContinueDisabled] = useState(true);
     const [lookingFor, setLookingFor] = useState([]);
     const [imagePickerOpen, setImagePickerOpen] = useState(false)
+    const [location, setLocation] = useState(null);
 
     
     const firebase = useContext(FirebaseContext);
@@ -41,6 +43,7 @@ const CreateProfileScreen = props => {
 
     useEffect(()=> {
         registerForPushNotificationsAsync()
+        getGeolocation()
     }, [])
     useEffect(() => {
         (profile.name === '' || eval(profile.age) < 18 || profile.gender === '' || lookingFor.length == 0) ?
@@ -64,6 +67,19 @@ const CreateProfileScreen = props => {
         name: 'trans_female'
       }
     ];
+
+    //gets location
+    const getGeolocation = async () => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Permission to access location was denied');
+            }
+      
+            let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+            setLocation(location);
+          })();
+    }
 
     //creates an expoPushToken for notification purposes.
     const registerForPushNotificationsAsync = async () => {
@@ -118,8 +134,7 @@ const CreateProfileScreen = props => {
         setProfile({...profile,
             [name]: value})
     }
-
-
+    // console.log(location)
     //Gets all data entered by the user and adds it to the profile
     const createProfile = async () => {
 
@@ -144,6 +159,12 @@ const CreateProfileScreen = props => {
                         photos: [url],
                         expoToken: profile.expoToken
                     }
+                    if(location) {
+                        postProfile.geolocation = {
+                            latitude: location.coords.latitude,
+                            longitude: location.coords.longitude
+                        }
+                    }
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
                     if(profile.height != '')
@@ -167,6 +188,12 @@ const CreateProfileScreen = props => {
                 gender: profile.gender,
                 lookingFor: lookingFor,
                 expoToken: profile.expoToken
+            }
+            if(location) {
+                postProfile.geolocation = {
+                    latitude: location.coords.latitude,
+                    longitude: location.coords.longitude
+                }
             }
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
@@ -344,8 +371,8 @@ const styles = StyleSheet.create({
     }
 })
 
-CreateProfileScreen.navigationOptions = {
-    headerTitle: 'Edit Profile'
+export const createProfileConfig = {
+    headerTitle: 'Create Profile'
 }
 
 export default CreateProfileScreen;

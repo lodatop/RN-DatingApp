@@ -22,6 +22,7 @@ const UserImagesScreen = props => {
     const [modalOpen, setModalOpen] = useState(false)
     const [imagePickerOpen, setImagePickerOpen] = useState(false)
     const [photo, setPhoto] = useState(null)
+    const [stories, setStories] = useState(null)
 
 
     useEffect(()=> {
@@ -32,6 +33,7 @@ const UserImagesScreen = props => {
             setLoading(false)
         }, 1000)
     }, [profileContext])
+
 
     const handleTakePhoto = async () => {
         setImagePickerOpen(false)
@@ -55,7 +57,7 @@ const UserImagesScreen = props => {
 
     const uploadPhoto = async () => {
 
-        let uid = await firebase.auth.currentUser.uid;
+        let uid = profile.uid;
 
         var db = firebase.firestore;
 

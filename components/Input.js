@@ -47,8 +47,8 @@ const Input = (props) => {
     };
 
     return(
-        <View>
-            <Animated.Text style={{...labelStyle, top: top, fontSize: fontSize, zIndex: 100}}>{label}</Animated.Text>
+        <View style={{backgroundColor: 'transparent'}}>
+            <Animated.Text style={{...labelStyle, top: top, fontSize: fontSize, zIndex: 90}}>{label}</Animated.Text>
             <TextInput
                 editable={editable}
                 onFocus={focus}
@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 3,
         margin: 5,
         paddingLeft: 10,
-        zIndex: 90
+        zIndex: 100
     }
 });
 

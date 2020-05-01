@@ -9,10 +9,11 @@ import LoginScreen, { loginConfig } from '../screens/LoginScreen';
 import MatchingScreen from '../screens/MatchingScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import RegisterScreen, { registerConfig } from '../screens/RegisterScreen';
-import CreateProfileScreen from '../screens/CreateProfileScreen';
+import CreateProfileScreen, { createProfileConfig } from '../screens/CreateProfileScreen';
 import EditProfileScreen from '../screens/EditProfileScreen';
 import Colors from '../constants/Colors';
 import UserImagesScreen, { userImagesConfig } from '../screens/UserImagesScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const defaultStackConfig = {
   headerTitleAlign: 'center',
@@ -48,6 +49,11 @@ export const InboxNavigator = () => {
         name='Inbox' 
         component={InboxScreen}
         options={{title: 'Your Inbox', headerLeft: null}}
+        />
+      <InboxStackNavigator.Screen 
+        name='Chat' 
+        component={ChatScreen}
+        options={{headerShown: false}}
         />
     </InboxStackNavigator.Navigator>
   )
@@ -143,7 +149,7 @@ export const LoginNavigator = () => {
       <LoginStackNavigator.Screen 
         name='CreateProfile' 
         component={CreateProfileScreen}
-        options={{headerLeft: null}}
+        options={{...createProfileConfig, headerLeft: null}}
         />
       <LoginStackNavigator.Screen 
         name='Tabs' 

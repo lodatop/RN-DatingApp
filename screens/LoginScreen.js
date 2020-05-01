@@ -1,8 +1,13 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { View, Text, ScrollView, StyleSheet, Button, Alert, TextInput, TouchableOpacity } from 'react-native';
 import { KoroProgress } from 'rn-koro-lib';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from '../constants/Colors';
+
+import { Notifications } from 'expo';
+import * as Permissions from 'expo-permissions';
+import Constants from 'expo-constants';
+import * as Location from 'expo-location';
 
 import { FirebaseContext } from '../context/Firebase';
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
@@ -14,9 +19,58 @@ const LoginScreen = props => {
     const [password, setPassword] = useState('')
     const [loading, setLoading] = useState(false);
     const [passwordIsHidden, setPasswordIsHidden] = useState(true);
+    const [location, setLocation] = useState(null);
+    const [token, setToken] = useState(null);
 
     const firebase = useContext(FirebaseContext);
     const profileContext = useContext(ProfileContext);
+
+    useEffect(()=>{
+        getGeolocation()
+        registerForPushNotificationsAsync()
+    }, [])
+
+    //gets location
+    const getGeolocation = async () => {
+        (async () => {
+            let { status } = await Location.requestPermissionsAsync();
+            if (status !== 'granted') {
+              alert('Permission to access location was denied');
+            }
+      
+            let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
+            setLocation(location);
+          })();
+    }
+
+    //creates an expoPushToken for notification purposes.
+    const registerForPushNotificationsAsync = async () => {
+        if (Constants.isDevice) {
+          const { status: existingStatus } = await Permissions.getAsync(Permissions.NOTIFICATIONS);
+          let finalStatus = existingStatus;
+          if (existingStatus !== 'granted') {
+            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            finalStatus = status;
+          }
+          if (finalStatus !== 'granted') {
+            alert('Failed to get push token for push notification!');
+            return;
+          }
+          let token = await Notifications.getExpoPushTokenAsync();
+          setToken(token)
+        } else {
+          alert('Must use physical device for Push Notifications');
+        }
+    
+        if (Platform.OS === 'android') {
+          Notifications.createChannelAndroidAsync('default', {
+            name: 'default',
+            sound: true,
+            priority: 'max',
+            vibrate: [0, 250, 250, 250],
+          });
+        }
+      };
 
     const login = (e) => {
         e.preventDefault();
@@ -43,12 +97,25 @@ const LoginScreen = props => {
 
         var db = firebase.firestore;
 
+        toUpdate = {
+            geolocation: {
+                latitude: location.coords.latitude,
+                longitude: location.coords.longitude
+            },
+            expoToken: token
+        }
+
         db.collection("profile").where("uid", "==", uid)
         .get()
         .then(function(querySnapshot) {
-            querySnapshot.forEach(async function(doc) {
-                await profileContext.setProfile(doc.data())
-                setLoading(false);
+            querySnapshot.forEach(function(doc) {
+                let user = doc.data()
+                user.geolocation = toUpdate.geolocation
+                user.expoToken = toUpdate.expoToken
+                doc.ref.update(toUpdate).then(async () => {
+                    await profileContext.setProfile(user)
+                    setLoading(false);
+                });
             });
         })
         .catch(function(error) {
