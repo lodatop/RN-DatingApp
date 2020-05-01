@@ -95,6 +95,7 @@ const InboxScreen = props => {
                         unsubscribe()
                 }
             }
+            setLoading(false)
       }, [firebase])
 
 
