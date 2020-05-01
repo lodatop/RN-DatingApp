@@ -76,7 +76,7 @@ const CreateProfileScreen = props => {
               alert('Permission to access location was denied');
             }
       
-            let location = await Location.getCurrentPositionAsync({});
+            let location = await Location.getCurrentPositionAsync({enableHighAccuracy: true});
             setLocation(location);
           })();
     }
@@ -141,8 +141,6 @@ const CreateProfileScreen = props => {
 
         let uid = await firebase.auth.currentUser.uid;
 
-        console.log(location)
-
         var db = firebase.firestore;
         setLoading(true);
         if(photo){
@@ -162,8 +160,10 @@ const CreateProfileScreen = props => {
                         photos: [url],
                         expoToken: profile.expoToken
                     }
-                    if(location)
-                        postProfile.geolocation = location;
+                    if(location) {
+                        postProfile.geolocation.latitude = location.coords.latitude;
+                        postProfile.geolocation.longitude = location.coords.longitude;
+                    }
                     if(profile.aboutMe != '')
                         postProfile.aboutMe = profile.aboutMe;
                     if(profile.height != '')
@@ -188,8 +188,10 @@ const CreateProfileScreen = props => {
                 lookingFor: lookingFor,
                 expoToken: profile.expoToken
             }
-            if(location)
-                postProfile.geolocation = location;
+            if(location) {
+                postProfile.geolocation.latitude = location.coords.latitude;
+                postProfile.geolocation.longitude = location.coords.longitude;
+            }
             if(profile.aboutMe != '')
                 postProfile.aboutMe = profile.aboutMe;
             if(profile.height != '')

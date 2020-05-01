@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useContext, useRef} from 'react';
-import {View, Text, ScrollView, StyleSheet, TextInput, Dimensions, Keyboard, Image, TouchableOpacity} from 'react-native';
+import {View, Text, ScrollView, Vibration, StyleSheet, TextInput, Dimensions, Keyboard, Image, TouchableOpacity} from 'react-native';
 
 import { ProfileContext } from '../context/ProfileContext/ProfileContext';
 import  { FirebaseContext } from '../context/Firebase';
@@ -138,8 +138,7 @@ const ChatScreen = props => {
                     const message = {
                         uid,
                         attachment: url,
-                        sendAt: Date.now(),
-                        content
+                        sendAt: Date.now()
                     }
                     let messagesX = messages
                     messagesX.push(message)
@@ -154,21 +153,23 @@ const ChatScreen = props => {
             })
 
         } else {
-            const message = {
-                uid,
-                sendAt: Date.now(),
-                content
+            if(newMsg != ''){
+                const message = {
+                    uid,
+                    sendAt: Date.now(),
+                    content
+                }
+                let messagesX = messages
+                messagesX.push(message)
+                setMessages(oldArray => [...oldArray, message]);
+                const toUpdate = {
+                    messages: messagesX
+                }
+                db.collection('chat').doc(chatId).update(toUpdate)
+                console.log(chatId)
+                sendPushNotification(newMsg)
+                setNewMsg('')
             }
-            let messagesX = messages
-            messagesX.push(message)
-            setMessages(oldArray => [...oldArray, message]);
-            const toUpdate = {
-                messages: messagesX
-            }
-            db.collection('chat').doc(chatId).update(toUpdate)
-            console.log(chatId)
-            sendPushNotification(newMsg)
-            setNewMsg('')
         }
     }
 
