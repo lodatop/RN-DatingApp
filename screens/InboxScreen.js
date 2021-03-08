@@ -32,13 +32,6 @@ const InboxScreen = props => {
 
     const img = 'https://e00-marca.uecdn.es/assets/multimedia/imagenes/2019/11/12/15735360845312.jpg'
 
-    // const stories = [
-    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] },
-    //     { userId: '1234', images: [img] }, { userId: '1234', images: [img] }
-    // ]
-
     useEffect(()=>{
         if(profile.uid) {
             setLoading(true)
@@ -48,7 +41,6 @@ const InboxScreen = props => {
 
     useEffect(()=> {
         if(profile.uid) {
-            //getMatches()
             getChats()
         }
     }, [profile])
@@ -57,7 +49,6 @@ const InboxScreen = props => {
         setProfile(profileContext.profile)
     }, [profileContext])
 
-    //probar esto
 
     useEffect(() => {
         setMatches([]);
@@ -99,45 +90,6 @@ const InboxScreen = props => {
       }, [firebase])
 
 
-    // const getMatches = () => {
-    //     setMatches([]);
-    //     setStories([]);
-    //     const db = firebase.firestore;
-    //     if(profile.matches){
-    //         const query = db.collection('profile').where('uid', 'in', profile.matches);
-
-    //         query.get()
-    //         .then(function(querySnapshot) {
-    //             querySnapshot.forEach(async function(doc) {
-    //                 let user = doc.data()
-    //                 doc.ref.collection("story").where('uploadedAt', '>', Date.now() - 86400000).get().then((querySnapshot) => {
-    //                     querySnapshot.forEach(async function(doc) {
-    //                         if(!user.stories) user.stories = []
-    //                         user.stories.push(doc.data());
-    //                     })
-    //                     if(user.stories) {
-    //                         let userStories = {
-    //                             userId: user.uid,
-    //                             userName: user.name,
-    //                             images: user.stories
-    //                         }
-    //                         console.log(userStories)
-    //                         setStories(oldArray => [...oldArray, userStories]);
-    //                     }
-    //                     setMatches(oldArray => [...oldArray, user]);
-    //                 });
-    //             });
-    //             setLoading(false)
-    //         })
-    //         .catch(function(error) {
-    //             alert("Error getting documents: ", error);
-    //         });
-    //     } else {
-    //         setLoading(false)
-    //     }
-        
-    // }
-
     const getChats = () => {
         
         const db = firebase.firestore;
@@ -160,13 +112,8 @@ const InboxScreen = props => {
     }
 
     const accessChat = (user) => {
-        //console.log(stories)
-        // console.log(userId)
         let chat = chatList.find(chat => chat.participants.includes(user.uid) )
-        // console.log(chat.ref)
         props.navigation.navigate('Chat', {ref: chat.ref, user: user})
-        //chat.ref es el id con el q se va a redireccionar
-        //hacer la navegacion con el chatId como parametro "chat/:id"
     }
 
     

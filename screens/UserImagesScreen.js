@@ -153,7 +153,6 @@ const UserImagesScreen = props => {
     }
 
     return (
-        // <View><Text>Hello im your pictures</Text></View>
         <ScrollView style={{flex:1}}>
             <View style={{...styles.container, flexDirection: photos ? photos.length > 0 ? 'row' : 'column' : 'row'}}>
                 {photos ?

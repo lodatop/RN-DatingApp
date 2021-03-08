@@ -118,8 +118,7 @@ const ChatScreen = props => {
         }
       }, [firebase])
 
-    //aqui agarramos el chat id del parametro en la ruta, dado q esta ruta es un chat/:id
-
+    
     const sendMessage = async (content) => {
 
         let uid = profile.uid;
@@ -173,31 +172,6 @@ const ChatScreen = props => {
         }
     }
 
-    // const sendMessageHandler = (msg) => {
-    //     console.log(msg)
-    //     setNewMsg('')
-    // }
-
-    // const getChatPartner = () => {
-    //     const db = firebase.firestore; 
-
-    //     db.collection("profile").where("uid", "==", chatPartner.uid)
-    //     .get()
-    //     .then(function(querySnapshot) {
-    //         querySnapshot.forEach(async function(doc) {
-    //             setChatPartner(doc.data())/*
-    //             doc.ref.collection("story").get().then((querySnapshot) => {
-    //                 setStories(querySnapshot.docs.data()) 
-    //                 querySnapshot.forEach(async function(doc) {
-    //                     setStories(oldArray => [...oldArray, doc.data()]);
-    //                 })
-    //               });*/
-    //         });
-    //     })
-    //     .catch(function(error) {
-    //         alert("Error getting documents: ", error);
-    //     });
-    // }
 
     const transformTime = (ms) => {
         let time = new Date(ms)

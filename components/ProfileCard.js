@@ -22,36 +22,11 @@ const ProfileCard = props => {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [modalVisible, setModalVisible] = useState(false)
     const [sortedProfiles, setSortedProfiles] = useState([])
-    // const [myProfile, setMyProfile] = useState({...props.myProfile})
-
-    // useEffect(()=>{
-    //     setMyProfile({...props.myProfile})
-    // }, [props.myProfile])
-
-    // useEffect(()=>{
-    //     if(myProfile) setSortedProfiles(sortProfiles(profiles))
-    // }, [myProfile])
-    
-    // const sortProfiles = (arr) => {
-    //     let aux = [...arr]
-    //     let n = arr.length
-    //     for (let i = 0; i < n ; i++) {
-    //         let distA = distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, profiles[i].geolocation.latitude, profiles[i].geolocation.longitude, 'K')
-    //         for (let j = i+1; j < n ; j++){
-    //             let distB = distance(myProfile.geolocation.latitude, myProfile.geolocation.longitude, profiles[j].geolocation.latitude, profiles[j].geolocation.longitude, 'K')
-    //             if(distB < distA){
-    //                 let temp = aux[i]
-    //                 aux[i] = aux[j]
-    //                 aux[j] = temp                      
-    //             }
-    //         }
-    //     }
-    //     return aux
-    // }
+ 
 
     const position = new Animated.ValueXY();
 
-    //se calcula la distancia en Kilometros entre el usuario logeado y el usuario que se desee
+    //This calculates the distance in kilometers between the current user and the desired one
     const distance = (lat1, lon1, lat2, lon2, unit) => {
         if ((lat1 == lat2) && (lon1 == lon2)) {
             return 0;
@@ -73,7 +48,7 @@ const ProfileCard = props => {
         }
     }
 
-    //This is the logic for the card to rotate ad=nd translate
+    //This is the logic for the card to rotate and translate
     const rotate = position.x.interpolate({
         inputRange:[-SCREEN_WIDTH/2, 0, SCREEN_WIDTH/2],
         outputRange:['-10deg', '0deg', '10deg'],
